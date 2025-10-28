@@ -1,18 +1,30 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth-service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
 export class Login {
 
-  constructor(private router: Router) {}
+  email = '';
+  password = '';
+
+  constructor(private auth: AuthService, private router: Router) {}
 
   login() {
-    // for now, just go straight to home
+    if (this.auth.login(this.email, this.password)) {
+      this.router.navigate(['/home']);
+    }
+  }
+
+  loginWithGithub() {
+    // Simulate OAuth login for now
+    this.auth.login('test', 'test');
     this.router.navigate(['/home']);
   }
 }
