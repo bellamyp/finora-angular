@@ -21,4 +21,10 @@ export class Login {
       this.router.navigate(['/home']);
     }
   }
+
+  loginWithGithub() {
+    // Simulate OAuth login for now
+    this.auth.login('test', 'test');
+    this.router.navigate(['/home']);
+  }
 }
