@@ -1,9 +1,9 @@
 export const BackendConfig = {
-  springApiUrl: getSpringApiUrl()
+  springApiUrl: getSpringApiUrl(window.location.hostname)
 };
 
-function getSpringApiUrl(): string {
-  return window.location.hostname === 'localhost'
+export function getSpringApiUrl(hostname: string): string {
+  return hostname === 'localhost'
     ? 'http://localhost:8080/api'
     : 'https://finora-spring.onrender.com/api';
 }
