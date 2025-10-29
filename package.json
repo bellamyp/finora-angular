@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open",
-    "build": "ng build --configuration production",
+    "build": "ng build --output-path=dist/finora-angular",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
