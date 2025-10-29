@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UserDTO } from '../dto/user.dto';
+import {BackendConfig} from '../config/backend-config';
 
 @Injectable({
   providedIn: 'root'
 })
-export class User {
+export class UserService {
 
-  private apiUrl = 'http://localhost:8080/api/users'; // your BE URL
+  private apiUrl = `${BackendConfig.springApiUrl}/users`;
 
   constructor(private http: HttpClient) { }
 

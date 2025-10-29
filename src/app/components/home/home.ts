@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserDTO } from '../../dto/user.dto';
-import { User } from '../../services/user';
+import { UserService } from '../../services/user.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -13,7 +13,7 @@ export class Home implements OnInit {
 
   users: UserDTO[] = [];
 
-  constructor(private userService: User) { }
+  constructor(private userService: UserService) { }
 
   ngOnInit(): void {
     this.userService.getAllUsers().subscribe({
