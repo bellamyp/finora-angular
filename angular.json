@@ -31,7 +31,8 @@
             ],
             "styles": [
               "src/styles.scss"
-            ]
+            ],
+            "outputPath": "dist/finora-angular"
           },
           "configurations": {
             "production": {
