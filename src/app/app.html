@@ -1,22 +1,23 @@
 <!-- Root layout -->
 <div class="d-flex flex-column min-vh-100">
 
-  <!-- Header -->
-  <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm px-3">
-    <div class="container-fluid d-flex justify-content-between align-items-center position-relative"><!-- UPDATED: flex alignment -->
 
-      <!-- Left nav links -->
-      <ul class="navbar-nav flex-row gap-3 mb-0"><!-- UPDATED -->
+  <!-- Header (fixed) -->
+  <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm px-3">
+    <div class="container-fluid d-flex justify-content-between align-items-center position-relative">
+
+    <!-- Left nav links -->
+      <ul class="navbar-nav flex-row gap-3 mb-0">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
+          <a class="nav-link text-white" routerLink="/home" routerLinkActive="active">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://bellamyphan.space">Portfolio</a>
+          <a class="nav-link text-white" href="https://bellamyphan.space">Portfolio</a>
         </li>
       </ul>
 
       <!-- Brand centered -->
-      <a class="navbar-brand position-absolute start-50 translate-middle-x fw-bold" href="#"><!-- UPDATED -->
+      <a class="navbar-brand position-absolute start-50 translate-middle-x fw-bold" href="#">
         Finora Web App
       </a>
 
@@ -34,25 +35,19 @@
 
   <!-- Main Content -->
   <main class="flex-grow-1">
-    <div class="container my-4">
-      <h1>{{ title }}</h1>
-      <p>Congratulations! Your Angular app is running. 🎉</p>
-      <h1 class="text-primary">Bootstrap Test</h1>
-    </div>
-
     <router-outlet></router-outlet>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-dark text-light py-3 mt-auto shadow-sm position-relative"><!-- UPDATED -->
-    <div class="container d-flex justify-content-center align-items-center position-relative"><!-- UPDATED -->
+  <!-- Footer (fixed) -->
+  <footer class="bg-dark text-light py-3 mt-auto shadow-sm fixed-bottom">
+    <div class="container d-flex justify-content-center align-items-center position-relative">
       <!-- Footer Text centered -->
       <p class="mb-0 small text-secondary text-center fw-medium">
         All rights reserved to Finora Web App 2025 & author BellamyPhan@iCloud.com
       </p>
 
       <!-- Backend Status on right corner -->
-      <div class="position-absolute end-0 me-3 small"><!-- UPDATED -->
+      <div class="position-absolute end-0 me-3 small">
         @if (backendStatus === 'loading') {
           <div class="d-flex align-items-center gap-1">
             <div class="spinner-border spinner-border-sm text-info" role="status"></div>
