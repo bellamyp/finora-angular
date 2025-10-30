@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
@@ -9,12 +9,19 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
-export class Login {
+export class Login implements OnInit{
 
   email = '';
   password = '';
 
   constructor(private auth: AuthService, private router: Router) {}
+
+  ngOnInit() {
+    if (this.auth.isLoggedIn()) {
+      this.router.navigate(['/home']);
+    }
+  }
+
   login() {
     const success = this.auth.login(this.email, this.password);
 
@@ -41,5 +48,9 @@ export class Login {
 
   loginWithIcloud() {
     this.loginWithGithub();
+  }
+
+  signUpNewAccount() {
+    this.router.navigate(['/signup']);
   }
 }

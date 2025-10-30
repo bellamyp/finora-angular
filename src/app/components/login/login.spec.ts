@@ -12,7 +12,7 @@ describe('Login', () => {
   let alertSpy: jasmine.Spy;
 
   beforeEach(async () => {
-    mockAuthService = jasmine.createSpyObj('AuthService', ['login']);
+    mockAuthService = jasmine.createSpyObj('AuthService', ['login', 'isLoggedIn']);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     alertSpy = spyOn(window, 'alert');
 
@@ -31,6 +31,12 @@ describe('Login', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should redirect to /home if already logged in', () => {
+    mockAuthService.isLoggedIn.and.returnValue(true);
+    component.ngOnInit();
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/home']);
   });
 
   it('should call AuthService.login and navigate on login() success', () => {
@@ -77,7 +83,13 @@ describe('Login', () => {
     expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
   });
 
+  it('should navigate to signup on signUpNewAccount()', () => {
+    component.signUpNewAccount();
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/signup']);
+  });
+
   it('should update component properties from input fields', () => {
+    fixture.detectChanges();
     const emailInput = fixture.debugElement.query(By.css('input[name="email"]')).nativeElement;
     const passwordInput = fixture.debugElement.query(By.css('input[name="password"]')).nativeElement;
 

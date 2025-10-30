@@ -1,0 +1,50 @@
+<div class="d-flex justify-content-center align-items-start py-5">
+  <div class="card p-4 shadow-lg rounded-4" style="max-width: 400px; width: 100%;">
+    <h2 class="text-center mb-4 fw-bold text-primary">Create Account</h2>
+
+    <form>
+      <div class="mb-3">
+        <input
+          type="text"
+          class="form-control form-control-lg rounded-3"
+          placeholder="Full Name"
+        />
+      </div>
+
+      <div class="mb-3">
+        <input
+          type="email"
+          class="form-control form-control-lg rounded-3"
+          placeholder="Email"
+        />
+      </div>
+
+      <div class="mb-3">
+        <input
+          type="password"
+          class="form-control form-control-lg rounded-3"
+          placeholder="Password"
+        />
+      </div>
+
+      <div class="mb-3">
+        <input
+          type="text"
+          class="form-control form-control-lg rounded-3"
+          placeholder="Phone Number"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 mb-3 btn-lg fw-semibold shadow-sm">
+        Sign Up
+      </button>
+    </form>
+
+    <p class="text-center text-muted small mt-3">
+      Already have an account?
+      <a [routerLink]="['/login']" class="text-decoration-none fw-semibold">
+        Sign in
+      </a>
+    </p>
+  </div>
+</div>
