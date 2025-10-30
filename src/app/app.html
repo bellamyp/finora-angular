@@ -9,6 +9,23 @@
       <li><a routerLink="/portfolio">Portfolio</a></li>
     </ul>
   </nav>
+
+  <!-- Backend Status -->
+  <div class="backend-status d-flex align-items-center gap-1">
+    <!-- Loading state -->
+    @if (backendStatus === 'loading') {
+      <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
+      <span>Checking backend...</span>
+    }
+    <!-- Up state -->
+    @if (backendStatus === 'up') {
+      <span class="text-success">Backend up</span>
+    }
+    <!-- Down state -->
+    @if (backendStatus === 'down') {
+      <span class="text-danger">Backend down</span>
+    }
+  </div>
 </header>
 
 <!-- Main Content -->
