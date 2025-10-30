@@ -15,16 +15,31 @@ export class Login {
   password = '';
 
   constructor(private auth: AuthService, private router: Router) {}
-
   login() {
-    if (this.auth.login(this.email, this.password)) {
+    const success = this.auth.login(this.email, this.password);
+
+    if (success) {
       this.router.navigate(['/home']);
+    } else {
+      // Simple feedback to user
+      window.alert('❌ Login failed: Invalid email or password.');
     }
   }
 
   loginWithGithub() {
-    // Simulate OAuth login for now
-    this.auth.login('test', 'test');
-    this.router.navigate(['/home']);
+    // Show warning
+    window.alert('⚠️ This button is not working yet.');
+  }
+
+  loginWithGoogle() {
+    this.loginWithGithub();
+  }
+
+  loginWithFacebook() {
+    this.loginWithGithub();
+  }
+
+  loginWithIcloud() {
+    this.loginWithGithub();
   }
 }
