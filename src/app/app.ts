@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
 import { PingService } from './services/ping.service';
 import { CommonModule } from '@angular/common';
+import {AuthService} from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,11 @@ export class App implements OnInit{
   title = 'finora-angular';
   backendStatus: 'loading' | 'up' | 'down' = 'loading';
 
-  constructor(private pingService: PingService) {}
+  constructor(
+    private pingService: PingService,
+    private auth: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.checkBackend();
@@ -26,5 +31,10 @@ export class App implements OnInit{
     this.pingService.ping().subscribe(result => {
       this.backendStatus = result === 'pong' ? 'up' : 'down';
     });
+  }
+
+  logout() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }
