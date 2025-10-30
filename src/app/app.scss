@@ -1,0 +1,45 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  z-index: 1030;
+}
+
+main {
+  flex: 1;
+  padding: 2rem 0;
+}
+
+footer {
+  background-color: #212529; // matches Bootstrap bg-dark
+  color: #adb5bd;            // softer light text
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  z-index: 1020;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.3);
+}
+
+footer p {
+  margin: 0;
+}
+
+footer .text-success {
+  color: #28a745 !important;
+}
+
+footer .text-danger {
+  color: #dc3545 !important;
+}
+
+footer .text-info {
+  color: #17a2b8 !important;
+}

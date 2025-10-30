@@ -1,44 +1,72 @@
-<!-- app.component.html -->
+<!-- Root layout -->
+<div class="d-flex flex-column min-vh-100">
 
-<!-- Header -->
-<header>
-  <h1>My App Header</h1>
-  <nav>
-    <ul>
-      <li><a routerLink="/">Home</a></li>
-      <li><a routerLink="/portfolio">Portfolio</a></li>
-    </ul>
-  </nav>
+  <!-- Header -->
+  <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm px-3">
+    <div class="container-fluid d-flex justify-content-between align-items-center position-relative"><!-- UPDATED: flex alignment -->
 
-  <!-- Backend Status -->
-  <div class="backend-status d-flex align-items-center gap-1">
-    <!-- Loading state -->
-    @if (backendStatus === 'loading') {
-      <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
-      <span>Checking backend...</span>
-    }
-    <!-- Up state -->
-    @if (backendStatus === 'up') {
-      <span class="text-success">Backend up</span>
-    }
-    <!-- Down state -->
-    @if (backendStatus === 'down') {
-      <span class="text-danger">Backend down</span>
-    }
-  </div>
-</header>
+      <!-- Left nav links -->
+      <ul class="navbar-nav flex-row gap-3 mb-0"><!-- UPDATED -->
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Portfolio</a>
+        </li>
+      </ul>
 
-<!-- Main Content -->
-<main>
-  <div class="container">
-    <h1>{{ title }}</h1>
-    <p>Congratulations! Your Angular app is running. 🎉</p>
-    <h1 class="text-primary">Bootstrap Test</h1>
-  </div>
-  <router-outlet></router-outlet>
-</main>
+      <!-- Brand centered -->
+      <a class="navbar-brand position-absolute start-50 translate-middle-x fw-bold" href="#"><!-- UPDATED -->
+        Finora Web App
+      </a>
 
-<!-- Footer -->
-<footer>
-  <p>All rights reserved © 2025</p>
-</footer>
+      <!-- Right-side section -->
+      <div class="d-flex align-items-center text-light small gap-3">
+        <button class="btn btn-outline-light btn-sm fw-semibold" type="button">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Add spacing for fixed header -->
+  <div style="padding-top: 70px;"></div>
+
+  <!-- Main Content -->
+  <main class="flex-grow-1">
+    <div class="container my-4">
+      <h1>{{ title }}</h1>
+      <p>Congratulations! Your Angular app is running. 🎉</p>
+      <h1 class="text-primary">Bootstrap Test</h1>
+    </div>
+
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-light py-3 mt-auto shadow-sm position-relative"><!-- UPDATED -->
+    <div class="container d-flex justify-content-center align-items-center position-relative"><!-- UPDATED -->
+      <!-- Footer Text centered -->
+      <p class="mb-0 small text-secondary text-center fw-medium">
+        All rights reserved to Finora Web App 2025 & author BellamyPhan@iCloud.com
+      </p>
+
+      <!-- Backend Status on right corner -->
+      <div class="position-absolute end-0 me-3 small"><!-- UPDATED -->
+        @if (backendStatus === 'loading') {
+          <div class="d-flex align-items-center gap-1">
+            <div class="spinner-border spinner-border-sm text-info" role="status"></div>
+            <span>Checking backend...</span>
+          </div>
+        }
+        @if (backendStatus === 'up') {
+          <span class="text-success fw-semibold">● Backend up</span>
+        }
+        @if (backendStatus === 'down') {
+          <span class="text-danger fw-semibold">● Backend down</span>
+        }
+      </div>
+    </div>
+  </footer>
+
+</div>
