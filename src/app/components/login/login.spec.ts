@@ -1,22 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { Login } from './login';
-import {AuthService} from '../../services/auth.service';
-import {Router} from '@angular/router';
-import {By} from '@angular/platform-browser';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+import { By } from '@angular/platform-browser';
 
 describe('Login', () => {
   let component: Login;
   let fixture: ComponentFixture<Login>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
   let mockRouter: jasmine.SpyObj<Router>;
+  let alertSpy: jasmine.Spy;
 
   beforeEach(async () => {
     mockAuthService = jasmine.createSpyObj('AuthService', ['login']);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    alertSpy = spyOn(window, 'alert');
 
     await TestBed.configureTestingModule({
-      imports: [Login], // standalone component
+      imports: [Login],
       providers: [
         { provide: AuthService, useValue: mockAuthService },
         { provide: Router, useValue: mockRouter }
@@ -32,21 +33,19 @@ describe('Login', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call AuthService.login and navigate on login()', () => {
-    // Arrange
+  it('should call AuthService.login and navigate on login() success', () => {
     component.email = 'user@example.com';
     component.password = 'password';
     mockAuthService.login.and.returnValue(true);
 
-    // Act
     component.login();
 
-    // Assert
     expect(mockAuthService.login).toHaveBeenCalledWith('user@example.com', 'password');
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/home']);
+    expect(alertSpy).not.toHaveBeenCalled(); // no alert on success
   });
 
-  it('should not navigate if login fails', () => {
+  it('should show alert if login fails', () => {
     component.email = 'user@example.com';
     component.password = 'wrongpass';
     mockAuthService.login.and.returnValue(false);
@@ -55,15 +54,27 @@ describe('Login', () => {
 
     expect(mockAuthService.login).toHaveBeenCalledWith('user@example.com', 'wrongpass');
     expect(mockRouter.navigate).not.toHaveBeenCalled();
+    expect(alertSpy).toHaveBeenCalledWith('❌ Login failed: Invalid email or password.');
   });
 
-  it('should login with GitHub and navigate', () => {
-    mockAuthService.login.and.returnValue(true);
-
+  it('should show alert when clicking loginWithGithub', () => {
     component.loginWithGithub();
+    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
+  });
 
-    expect(mockAuthService.login).toHaveBeenCalledWith('test', 'test');
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/home']);
+  it('should show alert when clicking loginWithGoogle', () => {
+    component.loginWithGoogle();
+    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
+  });
+
+  it('should show alert when clicking loginWithFacebook', () => {
+    component.loginWithFacebook();
+    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
+  });
+
+  it('should show alert when clicking loginWithIcloud', () => {
+    component.loginWithIcloud();
+    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
   });
 
   it('should update component properties from input fields', () => {

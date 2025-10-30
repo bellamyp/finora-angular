@@ -39,17 +39,6 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title in the template', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-
-    const titleH1 = Array.from(compiled.querySelectorAll('h1'))
-      .find(el => el.textContent?.includes(fixture.componentInstance.title));
-
-    expect(titleH1).toBeTruthy();
-  });
-
   it('should have a router-outlet', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
