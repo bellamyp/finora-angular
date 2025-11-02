@@ -21,7 +21,6 @@ export class BankCreate implements OnInit {
     private fb: FormBuilder,
     private bankService: BankService,
     private authService: AuthService,
-    private router: Router
   ) {
     this.bankForm = this.fb.group({
       name: ['', Validators.required],

@@ -1,4 +1,5 @@
 // src/app/dto/user.dto.ts
+
 export interface UserDTO {
   id: number;
   name: string;      // changed from username
