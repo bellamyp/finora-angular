@@ -1,6 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { MenuUser } from './menu-user';
+import { By } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
+import { Component } from '@angular/core';
+
+// Dummy root route component
+@Component({ template: '' })
+class DummyComponent {}
 
 describe('MenuUser', () => {
   let component: MenuUser;
@@ -8,7 +14,12 @@ describe('MenuUser', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MenuUser] // Standalone component
+      imports: [
+        MenuUser,
+      ],
+      providers: [
+        provideRouter([{ path: '', component: DummyComponent }])
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MenuUser);
@@ -21,9 +32,7 @@ describe('MenuUser', () => {
   });
 
   it('should have Transactions buttons', () => {
-    const transactionButtons = fixture.debugElement.queryAll(
-      By.css('.d-grid.mb-4 button')
-    );
+    const transactionButtons = fixture.debugElement.queryAll(By.css('.d-grid.mb-4 button'));
     expect(transactionButtons.length).toBe(4);
 
     const labels = transactionButtons.map(btn => btn.nativeElement.textContent.trim());
@@ -35,8 +44,8 @@ describe('MenuUser', () => {
 
   it('should have Banks buttons', () => {
     const allGrids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2'));
-    const bankGrid = allGrids[1]; // second grid is Banks
-    const bankButtons = bankGrid.queryAll(By.css('button'));
+    const bankGrid = allGrids[1]; // second grid
+    const bankButtons = bankGrid.queryAll(By.css('button, a')); // include <a>
 
     expect(bankButtons.length).toBe(3);
 
