@@ -1,22 +1,28 @@
-import { TestBed } from '@angular/core/testing';
+// src/app/services/user.service.spec.ts
 
+import { TestBed } from '@angular/core/testing';
 import { UserService } from './user.service';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {UserDTO} from '../dto/user.dto';
-import {BackendConfig} from '../config/backend-config';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { UserDTO } from '../dto/user.dto';
+import { BackendConfig } from '../config/backend-config';
 
 describe('UserService', () => {
   let service: UserService;
   let httpMock: HttpTestingController;
+
   const mockUsers: UserDTO[] = [
-    { id: 1, username: 'alice', email: 'alice@example.com' },
-    { id: 2, username: 'bob', email: 'bob@example.com' },
+    { id: 1, name: 'Alice', email: 'alice@example.com' },
+    { id: 2, name: 'Bob', email: 'bob@example.com' },
   ];
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [UserService]
+      providers: [
+        UserService,
+        provideHttpClient(),         // <-- provide the real HttpClient (_HttpClient)
+        provideHttpClientTesting()   // <-- provide the testing controller
+      ]
     });
 
     service = TestBed.inject(UserService);
@@ -24,7 +30,6 @@ describe('UserService', () => {
   });
 
   afterEach(() => {
-    // Verify that no unmatched requests are pending
     httpMock.verify();
   });
 
@@ -38,11 +43,9 @@ describe('UserService', () => {
       expect(users).toEqual(mockUsers);
     });
 
-    // Expect one GET request to the correct URL
     const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/users`);
     expect(req.request.method).toBe('GET');
 
-    // Respond with mock data
     req.flush(mockUsers);
   });
 
