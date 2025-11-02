@@ -1,0 +1,78 @@
+<!-- bank-create.component.html -->
+<div class="container py-4" style="max-width: 600px;">
+  <h3 class="mb-4 text-center">Add a Bank</h3>
+
+  <form [formGroup]="bankForm" (ngSubmit)="submit()">
+    <!-- Bank Name -->
+    <div class="mb-3">
+      <label for="name" class="form-label">Bank Name</label>
+      <input
+        id="name"
+        type="text"
+        class="form-control"
+        formControlName="name"
+        placeholder="Enter bank name"
+      />
+      <div *ngIf="bankForm.get('name')?.touched && bankForm.get('name')?.invalid" class="text-danger">
+        Bank name is required.
+      </div>
+    </div>
+
+    <!-- Opening Date -->
+    <div class="mb-3">
+      <label for="openingDate" class="form-label">Opening Date</label>
+      <input
+        id="openingDate"
+        type="date"
+        class="form-control"
+        formControlName="openingDate"
+      />
+      <div *ngIf="bankForm.get('openingDate')?.touched && bankForm.get('openingDate')?.invalid" class="text-danger">
+        Opening date is required.
+      </div>
+    </div>
+
+    <!-- Closing Date -->
+    <div class="mb-3">
+      <label for="closingDate" class="form-label">Closing Date (optional)</label>
+      <input
+        id="closingDate"
+        type="date"
+        class="form-control"
+        formControlName="closingDate"
+      />
+    </div>
+
+    <!-- Bank Type -->
+    <div class="mb-3">
+      <label for="type" class="form-label">Bank Type</label>
+      <select id="type" class="form-select" formControlName="type">
+        <option value="" disabled>Select type</option>
+        <option *ngFor="let type of bankTypes" [value]="type">{{ type }}</option>
+      </select>
+      <div *ngIf="bankForm.get('type')?.touched && bankForm.get('type')?.invalid" class="text-danger">
+        Bank type is required.
+      </div>
+    </div>
+
+    <!-- User Email -->
+    <div class="mb-3">
+      <label for="userEmail" class="form-label">User Email</label>
+      <input
+        id="userEmail"
+        type="email"
+        class="form-control"
+        formControlName="userEmail"
+        placeholder="Enter user email"
+      />
+      <div *ngIf="bankForm.get('userEmail')?.touched && bankForm.get('userEmail')?.invalid" class="text-danger">
+        Valid user email is required.
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-warning w-100">
+      <i class="bi bi-plus-square me-2"></i> Add Bank
+    </button>
+  </form>
+</div>
