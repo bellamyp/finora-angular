@@ -2,12 +2,13 @@
   <div class="card p-4 shadow-lg rounded-4" style="max-width: 400px; width: 100%;">
     <h2 class="text-center mb-4 fw-bold text-primary">Create Account</h2>
 
-    <form>
+    <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
       <div class="mb-3">
         <input
           type="text"
           class="form-control form-control-lg rounded-3"
           placeholder="Full Name"
+          formControlName="name"
         />
       </div>
 
@@ -16,6 +17,7 @@
           type="email"
           class="form-control form-control-lg rounded-3"
           placeholder="Email"
+          formControlName="email"
         />
       </div>
 
@@ -24,20 +26,21 @@
           type="password"
           class="form-control form-control-lg rounded-3"
           placeholder="Password"
+          formControlName="password"
         />
       </div>
 
-      <div class="mb-3">
-        <input
-          type="text"
-          class="form-control form-control-lg rounded-3"
-          placeholder="Phone Number"
-        />
-      </div>
-
-      <button type="submit" class="btn btn-primary w-100 mb-3 btn-lg fw-semibold shadow-sm">
-        Sign Up
+      <button
+        type="submit"
+        class="btn btn-primary w-100 mb-3 btn-lg fw-semibold shadow-sm"
+        [disabled]="loading"
+      >
+        {{ loading ? 'Signing Up...' : 'Sign Up' }}
       </button>
+
+      <div *ngIf="errorMessage" class="text-danger text-center mb-2">
+        {{ errorMessage }}
+      </div>
     </form>
 
     <p class="text-center text-muted small mt-3">
