@@ -1,33 +1,32 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MenuAdmin } from './menu-admin';
+import { UserService } from '../../services/user.service';
+import { UserDTO } from '../../dto/user.dto';
+import { of, throwError } from 'rxjs';
+import { By } from '@angular/platform-browser';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { Home } from './home';
-import {UserService} from '../../services/user.service';
-import {UserDTO} from '../../dto/user.dto';
-import {of, throwError} from 'rxjs';
-import {By} from '@angular/platform-browser';
-
-describe('Home', () => {
-  let component: Home;
-  let fixture: ComponentFixture<Home>;
+describe('MenuAdmin', () => {
+  let component: MenuAdmin;
+  let fixture: ComponentFixture<MenuAdmin>;
   let mockUserService: jasmine.SpyObj<UserService>;
 
   const dummyUsers: UserDTO[] = [
-    { id: 1, name: 'Alice Smith', email: 'alice@example.com' },
-    { id: 2, name: 'Bob Johnson', email: 'bob@example.com' },
+    { id: 1, name: 'Alice Smith', email: 'alice@example.com', role: 'ROLE_ADMIN' },
+    { id: 2, name: 'Bob Johnson', email: 'bob@example.com', role: 'ROLE_USER' },
   ];
 
   beforeEach(async () => {
-    // Create a mock UserService
     mockUserService = jasmine.createSpyObj('UserService', ['getAllUsers']);
 
     await TestBed.configureTestingModule({
-      imports: [Home],
+      imports: [MenuAdmin, HttpClientTestingModule],
       providers: [
         { provide: UserService, useValue: mockUserService }
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Home);
+    fixture = TestBed.createComponent(MenuAdmin);
     component = fixture.componentInstance;
   });
 
@@ -53,9 +52,9 @@ describe('Home', () => {
 
     const rows = fixture.debugElement.queryAll(By.css('tbody tr'));
     expect(rows.length).toBe(2);
-    expect(rows[0].nativeElement.textContent).toContain('alice');
+    expect(rows[0].nativeElement.textContent).toContain('Alice Smith');
     expect(rows[0].nativeElement.textContent).toContain('alice@example.com');
-    expect(rows[1].nativeElement.textContent).toContain('bob');
+    expect(rows[1].nativeElement.textContent).toContain('Bob Johnson');
   });
 
   it('should show "No users found" if users array is empty', () => {
