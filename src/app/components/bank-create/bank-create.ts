@@ -3,7 +3,6 @@ import {CommonModule} from '@angular/common';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {BankCreateDto} from '../../dto/bank-create.dto';
 import {BankService} from '../../services/bank.service';
-import {Router} from '@angular/router';
 import {AuthService} from '../../services/auth.service';
 
 @Component({
