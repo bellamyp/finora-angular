@@ -6,8 +6,7 @@ import { provideRouter } from '@angular/router';
 import { provideLocationMocks } from '@angular/common/testing';
 import { of, throwError } from 'rxjs';
 import { By } from '@angular/platform-browser';
-import { Component } from '@angular/core';
-import { DebugElement } from '@angular/core';
+import { Component, DebugElement } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 // Dummy component for root route
@@ -22,7 +21,7 @@ describe('Login', () => {
   let router: Router;
 
   beforeEach(async () => {
-    mockAuthService = jasmine.createSpyObj('AuthService', ['login', 'isLoggedIn']);
+    mockAuthService = jasmine.createSpyObj('AuthService', ['login', 'isLoggedIn', 'getCurrentUserRole']);
     alertSpy = spyOn(window, 'alert');
 
     await TestBed.configureTestingModule({
@@ -43,27 +42,48 @@ describe('Login', () => {
     spyOn(router, 'navigate'); // spy on navigation
     fixture.detectChanges();
   });
-
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should redirect to /home if already logged in', () => {
+  it('should redirect to menu-admin if already logged in as admin', () => {
     mockAuthService.isLoggedIn.and.returnValue(true);
+    mockAuthService.getCurrentUserRole.and.returnValue('ROLE_ADMIN');
     component.ngOnInit();
-    expect(router.navigate).toHaveBeenCalledWith(['/home']);
+    expect(router.navigate).toHaveBeenCalledWith(['/menu-admin']);
   });
 
-  it('should navigate on successful login', fakeAsync(() => {
+  it('should redirect to menu-user if already logged in as normal user', () => {
+    mockAuthService.isLoggedIn.and.returnValue(true);
+    mockAuthService.getCurrentUserRole.and.returnValue('ROLE_USER');
+    component.ngOnInit();
+    expect(router.navigate).toHaveBeenCalledWith(['/menu-user']);
+  });
+
+  it('should navigate to menu-admin on successful admin login', fakeAsync(() => {
+    component.email = 'admin@example.com';
+    component.password = 'password';
+    mockAuthService.login.and.returnValue(of(true));
+    mockAuthService.getCurrentUserRole.and.returnValue('ROLE_ADMIN');
+
+    component.login();
+    tick();
+
+    expect(mockAuthService.login).toHaveBeenCalledWith('admin@example.com', 'password');
+    expect(router.navigate).toHaveBeenCalledWith(['/menu-admin']);
+  }));
+
+  it('should navigate to menu-user on successful normal user login', fakeAsync(() => {
     component.email = 'user@example.com';
     component.password = 'password';
     mockAuthService.login.and.returnValue(of(true));
+    mockAuthService.getCurrentUserRole.and.returnValue('ROLE_USER');
 
     component.login();
     tick();
 
     expect(mockAuthService.login).toHaveBeenCalledWith('user@example.com', 'password');
-    expect(router.navigate).toHaveBeenCalledWith(['/home']);
+    expect(router.navigate).toHaveBeenCalledWith(['/menu-user']);
   }));
 
   it('should show alert if login fails', fakeAsync(() => {
@@ -75,7 +95,7 @@ describe('Login', () => {
     tick();
 
     expect(mockAuthService.login).toHaveBeenCalledWith('user@example.com', 'wrongpass');
-    expect(router.navigate).not.toHaveBeenCalled(); // <-- use router spy
+    expect(router.navigate).not.toHaveBeenCalled();
     expect(alertSpy).toHaveBeenCalledWith('❌ Login failed: Invalid email or password.');
   }));
 
@@ -129,7 +149,6 @@ describe('Login', () => {
     const anchorDe: DebugElement = fixture.debugElement.query(By.css('a'));
     expect(anchorDe).toBeTruthy();
 
-    // Instead of injector.get, check href rendered in DOM
     const anchorEl: HTMLAnchorElement = anchorDe.nativeElement;
     expect(anchorEl.getAttribute('href')).toBe('/signup');
   });

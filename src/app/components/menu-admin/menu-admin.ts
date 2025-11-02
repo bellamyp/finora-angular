@@ -4,26 +4,25 @@ import { UserService } from '../../services/user.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-menu-admin',
   imports: [CommonModule],
-  templateUrl: './home.html',
-  styleUrl: './home.scss',
+  templateUrl: './menu-admin.html',
+  styleUrl: './menu-admin.scss',
 })
-export class Home implements OnInit {
+export class MenuAdmin implements OnInit {
 
   users: UserDTO[] = [];
+  currentUserRole: string = ''; // store logged-in user's role
 
-  constructor(private userService: UserService) { }
+  constructor(
+    private userService: UserService
+  ) { }
 
   ngOnInit(): void {
+    // Optional: still fetch all users for the table
     this.userService.getAllUsers().subscribe({
       next: data => {
-        // Map role object if backend includes it
-        this.users = data.map(user => ({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        }));
+        this.users = data;
       },
       error: err => console.error('Error fetching users', err)
     });

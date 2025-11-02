@@ -1,3 +1,5 @@
+<p>menu-admin works!</p>
+
 <h1>All Users</h1>
 
 <table border="1" cellpadding="8" cellspacing="0">
@@ -6,6 +8,7 @@
     <th>ID</th>
     <th>Name</th>
     <th>Email</th>
+    <th>Role</th> <!-- new column for role -->
   </tr>
   </thead>
   <tbody>
@@ -13,11 +16,11 @@
     <td>{{ user.id }}</td>
     <td>{{ user.name }}</td>
     <td>{{ user.email }}</td>
+    <td>{{ user.role }}</td> <!-- show role string -->
   </tr>
   </tbody>
 </table>
 
-<!-- Optional: show a message if no users are found -->
 <div *ngIf="users.length === 0">
   No users found.
 </div>

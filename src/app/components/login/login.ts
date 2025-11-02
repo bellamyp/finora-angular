@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -10,8 +10,7 @@ import { RouterModule } from '@angular/router';
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule,
-    RouterLink
+    RouterModule
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',
@@ -27,7 +26,12 @@ export class Login implements OnInit{
 
   ngOnInit() {
     if (this.auth.isLoggedIn()) {
-      this.router.navigate(['/home']);
+      const role = this.auth.getCurrentUserRole();
+      if (role === 'ROLE_ADMIN') {
+        this.router.navigate(['/menu-admin']);
+      } else {
+        this.router.navigate(['/menu-user']);
+      }
     }
   }
 
@@ -35,7 +39,16 @@ export class Login implements OnInit{
     this.auth.login(this.email, this.password).subscribe({
       next: success => {
         if (success) {
-          this.router.navigate(['/home']);
+          // Get role from AuthService
+          const role = this.auth.getCurrentUserRole();
+
+          if (role === 'ROLE_ADMIN') {
+            console.log('Redirect to Admin Menu');
+            this.router.navigate(['/menu-admin']);
+          } else {
+            console.log('Redirect to User Menu');
+            this.router.navigate(['/menu-user']);
+          }
         } else {
           window.alert('❌ Login failed: Invalid email or password.');
         }
