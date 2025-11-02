@@ -17,4 +17,10 @@ export class UserService {
     return this.http.get<UserDTO[]>(this.apiUrl);
   }
 
+  // ✅ POST /api/users
+  createUser(user: any): Observable<any> {
+    return this.http.post(this.apiUrl, user, { responseType: 'text' });
+    // responseType: 'text' to match backend returning plain String
+  }
+
 }
