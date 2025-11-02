@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Home } from './home';
 import {UserService} from '../../services/user.service';
 import {UserDTO} from '../../dto/user.dto';
-import {CommonModule} from '@angular/common';
 import {of, throwError} from 'rxjs';
 import {By} from '@angular/platform-browser';
 
@@ -13,8 +12,8 @@ describe('Home', () => {
   let mockUserService: jasmine.SpyObj<UserService>;
 
   const dummyUsers: UserDTO[] = [
-    { id: 1, username: 'alice', email: 'alice@example.com' },
-    { id: 2, username: 'bob', email: 'bob@example.com' },
+    { id: 1, name: 'Alice Smith', email: 'alice@example.com' },
+    { id: 2, name: 'Bob Johnson', email: 'bob@example.com' },
   ];
 
   beforeEach(async () => {

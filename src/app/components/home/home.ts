@@ -17,7 +17,14 @@ export class Home implements OnInit {
 
   ngOnInit(): void {
     this.userService.getAllUsers().subscribe({
-      next: data => this.users = data,
+      next: data => {
+        // Map role object if backend includes it
+        this.users = data.map(user => ({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        }));
+      },
       error: err => console.error('Error fetching users', err)
     });
   }

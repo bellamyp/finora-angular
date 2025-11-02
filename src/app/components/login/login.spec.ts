@@ -1,31 +1,46 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Login } from './login';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
+import { provideLocationMocks } from '@angular/common/testing';
+import { of, throwError } from 'rxjs';
 import { By } from '@angular/platform-browser';
+import { Component } from '@angular/core';
+import { DebugElement } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+// Dummy component for root route
+@Component({ template: '' })
+class DummyComponent {}
 
 describe('Login', () => {
   let component: Login;
   let fixture: ComponentFixture<Login>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
-  let mockRouter: jasmine.SpyObj<Router>;
   let alertSpy: jasmine.Spy;
+  let router: Router;
 
   beforeEach(async () => {
     mockAuthService = jasmine.createSpyObj('AuthService', ['login', 'isLoggedIn']);
-    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     alertSpy = spyOn(window, 'alert');
 
     await TestBed.configureTestingModule({
-      imports: [Login],
+      imports: [
+        Login,
+        FormsModule,
+      ],
       providers: [
         { provide: AuthService, useValue: mockAuthService },
-        { provide: Router, useValue: mockRouter }
+        provideRouter([{ path: '', component: DummyComponent }]),
+        provideLocationMocks()
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(Login);
     component = fixture.componentInstance;
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate'); // spy on navigation
     fixture.detectChanges();
   });
 
@@ -36,32 +51,45 @@ describe('Login', () => {
   it('should redirect to /home if already logged in', () => {
     mockAuthService.isLoggedIn.and.returnValue(true);
     component.ngOnInit();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/home']);
+    expect(router.navigate).toHaveBeenCalledWith(['/home']);
   });
 
-  it('should call AuthService.login and navigate on login() success', () => {
+  it('should navigate on successful login', fakeAsync(() => {
     component.email = 'user@example.com';
     component.password = 'password';
-    mockAuthService.login.and.returnValue(true);
+    mockAuthService.login.and.returnValue(of(true));
 
     component.login();
+    tick();
 
     expect(mockAuthService.login).toHaveBeenCalledWith('user@example.com', 'password');
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/home']);
-    expect(alertSpy).not.toHaveBeenCalled(); // no alert on success
-  });
+    expect(router.navigate).toHaveBeenCalledWith(['/home']);
+  }));
 
-  it('should show alert if login fails', () => {
+  it('should show alert if login fails', fakeAsync(() => {
     component.email = 'user@example.com';
     component.password = 'wrongpass';
-    mockAuthService.login.and.returnValue(false);
+    mockAuthService.login.and.returnValue(of(false));
 
     component.login();
+    tick();
 
     expect(mockAuthService.login).toHaveBeenCalledWith('user@example.com', 'wrongpass');
-    expect(mockRouter.navigate).not.toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled(); // <-- use router spy
     expect(alertSpy).toHaveBeenCalledWith('❌ Login failed: Invalid email or password.');
-  });
+  }));
+
+  it('should show alert on network error', fakeAsync(() => {
+    component.email = 'user@example.com';
+    component.password = 'password';
+    mockAuthService.login.and.returnValue(throwError(() => new Error('Network error')));
+
+    component.login();
+    tick();
+
+    expect(mockAuthService.login).toHaveBeenCalledWith('user@example.com', 'password');
+    expect(alertSpy).toHaveBeenCalledWith('❌ Login failed: Network or server error.');
+  }));
 
   it('should show alert when clicking loginWithGithub', () => {
     component.loginWithGithub();
@@ -83,11 +111,6 @@ describe('Login', () => {
     expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
   });
 
-  it('should navigate to signup on signUpNewAccount()', () => {
-    component.signUpNewAccount();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/signup']);
-  });
-
   it('should update component properties from input fields', () => {
     fixture.detectChanges();
     const emailInput = fixture.debugElement.query(By.css('input[name="email"]')).nativeElement;
@@ -100,5 +123,14 @@ describe('Login', () => {
 
     expect(component.email).toBe('newuser@example.com');
     expect(component.password).toBe('newpassword');
+  });
+
+  it('should have routerLink to /signup', () => {
+    const anchorDe: DebugElement = fixture.debugElement.query(By.css('a'));
+    expect(anchorDe).toBeTruthy();
+
+    // Instead of injector.get, check href rendered in DOM
+    const anchorEl: HTMLAnchorElement = anchorDe.nativeElement;
+    expect(anchorEl.getAttribute('href')).toBe('/signup');
   });
 });

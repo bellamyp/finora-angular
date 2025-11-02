@@ -1,7 +1,8 @@
 // src/app/dto/user.dto.ts
 export interface UserDTO {
-    id: number;
-    username: string;
-    email: string;
-    // add other fields as needed
+  id: number;
+  name: string;      // changed from username
+  email: string;
+  // do NOT include password in DTO for security
+  // optional: include role if needed
 }
