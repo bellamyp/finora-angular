@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { By } from '@angular/platform-browser';
 import { MenuUser } from './menu-user';
 
 describe('MenuUser', () => {
@@ -8,9 +8,8 @@ describe('MenuUser', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MenuUser]
-    })
-    .compileComponents();
+      imports: [MenuUser] // Standalone component
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MenuUser);
     component = fixture.componentInstance;
@@ -19,5 +18,31 @@ describe('MenuUser', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should have Transactions buttons', () => {
+    const transactionButtons = fixture.debugElement.queryAll(
+      By.css('.d-grid.mb-4 button')
+    );
+    expect(transactionButtons.length).toBe(4);
+
+    const labels = transactionButtons.map(btn => btn.nativeElement.textContent.trim());
+    expect(labels).toContain('Add a Transaction');
+    expect(labels).toContain('Recent Transactions');
+    expect(labels).toContain('Pending Transactions');
+    expect(labels).toContain('Search a Transaction');
+  });
+
+  it('should have Banks buttons', () => {
+    const allGrids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2'));
+    const bankGrid = allGrids[1]; // second grid is Banks
+    const bankButtons = bankGrid.queryAll(By.css('button'));
+
+    expect(bankButtons.length).toBe(3);
+
+    const labels = bankButtons.map(btn => btn.nativeElement.textContent.trim());
+    expect(labels).toContain('List Banks');
+    expect(labels).toContain('Add a Bank');
+    expect(labels).toContain('Edit a Bank');
   });
 });
