@@ -1,11 +1,18 @@
-import {Component, OnInit} from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    RouterLink
+  ],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -14,7 +21,9 @@ export class Login implements OnInit{
   email = '';
   password = '';
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router) {}
 
   ngOnInit() {
     if (this.auth.isLoggedIn()) {
@@ -23,14 +32,19 @@ export class Login implements OnInit{
   }
 
   login() {
-    const success = this.auth.login(this.email, this.password);
-
-    if (success) {
-      this.router.navigate(['/home']);
-    } else {
-      // Simple feedback to user
-      window.alert('❌ Login failed: Invalid email or password.');
-    }
+    this.auth.login(this.email, this.password).subscribe({
+      next: success => {
+        if (success) {
+          this.router.navigate(['/home']);
+        } else {
+          window.alert('❌ Login failed: Invalid email or password.');
+        }
+      },
+      error: err => {
+        console.error('Login error', err);
+        window.alert('❌ Login failed: Network or server error.');
+      }
+    });
   }
 
   loginWithGithub() {
@@ -48,9 +62,5 @@ export class Login implements OnInit{
 
   loginWithIcloud() {
     this.loginWithGithub();
-  }
-
-  signUpNewAccount() {
-    this.router.navigate(['/signup']);
   }
 }

@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Home } from './home';
 import {UserService} from '../../services/user.service';
 import {UserDTO} from '../../dto/user.dto';
-import {CommonModule} from '@angular/common';
 import {of, throwError} from 'rxjs';
 import {By} from '@angular/platform-browser';
 
