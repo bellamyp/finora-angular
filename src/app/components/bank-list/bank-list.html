@@ -1,0 +1,15 @@
+<p>bank-list works!</p>
+
+<div class="container py-5">
+  <h2 class="text-center mb-4 fw-bold text-primary">Your Banks</h2>
+
+  <div *ngIf="banks.length === 0" class="text-center text-muted">
+    No banks found.
+  </div>
+
+  <div *ngFor="let bank of banks" class="card mb-3 p-3 shadow-sm rounded-4">
+    <h5 class="fw-bold text-primary">{{ bank.name }}</h5>
+    <p>Type: {{ bank.type }}</p>
+    <p>User: {{ bank.email }}</p>
+  </div>
+</div>
