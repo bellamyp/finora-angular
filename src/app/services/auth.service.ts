@@ -21,11 +21,15 @@ export class AuthService {
       .set('email', email)
       .set('password', password);
 
-    return this.http.post(`${this.apiUrl}/login`, null, {params, responseType: 'text'})
+    return this.http.post<{email: string, role: string}>(`${this.apiUrl}/login`, null, { params })
       .pipe(
         map(res => {
           this.loggedIn = true;
-          localStorage.setItem('user', JSON.stringify({email}));
+          // save both email and role in localStorage
+          localStorage.setItem('user', JSON.stringify({
+            email: res.email,
+            role: res.role
+          }));
           return true;
         }),
         catchError(err => {
@@ -33,6 +37,21 @@ export class AuthService {
           return of(false);
         })
       );
+  }
+
+  getCurrentUser(): { email: string, role: string } | null {
+    const userJson = localStorage.getItem('user');
+    if (!userJson) return null;
+    try {
+      return JSON.parse(userJson);
+    } catch {
+      return null;
+    }
+  }
+
+  getCurrentUserRole(): string | null {
+    const user = this.getCurrentUser();
+    return user?.role ?? null;
   }
 
   logout() {
