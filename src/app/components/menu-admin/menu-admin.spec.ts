@@ -12,8 +12,8 @@ describe('MenuAdmin', () => {
   let mockUserService: jasmine.SpyObj<UserService>;
 
   const dummyUsers: UserDTO[] = [
-    { id: 1, name: 'Alice Smith', email: 'alice@example.com', role: 'ROLE_ADMIN' },
-    { id: 2, name: 'Bob Johnson', email: 'bob@example.com', role: 'ROLE_USER' },
+    { id: '550e8400-e29b-41d4-a716-446655440007', name: 'Alice Smith', email: 'alice@example.com', role: 'ROLE_ADMIN' },
+    { id: '550e8400-e29b-41d4-a716-446655440008', name: 'Bob Johnson', email: 'bob@example.com', role: 'ROLE_USER' },
   ];
 
   beforeEach(async () => {

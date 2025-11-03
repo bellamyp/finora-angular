@@ -1,7 +1,7 @@
 import {TransactionTypeEnum} from './transaction-type.enum';
 
 export interface TransactionDto {
-  id: number;
+  id: string; // UUID
   date: string;
   amount: number;
   type: TransactionTypeEnum;    // use enum instead of string

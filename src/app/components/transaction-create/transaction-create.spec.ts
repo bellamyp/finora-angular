@@ -14,13 +14,13 @@ describe('TransactionCreate', () => {
   // Mock services
   const mockTransactionService = {
     createTransaction: jasmine.createSpy('createTransaction').and.returnValue(
-      of({ id: 1 } as TransactionDto)
+      of({ id: '550e8400-e29b-41d4-a716-446655440009' } as TransactionDto)
     )
   };
 
   const mockBankService = {
     getBanksByUserEmail: jasmine.createSpy('getBanksByUserEmail').and.returnValue(
-      of([{ id: 1, name: 'Capital One Savings' }])
+      of([{ id: '550e8400-e29b-41d4-a716-446655440010', name: 'Capital One Savings' }])
     )
   };
 
@@ -68,7 +68,7 @@ describe('TransactionCreate', () => {
     component.date = '2025-11-02';
     component.amount = 100;
     component.type = TransactionTypeEnum.GROCERY;
-    component.bankId = 1;
+    component.bankId = '550e8400-e29b-41d4-a716-446655440010';
     component.notes = 'Test transaction';
 
     // Use a fake form object
@@ -84,7 +84,7 @@ describe('TransactionCreate', () => {
       amount: 100,
       type: TransactionTypeEnum.GROCERY,
       notes: 'Test transaction',
-      bankId: 1,
+      bankId: '550e8400-e29b-41d4-a716-446655440010',
       userEmail: 'test@example.com'
     });
 

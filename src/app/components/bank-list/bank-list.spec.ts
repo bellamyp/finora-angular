@@ -33,7 +33,7 @@ describe('BankList', () => {
     });
 
     const mockBanks: BankDto[] = [
-      { id: 1, name: 'Capital One Savings', type: 'SAVINGS', email: 'user@example.com' }
+      { id: '550e8400-e29b-41d4-a716-446655440006', name: 'Capital One Savings', type: 'SAVINGS', email: 'user@example.com' }
     ];
 
     mockBankService.getBanksByUserEmail.and.returnValue(of(mockBanks));

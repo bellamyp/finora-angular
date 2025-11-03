@@ -4,9 +4,8 @@ import { BankCreate } from './bank-create';
 import { BankService } from '../../services/bank.service';
 import { AuthService } from '../../services/auth.service';
 import { of, throwError } from 'rxjs';
-import {BankDto} from '../../dto/bank.dto';
-import {BankCreateDto} from '../../dto/bank-create.dto';
-
+import { BankDto } from '../../dto/bank.dto';
+import { BankCreateDto } from '../../dto/bank-create.dto';
 
 describe('BankCreate', () => {
 
@@ -56,12 +55,12 @@ describe('BankCreate', () => {
       name: 'Test Bank',
       openingDate: '2025-11-02',
       closingDate: null,
-      type: 'CHECKING',          // now correctly typed
+      type: 'CHECKING',
       userEmail: 'test@email.com'
     };
 
     const mockResponse: BankDto = {
-      id: 123,
+      id: '550e8400-e29b-41d4-a716-446655440005', // UUID instead of number
       name: formValue.name,
       type: formValue.type,
       email: formValue.userEmail

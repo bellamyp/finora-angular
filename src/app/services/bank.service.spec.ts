@@ -4,7 +4,7 @@ import { provideHttpClientTesting, HttpTestingController } from '@angular/common
 import { BankService } from './bank.service';
 import { BackendConfig } from '../config/backend-config';
 import { BankDto } from '../dto/bank.dto';
-import {BankCreateDto} from '../dto/bank-create.dto';
+import { BankCreateDto } from '../dto/bank-create.dto';
 
 describe('BankService', () => {
   let service: BankService;
@@ -34,7 +34,7 @@ describe('BankService', () => {
   it('should fetch banks by user email', () => {
     const mockEmail = 'user@example.com';
     const mockResponse: BankDto[] = [
-      { id: 1, name: 'Capital One Savings', type: 'SAVINGS', email: mockEmail }
+      { id: '550e8400-e29b-41d4-a716-446655440000', name: 'Capital One Savings', type: 'SAVINGS', email: mockEmail }
     ];
 
     service.getBanksByUserEmail(mockEmail).subscribe(banks => {
@@ -59,7 +59,7 @@ describe('BankService', () => {
     };
 
     const mockResponse: BankDto = {
-      id: 123,
+      id: '550e8400-e29b-41d4-a716-446655440001', // UUID now
       name: formValue.name,
       type: formValue.type,
       email: formValue.userEmail

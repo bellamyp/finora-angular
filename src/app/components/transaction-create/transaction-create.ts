@@ -9,7 +9,7 @@ import {AuthService} from '../../services/auth.service';
 import {BankService} from '../../services/bank.service';
 
 interface BankOption {
-  id: number;
+  id: string; // UUID
   name: string;
 }
 
@@ -26,7 +26,7 @@ export class TransactionCreate implements OnInit {
   amount!: number;
   type: TransactionTypeEnum = TransactionTypeEnum.GROCERY;
   notes?: string;
-  bankId?: number;
+  bankId?: string; // UUID
   userEmail!: string;
 
   // Enum and banks
