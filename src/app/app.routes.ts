@@ -6,6 +6,7 @@ import {MenuAdmin} from './components/menu-admin/menu-admin';
 import {MenuUser} from './components/menu-user/menu-user';
 import {BankList} from './components/bank-list/bank-list';
 import {BankCreate} from './components/bank-create/bank-create';
+import {TransactionList} from './components/transaction-list/transaction-list';
 
 export const routes: Routes = [
 
@@ -16,6 +17,7 @@ export const routes: Routes = [
   // Protected routes
   { path: 'menu-admin', component: MenuAdmin, canActivate: [authGuard] },
   { path: 'menu-user', component: MenuUser, canActivate: [authGuard] },
+  { path: 'transaction-list', component: TransactionList, canActivate: [authGuard] },
   { path: 'bank-list', component: BankList, canActivate: [authGuard] },
   { path: 'bank-create', component: BankCreate, canActivate: [authGuard] },
 
