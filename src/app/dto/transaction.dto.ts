@@ -1,10 +1,11 @@
+import {TransactionTypeEnum} from './transaction-type.enum';
 
 export interface TransactionDto {
   id: number;
   date: string;
   amount: number;
-  type: string;
-  notes: string;
-  bankName: string;
+  type: TransactionTypeEnum;    // use enum instead of string
+  notes?: string;               // make optional if backend can return null
+  bankName?: string;            // optional if no bank linked
   userEmail: string;
 }
