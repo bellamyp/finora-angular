@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { TransactionService } from './transaction-service';
-import { provideHttpClient, HttpClient } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { BackendConfig } from '../config/backend-config';
 import { TransactionDto } from '../dto/transaction.dto';

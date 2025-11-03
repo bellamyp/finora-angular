@@ -32,10 +32,11 @@ describe('MenuUser', () => {
   });
 
   it('should have Transactions buttons', () => {
-    const transactionButtons = fixture.debugElement.queryAll(By.css('.d-grid.mb-4 button'));
-    expect(transactionButtons.length).toBe(4);
+    // include both <button> and <a> elements
+    const transactionElements = fixture.debugElement.queryAll(By.css('.d-grid.mb-4 button, .d-grid.mb-4 a'));
+    expect(transactionElements.length).toBe(4);
 
-    const labels = transactionButtons.map(btn => btn.nativeElement.textContent.trim());
+    const labels = transactionElements.map(el => el.nativeElement.textContent.trim());
     expect(labels).toContain('Add a Transaction');
     expect(labels).toContain('Recent Transactions');
     expect(labels).toContain('Pending Transactions');
@@ -45,11 +46,11 @@ describe('MenuUser', () => {
   it('should have Banks buttons', () => {
     const allGrids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2'));
     const bankGrid = allGrids[1]; // second grid
-    const bankButtons = bankGrid.queryAll(By.css('button, a')); // include <a>
+    const bankElements = bankGrid.queryAll(By.css('button, a')); // include both <button> and <a>
 
-    expect(bankButtons.length).toBe(3);
+    expect(bankElements.length).toBe(3);
 
-    const labels = bankButtons.map(btn => btn.nativeElement.textContent.trim());
+    const labels = bankElements.map(el => el.nativeElement.textContent.trim());
     expect(labels).toContain('List Banks');
     expect(labels).toContain('Add a Bank');
     expect(labels).toContain('Edit a Bank');
