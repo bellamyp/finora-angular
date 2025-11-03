@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {BackendConfig} from '../config/backend-config';
 import {TransactionDto} from '../dto/transaction.dto';
+import {TransactionCreateDto} from '../dto/transaction-create.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,10 @@ export class TransactionService {
 
   getTransactionsByEmail(email: string): Observable<TransactionDto[]> {
     return this.http.get<TransactionDto[]>(`${this.apiUrl}?email=${email}`);
+  }
+
+  createTransaction(dto: TransactionCreateDto): Observable<TransactionDto> {
+    return this.http.post<TransactionDto>(this.apiUrl, dto);
   }
 
 }

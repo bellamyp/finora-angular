@@ -7,6 +7,7 @@ import {MenuUser} from './components/menu-user/menu-user';
 import {BankList} from './components/bank-list/bank-list';
 import {BankCreate} from './components/bank-create/bank-create';
 import {TransactionList} from './components/transaction-list/transaction-list';
+import {TransactionCreate} from './components/transaction-create/transaction-create';
 
 export const routes: Routes = [
 
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'menu-admin', component: MenuAdmin, canActivate: [authGuard] },
   { path: 'menu-user', component: MenuUser, canActivate: [authGuard] },
   { path: 'transaction-list', component: TransactionList, canActivate: [authGuard] },
+  { path: 'transaction-create', component: TransactionCreate, canActivate: [authGuard] },
   { path: 'bank-list', component: BankList, canActivate: [authGuard] },
   { path: 'bank-create', component: BankCreate, canActivate: [authGuard] },
 

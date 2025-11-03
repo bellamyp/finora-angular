@@ -4,6 +4,7 @@ import { TransactionService } from '../../services/transaction-service';
 import { of, throwError } from 'rxjs';
 import { TransactionDto } from '../../dto/transaction.dto';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { TransactionTypeEnum } from '../../dto/transaction-type.enum';
 
 describe('TransactionList', () => {
   let component: TransactionList;
@@ -11,8 +12,24 @@ describe('TransactionList', () => {
   let mockTransactionService: any;
 
   const mockTransactions: TransactionDto[] = [
-    { id: 9, date: '2025-10-09', amount: 250, type: 'SAVINGS', notes: 'Savings transfer', bankName: 'Capital One Savings', userEmail: 'bellamyphan@icloud.com' },
-    { id: 10, date: '2025-10-10', amount: 30, type: 'PET', notes: 'Pet supplies', bankName: 'Capital One Savings', userEmail: 'bellamyphan@icloud.com' }
+    {
+      id: 9,
+      date: '2025-10-09',
+      amount: 250,
+      type: TransactionTypeEnum.SAVINGS,   // ✅ enum reference
+      notes: 'Savings transfer',
+      bankName: 'Capital One Savings',
+      userEmail: 'bellamyphan@icloud.com'
+    },
+    {
+      id: 10,
+      date: '2025-10-10',
+      amount: 30,
+      type: TransactionTypeEnum.PET,       // ✅ enum reference
+      notes: 'Pet supplies',
+      bankName: 'Capital One Savings',
+      userEmail: 'bellamyphan@icloud.com'
+    }
   ];
 
   beforeEach(async () => {
@@ -21,7 +38,7 @@ describe('TransactionList', () => {
     await TestBed.configureTestingModule({
       imports: [TransactionList],
       providers: [
-        provideHttpClientTesting(), // ✅ modern replacement
+        provideHttpClientTesting(),
         { provide: TransactionService, useValue: mockTransactionService }
       ]
     }).compileComponents();
@@ -46,7 +63,8 @@ describe('TransactionList', () => {
 
     expect(component.userEmail).toBe('bellamyphan@icloud.com');
     expect(component.transactions.length).toBe(2);
-    expect(component.transactions[0].type).toBe('SAVINGS');
+    expect(component.transactions[0].type).toBe(TransactionTypeEnum.SAVINGS);
+    expect(component.transactions[1].type).toBe(TransactionTypeEnum.PET);
     expect(component.loading).toBeFalse();
   });
 

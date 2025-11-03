@@ -4,6 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { BackendConfig } from '../config/backend-config';
 import { TransactionDto } from '../dto/transaction.dto';
+import { TransactionTypeEnum } from '../dto/transaction-type.enum';
 
 describe('TransactionService', () => {
   let service: TransactionService;
@@ -13,8 +14,8 @@ describe('TransactionService', () => {
     TestBed.configureTestingModule({
       providers: [
         TransactionService,
-        provideHttpClient(),          // provides HttpClient
-        provideHttpClientTesting()    // provides HttpTestingController
+        provideHttpClient(),
+        provideHttpClientTesting()
       ]
     });
 
@@ -23,7 +24,7 @@ describe('TransactionService', () => {
   });
 
   afterEach(() => {
-    httpMock.verify(); // ensure no outstanding requests
+    httpMock.verify();
   });
 
   it('should be created', () => {
@@ -32,7 +33,15 @@ describe('TransactionService', () => {
 
   it('should fetch transactions by email', () => {
     const mockTransactions: TransactionDto[] = [
-      { id: 1, date: '2025-10-09', amount: 250, type: 'SAVINGS', notes: 'Test', bankName: 'Bank A', userEmail: 'test@example.com' }
+      {
+        id: 1,
+        date: '2025-10-09',
+        amount: 250,
+        type: TransactionTypeEnum.SAVINGS,
+        notes: 'Test',
+        bankName: 'Bank A',
+        userEmail: 'test@example.com'
+      }
     ];
     const testEmail = 'test@example.com';
 
@@ -42,6 +51,6 @@ describe('TransactionService', () => {
 
     const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/transactions?email=${testEmail}`);
     expect(req.request.method).toBe('GET');
-    req.flush(mockTransactions); // respond with mock data
+    req.flush(mockTransactions);
   });
 });
