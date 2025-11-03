@@ -5,6 +5,6 @@ export interface TransactionCreateDto {
   amount: number;
   type: TransactionTypeEnum;    // use enum instead of string
   notes?: string;
-  bankId?: number;
+  bankId?: string; // UUID
   userEmail: string;
 }
