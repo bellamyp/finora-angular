@@ -34,7 +34,7 @@ describe('TransactionService', () => {
   it('should fetch transactions by email', () => {
     const mockTransactions: TransactionDto[] = [
       {
-        id: 1,
+        id: '550e8400-e29b-41d4-a716-446655440002', // UUID instead of number
         date: '2025-10-09',
         amount: 250,
         type: TransactionTypeEnum.SAVINGS,

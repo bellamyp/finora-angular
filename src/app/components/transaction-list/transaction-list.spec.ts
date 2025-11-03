@@ -13,19 +13,19 @@ describe('TransactionList', () => {
 
   const mockTransactions: TransactionDto[] = [
     {
-      id: 9,
+      id: '550e8400-e29b-41d4-a716-446655440003', // UUID instead of number
       date: '2025-10-09',
       amount: 250,
-      type: TransactionTypeEnum.SAVINGS,   // ✅ enum reference
+      type: TransactionTypeEnum.SAVINGS,
       notes: 'Savings transfer',
       bankName: 'Capital One Savings',
       userEmail: 'bellamyphan@icloud.com'
     },
     {
-      id: 10,
+      id: '550e8400-e29b-41d4-a716-446655440004', // UUID instead of number
       date: '2025-10-10',
       amount: 30,
-      type: TransactionTypeEnum.PET,       // ✅ enum reference
+      type: TransactionTypeEnum.PET,
       notes: 'Pet supplies',
       bankName: 'Capital One Savings',
       userEmail: 'bellamyphan@icloud.com'
