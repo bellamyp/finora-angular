@@ -124,9 +124,9 @@ export class LoginOtpConfirm implements OnInit {
   resendOtp() {
     this.sending = true;
     this.authService.requestOtp(this.email).subscribe({
-      next: (success) => {
+      next: (res) => {
         this.sending = false;
-        if (success) {
+        if (res?.success) {                     // ✅ check the success property
           window.alert('✅ OTP resent successfully.');
         } else {
           window.alert('❌ Failed to resend OTP.');
