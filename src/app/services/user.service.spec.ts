@@ -12,8 +12,8 @@ describe('UserService', () => {
   let httpMock: HttpTestingController;
 
   const mockUsers: UserDTO[] = [
-    { id: '550e8400-e29b-41d4-a716-446655440000', name: 'Alice', email: 'alice@example.com', role: 'ROLE_ADMIN' },
-    { id: '550e8400-e29b-41d4-a716-446655440001', name: 'Bob', email: 'bob@example.com', role: 'ROLE_USER' },
+    { name: 'Alice', email: 'alice@example.com', role: 'ROLE_ADMIN' },
+    { name: 'Bob', email: 'bob@example.com', role: 'ROLE_USER' },
   ];
 
   beforeEach(() => {

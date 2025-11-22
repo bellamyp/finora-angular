@@ -6,10 +6,10 @@ import { provideRouter } from '@angular/router';
 import { provideLocationMocks } from '@angular/common/testing';
 import { of, throwError } from 'rxjs';
 import { By } from '@angular/platform-browser';
-import { Component, DebugElement } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-// Dummy component for root route
+// Dummy component for the root route
 @Component({ template: '' })
 class DummyComponent {}
 
@@ -147,10 +147,10 @@ describe('Login', () => {
   });
 
   it('should have routerLink to /signup', () => {
-    const anchorDe: DebugElement = fixture.debugElement.query(By.css('a'));
-    expect(anchorDe).toBeTruthy();
+    const signupAnchorDe = fixture.debugElement.query(By.css('a.signup-link'));
+    expect(signupAnchorDe).toBeTruthy();
 
-    const anchorEl: HTMLAnchorElement = anchorDe.nativeElement;
-    expect(anchorEl.getAttribute('href')).toBe('/signup');
+    const signupAnchorEl: HTMLAnchorElement = signupAnchorDe.nativeElement;
+    expect(signupAnchorEl.getAttribute('href')).toBe('/signup');
   });
 });

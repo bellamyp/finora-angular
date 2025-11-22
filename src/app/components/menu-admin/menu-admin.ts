@@ -11,8 +11,7 @@ import { CommonModule } from '@angular/common';
 })
 export class MenuAdmin implements OnInit {
 
-  users: UserDTO[] = [];
-  currentUserRole: string = ''; // store logged-in user's role
+  users: UserDTO[] = [];// store logged-in user's role
 
   constructor(
     private userService: UserService

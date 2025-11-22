@@ -1,7 +1,6 @@
 // src/app/dto/user.dto.ts
 
 export interface UserDTO {
-  id: string; // UUID
   name: string;      // changed from username
   email: string;
   role: string; // just the role name, e.g., "ROLE_ADMIN"

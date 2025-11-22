@@ -4,7 +4,8 @@ import { UserService } from '../../services/user.service';
 import { UserDTO } from '../../dto/user.dto';
 import { of, throwError } from 'rxjs';
 import { By } from '@angular/platform-browser';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import {provideHttpClientTesting} from '@angular/common/http/testing';
+import { CommonModule } from '@angular/common';
 
 describe('MenuAdmin', () => {
   let component: MenuAdmin;
@@ -12,16 +13,17 @@ describe('MenuAdmin', () => {
   let mockUserService: jasmine.SpyObj<UserService>;
 
   const dummyUsers: UserDTO[] = [
-    { id: '550e8400-e29b-41d4-a716-446655440007', name: 'Alice Smith', email: 'alice@example.com', role: 'ROLE_ADMIN' },
-    { id: '550e8400-e29b-41d4-a716-446655440008', name: 'Bob Johnson', email: 'bob@example.com', role: 'ROLE_USER' },
+    { name: 'Alice Smith', email: 'alice@example.com', role: 'ROLE_ADMIN' },
+    { name: 'Bob Johnson', email: 'bob@example.com', role: 'ROLE_USER' },
   ];
 
   beforeEach(async () => {
     mockUserService = jasmine.createSpyObj('UserService', ['getAllUsers']);
 
     await TestBed.configureTestingModule({
-      imports: [MenuAdmin, HttpClientTestingModule],
+      imports: [CommonModule, MenuAdmin],
       providers: [
+        provideHttpClientTesting(),
         { provide: UserService, useValue: mockUserService }
       ]
     }).compileComponents();
@@ -44,7 +46,7 @@ describe('MenuAdmin', () => {
     expect(component.users).toEqual(dummyUsers);
   });
 
-  it('should display users in the table', () => {
+  it('should display users in the table including role', () => {
     mockUserService.getAllUsers.and.returnValue(of(dummyUsers));
 
     component.ngOnInit();
@@ -52,9 +54,18 @@ describe('MenuAdmin', () => {
 
     const rows = fixture.debugElement.queryAll(By.css('tbody tr'));
     expect(rows.length).toBe(2);
-    expect(rows[0].nativeElement.textContent).toContain('Alice Smith');
-    expect(rows[0].nativeElement.textContent).toContain('alice@example.com');
-    expect(rows[1].nativeElement.textContent).toContain('Bob Johnson');
+
+    // First row checks
+    const firstRowText = rows[0].nativeElement.textContent;
+    expect(firstRowText).toContain('Alice Smith');
+    expect(firstRowText).toContain('alice@example.com');
+    expect(firstRowText).toContain('ROLE_ADMIN');
+
+    // Second row checks
+    const secondRowText = rows[1].nativeElement.textContent;
+    expect(secondRowText).toContain('Bob Johnson');
+    expect(secondRowText).toContain('bob@example.com');
+    expect(secondRowText).toContain('ROLE_USER');
   });
 
   it('should show "No users found" if users array is empty', () => {
