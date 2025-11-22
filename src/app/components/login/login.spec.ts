@@ -6,10 +6,10 @@ import { provideRouter } from '@angular/router';
 import { provideLocationMocks } from '@angular/common/testing';
 import { of, throwError } from 'rxjs';
 import { By } from '@angular/platform-browser';
-import { Component, DebugElement } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-// Dummy component for root route
+// Dummy component for the root route
 @Component({ template: '' })
 class DummyComponent {}
 
