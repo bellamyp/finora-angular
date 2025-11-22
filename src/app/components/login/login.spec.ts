@@ -147,10 +147,10 @@ describe('Login', () => {
   });
 
   it('should have routerLink to /signup', () => {
-    const anchorDe: DebugElement = fixture.debugElement.query(By.css('a'));
-    expect(anchorDe).toBeTruthy();
+    const signupAnchorDe = fixture.debugElement.query(By.css('a.signup-link'));
+    expect(signupAnchorDe).toBeTruthy();
 
-    const anchorEl: HTMLAnchorElement = anchorDe.nativeElement;
-    expect(anchorEl.getAttribute('href')).toBe('/signup');
+    const signupAnchorEl: HTMLAnchorElement = signupAnchorDe.nativeElement;
+    expect(signupAnchorEl.getAttribute('href')).toBe('/signup');
   });
 });
