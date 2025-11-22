@@ -12,26 +12,23 @@ import {CommonModule} from '@angular/common';
 export class BankList implements OnInit {
 
   banks: BankDto[] = [];
-  userEmail: string | null = null;
 
   constructor(private bankService: BankService) {}
 
   ngOnInit(): void {
-    const userJson = localStorage.getItem('user');
-    if (userJson) {
-      try {
-        const user = JSON.parse(userJson);
-        this.userEmail = user.email;
-      } catch {
-        console.error('Invalid user data in localStorage');
-      }
-    }
+    this.bankService.getBanks().subscribe({
+      next: (data) => this.banks = data,
+      error: (err) => console.error('Failed to fetch banks:', err),
+    });
+  }
 
-    if (this.userEmail) {
-      this.bankService.getBanksByUserEmail(this.userEmail).subscribe({
-        next: (data) => (this.banks = data),
-        error: (err) => console.error('Failed to fetch banks:', err),
-      });
-    }
+  editBank(bank: BankDto): void {
+    // TODO: navigate to edit page or open modal
+    console.log('Edit bank:', bank);
+  }
+
+  viewBank(bank: BankDto): void {
+    // TODO: navigate to details page or open modal
+    console.log('View bank details:', bank);
   }
 }
