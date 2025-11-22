@@ -22,18 +22,19 @@ export class App implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Ping immediately and every 15s
     this.pingSub = timer(0, 15000)
-      .pipe(
-        switchMap(() => this.pingService.ping())
-      )
+      .pipe(switchMap(() => this.pingService.ping()))
       .subscribe({
         next: (result) => {
           this.backendStatus = result === 'pong' ? 'up' : 'down';
 
-          // Only enforce token on protected routes
-          const publicRoutes = ['/login', '/signup', '/login-otp-request', '/login-otp-confirm'];
-          if (!publicRoutes.includes(this.router.url) && !this.auth.isLoggedIn()) {
+          // Get current route path (ignores query params)
+          const currentRoute = this.router.routerState.snapshot.root.firstChild?.routeConfig?.path;
+
+          // List of routes that don't require login
+          const publicRoutes = ['login', 'signup', 'login-otp-request', 'login-otp-confirm'];
+
+          if (!publicRoutes.includes(currentRoute || '') && !this.auth.isLoggedIn()) {
             alert('⚠️ Your session has expired. Please log in again.');
             this.auth.logout();
             this.router.navigate(['/login']);
@@ -43,6 +44,16 @@ export class App implements OnInit, OnDestroy {
           this.backendStatus = 'down';
         }
       });
+  }
+
+  /** Used in template to check login state */
+  get isLoggedIn(): boolean {
+    return this.auth.isLoggedIn();
+  }
+
+  /** Used in template to show current user email */
+  get currentUserEmail(): string | null {
+    return this.auth.getCurrentUser()?.email ?? null;
   }
 
   ngOnDestroy() {
