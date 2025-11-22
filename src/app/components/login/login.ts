@@ -39,7 +39,7 @@ export class Login implements OnInit{
     this.auth.login(this.email, this.password).subscribe({
       next: success => {
         if (success) {
-          // Get role from AuthService
+          // Role is now retrieved from JWT token via AuthService
           const role = this.auth.getCurrentUserRole();
 
           if (role === 'ROLE_ADMIN') {
