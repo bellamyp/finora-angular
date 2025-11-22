@@ -1,0 +1,32 @@
+<div class="d-flex justify-content-center align-items-start py-5">
+  <div class="card p-4 shadow-lg rounded-4" style="max-width: 400px; width: 100%;">
+    <h2 class="text-center mb-4 fw-bold text-primary">Enter OTP</h2>
+    <p class="text-center text-muted small mb-3">We sent a 6-digit OTP to <strong>{{ email }}</strong></p>
+
+    <form (ngSubmit)="verifyOtp()">
+      <div class="d-flex justify-content-between gap-2 mb-3">
+        <input #otpInput1 type="text" maxlength="1" class="form-control rounded-3 text-center fs-4"
+               [(ngModel)]="otp1" name="otp1" required (keydown)="onOtpKeyDown($event, 1)" />
+        <input #otpInput2 type="text" maxlength="1" class="form-control rounded-3 text-center fs-4"
+               [(ngModel)]="otp2" name="otp2" required (keydown)="onOtpKeyDown($event, 2)" />
+        <input #otpInput3 type="text" maxlength="1" class="form-control rounded-3 text-center fs-4"
+               [(ngModel)]="otp3" name="otp3" required (keydown)="onOtpKeyDown($event, 3)" />
+        <input #otpInput4 type="text" maxlength="1" class="form-control rounded-3 text-center fs-4"
+               [(ngModel)]="otp4" name="otp4" required (keydown)="onOtpKeyDown($event, 4)" />
+        <input #otpInput5 type="text" maxlength="1" class="form-control rounded-3 text-center fs-4"
+               [(ngModel)]="otp5" name="otp5" required (keydown)="onOtpKeyDown($event, 5)" />
+        <input #otpInput6 type="text" maxlength="1" class="form-control rounded-3 text-center fs-4"
+               [(ngModel)]="otp6" name="otp6" required (keydown)="onOtpKeyDown($event, 6)" />
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 btn-lg fw-semibold shadow-sm">
+        Verify OTP
+      </button>
+    </form>
+
+    <div class="d-flex justify-content-between mt-2">
+      <a href="#" (click)="resendOtp()" class="text-decoration-none small">Resend OTP</a>
+      <a [routerLink]="['/login']" class="text-decoration-none small">Back to login</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<div class="d-flex justify-content-center align-items-start py-5">
+  <div class="card p-4 shadow-lg rounded-4" style="max-width: 400px; width: 100%;">
+    <h2 class="text-center mb-4 fw-bold text-primary">Login with Email OTP</h2>
+    <p class="text-center text-muted small mb-3">Enter your email to receive a one-time password</p>
+
+    <form (ngSubmit)="sendOtp()">
+      <div class="form-floating mb-3">
+        <input
+          [(ngModel)]="email"
+          name="email"
+          type="email"
+          class="form-control rounded-3"
+          id="emailInput"
+          placeholder="Email"
+          required
+        />
+        <label for="emailInput">Email</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 btn-lg fw-semibold shadow-sm">
+        Send OTP
+      </button>
+    </form>
+
+    <p class="text-center text-muted small mt-3">
+      Remembered your password?
+      <a [routerLink]="['/login']" class="text-decoration-none fw-semibold">Login with password</a>
+    </p>
+  </div>
+</div>
