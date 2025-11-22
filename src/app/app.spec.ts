@@ -16,21 +16,32 @@ describe('App', () => {
   let authServiceSpy: jasmine.SpyObj<AuthService>;
 
   beforeEach(async () => {
-    authServiceSpy = jasmine.createSpyObj('AuthService', ['logout', 'isLoggedIn']);
+    authServiceSpy = jasmine.createSpyObj('AuthService', [
+      'logout',
+      'isLoggedIn',
+      'getCurrentUser',      // <-- add this
+    ]);
+
+    // Return a fake user for getCurrentUser
+    authServiceSpy.getCurrentUser.and.returnValue({
+      email: 'test@example.com',
+      role: 'ROLE_USER',
+      userId: '12345',
+    });
+
+    authServiceSpy.isLoggedIn.and.returnValue(true);
 
     await TestBed.configureTestingModule({
-      imports: [
-        App,
-        CommonModule,
-      ],
+      imports: [App, CommonModule],
       providers: [
         provideHttpClient(),
-        provideRouter(routes),            // use provideRouter with your routes
-        provideLocationMocks(),           // provide location mocks if you need to simulate navigation
+        provideRouter(routes),
+        provideLocationMocks(),
         { provide: AuthService, useValue: authServiceSpy },
       ],
     }).compileComponents();
   });
+
 
 
   it('should create the app', () => {

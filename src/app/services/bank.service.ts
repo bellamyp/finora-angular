@@ -14,8 +14,8 @@ export class BankService {
 
   constructor(private http: HttpClient) {}
 
-  getBanksByUserEmail(email: string): Observable<BankDto[]> {
-    return this.http.get<BankDto[]>(`${this.apiUrl}?email=${email}`);
+  getBanks(): Observable<BankDto[]> {
+    return this.http.get<BankDto[]>(this.apiUrl);
   }
 
   createBank(payload: BankCreateDto): Observable<BankDto> {

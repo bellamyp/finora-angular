@@ -48,16 +48,16 @@ export class TransactionCreate implements OnInit {
       // Optionally redirect to login
     }
 
-    // Load banks for current user
-    this.bankService.getBanksByUserEmail(this.userEmail).subscribe({
-      next: (res) => {
-        this.banks = res;
-      },
-      error: (err) => {
-        console.error('Error loading banks:', err);
-        alert('Failed to load banks');
-      }
-    });
+    // // Load banks for current user
+    // this.bankService.getBanksByUserEmail(this.userEmail).subscribe({
+    //   next: (res) => {
+    //     this.banks = res;
+    //   },
+    //   error: (err) => {
+    //     console.error('Error loading banks:', err);
+    //     alert('Failed to load banks');
+    //   }
+    // });
   }
 
   submitTransaction(form: NgForm) {
