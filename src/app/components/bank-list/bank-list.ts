@@ -23,12 +23,12 @@ export class BankList implements OnInit {
   }
 
   editBank(bank: BankDto): void {
-    // TODO: navigate to edit page or open modal
+    window.alert('Edit bank not implemented yet!');
     console.log('Edit bank:', bank);
   }
 
   viewBank(bank: BankDto): void {
-    // TODO: navigate to details page or open modal
+    window.alert('View bank details not implemented yet!');
     console.log('View bank details:', bank);
   }
 }

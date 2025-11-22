@@ -21,26 +21,17 @@ export class BankCreate implements OnInit {
     private bankService: BankService,
     private authService: AuthService,
   ) {
+    // Only the backend-required fields
     this.bankForm = this.fb.group({
       name: ['', Validators.required],
       openingDate: ['', Validators.required],
       closingDate: [''],
-      type: ['', Validators.required],
-      userEmail: ['', [Validators.required, Validators.email]],
+      type: ['', Validators.required]
     });
   }
 
   ngOnInit(): void {
-    const currentUser = this.authService.getCurrentUser();
-    const userEmail = currentUser?.email ?? '';
-
-    this.bankForm = this.fb.group({
-      name: ['', Validators.required],
-      openingDate: ['', Validators.required],
-      closingDate: [''],
-      type: ['', Validators.required],
-      userEmail: [{ value: userEmail, disabled: true }, [Validators.required, Validators.email]]
-    });
+    // Nothing needed for userEmail — backend gets it from JWT
   }
 
   submit() {
@@ -49,11 +40,17 @@ export class BankCreate implements OnInit {
       return;
     }
 
-    // get raw value because userEmail is disabled
-    const formValue = this.bankForm.getRawValue() as BankCreateDto;
+    // Prepare payload matching backend BankCreateDto
+    const raw = this.bankForm.getRawValue();
+    const payload: BankCreateDto = {
+      name: raw.name,
+      openingDate: raw.openingDate,
+      closingDate: raw.closingDate || null,
+      type: raw.type
+    };
 
-    this.bankService.createBank(formValue).subscribe({
-      next: (res) => {
+    this.bankService.createBank(payload).subscribe({
+      next: () => {
         alert('Bank created successfully!');
         this.bankForm.reset();
       },

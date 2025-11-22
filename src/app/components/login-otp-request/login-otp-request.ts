@@ -47,6 +47,8 @@ export class LoginOtpRequest {
         } else {
           this.error = response?.message || 'Failed to send OTP. Please try again.';
           console.log('Failed to send OTP. Error message set:', this.error);
+          // Show the browser alert popup
+          window.alert(`❌ ${this.error}`);
         }
       },
       error: (err) => {
