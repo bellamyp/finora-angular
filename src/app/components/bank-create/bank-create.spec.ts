@@ -18,7 +18,7 @@ describe('BankCreate', () => {
     mockBankService = jasmine.createSpyObj('BankService', ['createBank']);
     mockAuthService = jasmine.createSpyObj('AuthService', ['getCurrentUser']);
 
-    mockAuthService.getCurrentUser.and.returnValue({ email: 'test@email.com', role: 'ROLE_USER' });
+    mockAuthService.getCurrentUser.and.returnValue({ email: 'test@email.com', role: 'ROLE_USER', userId: "1234567890"});
 
     await TestBed.configureTestingModule({
       imports: [BankCreate, ReactiveFormsModule],

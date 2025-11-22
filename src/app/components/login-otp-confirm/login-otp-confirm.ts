@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChildren, QueryList, ElementRef } from '@angular
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {AuthService} from '../../services/auth.service';
-import {UserDTO} from '../../dto/user.dto';
 
 @Component({
   selector: 'app-login-otp-confirm',
@@ -97,15 +96,15 @@ export class LoginOtpConfirm implements OnInit {
 
     this.sending = true;
     this.authService.verifyOtp(this.email, this.otp).subscribe({
-      next: (user: UserDTO | null) => {
+      next: (success: boolean) => {
         this.sending = false;
-        if (user) {
+        if (success) {
           const role = this.authService.getCurrentUserRole();
           if (role === 'ROLE_ADMIN') {
             console.log('✅ OTP verified. Redirecting to Admin Menu...');
             this.router.navigate(['/menu-admin']);
           } else {
-            window.alert('✅ OTP verified. Redirecting to User Menu...');
+            console.log('✅ OTP verified. Redirecting to User Menu...');
             this.router.navigate(['/menu-user']);
           }
         } else {

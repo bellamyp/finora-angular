@@ -5,6 +5,7 @@ import { provideRouter, ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { LoginOtpConfirm } from './login-otp-confirm';
 import { AuthService } from '../../services/auth.service';
+import { ElementRef, QueryList } from '@angular/core';
 
 describe('LoginOtpConfirm', () => {
   let component: LoginOtpConfirm;
@@ -23,17 +24,21 @@ describe('LoginOtpConfirm', () => {
       imports: [LoginOtpConfirm, FormsModule],
       providers: [
         provideHttpClientTesting(),
-        provideRouter([]), // dummy router
+        provideRouter([]),
         { provide: AuthService, useValue: mockAuthService },
-        {
-          provide: ActivatedRoute,
-          useValue: { queryParams: of({ email: 'test@example.com' }) } // ✅ proper token
-        }
+        { provide: ActivatedRoute, useValue: { queryParams: of({ email: 'test@example.com' }) } }
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginOtpConfirm);
     component = fixture.componentInstance;
+
+    // Mock otpInputs to avoid focus errors
+    const mockElement = { nativeElement: document.createElement('input') } as ElementRef;
+    component.otpInputs = new QueryList<ElementRef>();
+    (component.otpInputs as any)._results = [mockElement, mockElement, mockElement, mockElement, mockElement, mockElement];
+    (component.otpInputs as any)._dirty = true;
+
     fixture.detectChanges();
   });
 
@@ -55,7 +60,7 @@ describe('LoginOtpConfirm', () => {
   });
 
   it('should navigate to Admin Menu on successful OTP verification for admin', fakeAsync(() => {
-    mockAuthService.verifyOtp.and.returnValue(of({} as any));
+    mockAuthService.verifyOtp.and.returnValue(of(true));
     mockAuthService.getCurrentUserRole.and.returnValue('ROLE_ADMIN');
     spyOn(component['router'], 'navigate');
 
@@ -74,7 +79,7 @@ describe('LoginOtpConfirm', () => {
   }));
 
   it('should navigate to User Menu on successful OTP verification for user', fakeAsync(() => {
-    mockAuthService.verifyOtp.and.returnValue(of({} as any));
+    mockAuthService.verifyOtp.and.returnValue(of(true));
     mockAuthService.getCurrentUserRole.and.returnValue('ROLE_USER');
     spyOn(component['router'], 'navigate');
     spyOn(window, 'alert');
@@ -94,7 +99,7 @@ describe('LoginOtpConfirm', () => {
   }));
 
   it('should alert if OTP verification fails', fakeAsync(() => {
-    mockAuthService.verifyOtp.and.returnValue(of(null));
+    mockAuthService.verifyOtp.and.returnValue(of(false));
     spyOn(window, 'alert');
 
     component.otp1 = '1';
@@ -143,9 +148,7 @@ describe('LoginOtpConfirm', () => {
     spyOn(window, 'alert');
 
     component.email = 'test@example.com';
-    mockAuthService.requestOtp.and.returnValue(
-      of({ success: false, message: 'Failed to send OTP' })
-    );
+    mockAuthService.requestOtp.and.returnValue(of({ success: false, message: 'Failed to send OTP' }));
 
     component.resendOtp();
     tick();

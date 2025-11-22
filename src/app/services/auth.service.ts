@@ -2,42 +2,52 @@ import { Injectable } from '@angular/core';
 import { BackendConfig } from '../config/backend-config';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
-import {UserDTO} from '../dto/user.dto';
+import { jwtDecode } from 'jwt-decode';
+
+interface JwtPayload {
+  sub: string; // email
+  exp: number; // expiration timestamp
+  userId: string;
+  role: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private loggedIn = false;
   private apiUrl = `${BackendConfig.springApiUrl}/auth`; // backend URL
 
   constructor(private http: HttpClient) {
-    this.loggedIn = !!localStorage.getItem('user');
+    // auto logout if token expired on service init
+    this.checkTokenValid();
   }
 
   /** Password login */
   login(email: string, password: string): Observable<boolean> {
     const params = new HttpParams().set('email', email).set('password', password);
 
-    return this.http.post<{ email: string, role: string }>(`${this.apiUrl}/login`, null, { params })
+    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, null, { params })
       .pipe(
         map(res => {
-          this.loggedIn = true;
-          localStorage.setItem('user', JSON.stringify(res));
-          return true;
+          if (res.token) {
+            this.storeToken(res.token);
+            return true;
+          }
+          return false;
         }),
         catchError(err => {
-          this.loggedIn = false;
+          this.logout();
           return of(false);
         })
       );
   }
 
-  /** Request OTP to be sent to email */
+  /** Request OTP */
   requestOtp(email: string): Observable<{ success: boolean; message: string } | null> {
     const params = new HttpParams().set('email', email);
-    return this.http.post<{ success: boolean; message: string }>(`${this.apiUrl}/login/otp/request`, null, { params })
+    return this.http.post<{ success: boolean; message: string }>(
+      `${this.apiUrl}/login/otp/request`, null, { params })
       .pipe(
         catchError(err => {
           console.error('OTP request error:', err);
@@ -46,50 +56,85 @@ export class AuthService {
       );
   }
 
-  /** Verify OTP for email login */
-  verifyOtp(email: string, otp: string): Observable<UserDTO | null> {
+  /** Verify OTP */
+  verifyOtp(email: string, otp: string): Observable<boolean> {
     const params = new HttpParams().set('email', email).set('otp', otp);
-    return this.http.post<{ success: boolean, message: string, data?: UserDTO }>(
+    return this.http.post<{ success: boolean, message: string, token?: string }>(
       `${this.apiUrl}/login/otp/verify`, null, { params })
       .pipe(
         map(res => {
-          if (res.success && res.data) {
-            // ✅ Save user and mark logged in
-            this.loggedIn = true;
-            localStorage.setItem('user', JSON.stringify(res.data));
-            return res.data;
+          if (res.success && res.token) {
+            this.storeToken(res.token);
+            return true;
           }
           console.warn('OTP verification failed:', res.message);
-          return null;
+          return false;
         }),
         catchError(err => {
           console.error('OTP verify error:', err);
-          return of(null);
+          this.logout();
+          return of(false);
         })
       );
   }
 
-  /** Current logged-in user info */
-  getCurrentUser(): { email: string, role: string } | null {
-    const userJson = localStorage.getItem('user');
-    if (!userJson) return null;
+  /** Store token in localStorage */
+  private storeToken(token: string) {
+    localStorage.setItem('token', token);
+  }
+
+  /** Get stored token */
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  /** Decode JWT payload */
+  private getTokenPayload(): JwtPayload | null {
+    const token = this.getToken();
+    if (!token) return null;
     try {
-      return JSON.parse(userJson);
+      return jwtDecode<JwtPayload>(token);
     } catch {
       return null;
     }
   }
 
+  /** Check if token is valid, auto logout if expired */
+  private checkTokenValid(): boolean {
+    const payload = this.getTokenPayload();
+    if (!payload) {
+      this.logout();
+      return false;
+    }
+    const expired = payload.exp * 1000 < Date.now();
+    if (expired) this.logout();
+    return !expired;
+  }
+
+  /** Get current user info from token */
+  getCurrentUser(): { email: string, role: string, userId: string } | null {
+    const payload = this.getTokenPayload();
+    if (!payload) return null;
+    return { email: payload.sub, role: payload.role, userId: payload.userId };
+  }
+
+  /** Get current user role */
   getCurrentUserRole(): string | null {
     return this.getCurrentUser()?.role ?? null;
   }
 
-  logout() {
-    this.loggedIn = false;
-    localStorage.removeItem('user');
+  /** Get current user id */
+  getCurrentUserId(): string | null {
+    return this.getCurrentUser()?.userId ?? null;
   }
 
+  /** Logout user */
+  logout() {
+    localStorage.removeItem('token');
+  }
+
+  /** Check if user is logged in */
   isLoggedIn(): boolean {
-    return this.loggedIn;
+    return this.checkTokenValid();
   }
 }

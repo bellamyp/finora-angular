@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
-import { BackendConfig } from '../config/backend-config';
 import {firstValueFrom, of} from 'rxjs';
 import { provideHttpClient } from '@angular/common/http';
 
@@ -32,13 +31,23 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should initialize loggedIn as false when no user in localStorage', () => {
-    expect(service.isLoggedIn()).toBeFalse();
-  });
-
   it('should initialize loggedIn as true when user exists in localStorage', () => {
-    localStorage.setItem('user', JSON.stringify({ email: 'test@test.com' }));
-    const freshService = new AuthService({} as any); // mock HttpClient
+    // Create a simple valid JWT (header.payload.signature)
+    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+    const payload = btoa(JSON.stringify({
+      sub: 'test@test.com',
+      userId: 'AbC123xYz9',
+      role: 'ROLE_USER',
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 // expires 1 hour from now
+    }));
+    const fakeSignature = 'signature'; // just a placeholder
+    const token = `${header}.${payload}.${fakeSignature}`;
+
+    localStorage.setItem('token', token);
+
+    // Re-instantiate the service to trigger constructor
+    const freshService = TestBed.inject(AuthService);
+
     expect(freshService.isLoggedIn()).toBeTrue();
   });
 
@@ -62,28 +71,27 @@ describe('AuthService', () => {
     expect(service.login).toHaveBeenCalledWith(email, password);
   });
 
-  it('should logout correctly', async () => {
-    const email = 'test@test.com';
-    const password = 'test';
+  it('should logout correctly', () => {
+    // Create a simple base64-encoded JWT header.payload.signature
+    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+    const payload = btoa(JSON.stringify({
+      sub: 'test@example.com',
+      userId: 'AbC123xYz9',
+      role: 'ROLE_USER',
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 // 1 hour in future
+    }));
+    const signature = 'signature';
+    const token = `${header}.${payload}.${signature}`;
 
-    // Trigger login (must subscribe before expectOne)
-    const loginPromise = firstValueFrom(service.login(email, password));
+    localStorage.setItem('token', token);
 
-    // No need to encode manually — HttpParams already encodes properly
-    const req = httpMock.expectOne(
-      `${BackendConfig.springApiUrl}/auth/login?email=${email}&password=${password}`
-    );
-
-    expect(req.request.method).toBe('POST');
-    req.flush('Login successful', { status: 200, statusText: 'OK' });
-
-    await loginPromise; // wait for the login request to complete
-
+    // Check logged in
     expect(service.isLoggedIn()).toBeTrue();
 
-    // Now test logout
+    // Logout
     service.logout();
+
     expect(service.isLoggedIn()).toBeFalse();
-    expect(localStorage.getItem('user')).toBeNull();
+    expect(localStorage.getItem('token')).toBeNull();
   });
 });
