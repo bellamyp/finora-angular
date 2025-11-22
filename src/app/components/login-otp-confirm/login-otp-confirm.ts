@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import {AuthService} from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-otp-confirm',
@@ -22,72 +22,103 @@ export class LoginOtpConfirm implements OnInit {
   otp5 = '';
   otp6 = '';
 
-  error: string | null = null;       // ✅ to show OTP verification errors
-  sending: boolean = false;          // ✅ to disable button while sending
+  error: string | null = null;
+  sending: boolean = false;
 
-  // New: capture all input elements
-  @ViewChildren('otpInput1, otpInput2, otpInput3, otpInput4, otpInput5, otpInput6') otpInputs!: QueryList<ElementRef>;
+  // Capture all OTP input elements
+  @ViewChildren('otpInput') otpInputs!: QueryList<ElementRef>;
+
+  ngOnInit() {
+    if (this.authService.isLoggedIn()) {
+      const role = this.authService.getCurrentUserRole();
+      this.router.navigate([role === 'ROLE_ADMIN' ? '/menu-admin' : '/menu-user']);
+    }
+
+    this.route.queryParams.subscribe(params => {
+      if (params['email']) {
+        this.email = params['email'];
+      }
+    });
+  }
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService) {}
+    private authService: AuthService
+  ) {}
 
-  ngOnInit() {
-    // Redirect if already logged in
-    if (this.authService.isLoggedIn()) {
-      const role = this.authService.getCurrentUserRole();
-      if (role === 'ROLE_ADMIN') {
-        this.router.navigate(['/menu-admin']);
-      } else {
-        this.router.navigate(['/menu-user']);
-      }
-    }
-
-    // Get email from query params
-    this.route.queryParams.subscribe(params => {
-      if (params['email']) {
-        this.email = params['email'];
-        console.log('OTP for email:', this.email);
-      }
-    });
+  get otp(): string {
+    return this.otp1 + this.otp2 + this.otp3 + this.otp4 + this.otp5 + this.otp6;
   }
 
   onOtpKeyDown(event: KeyboardEvent, index: number) {
     const inputs = this.otpInputs.toArray();
     const target = event.target as HTMLInputElement;
 
+    // Handle backspace
     if (event.key === 'Backspace') {
-      // Move focus to previous input if current is empty
       if (!target.value && index > 1) {
         inputs[index - 2].nativeElement.focus();
       }
       return;
     }
 
-    // Only allow numeric input
+    // Handle numeric input
     if (/^[0-9]$/.test(event.key)) {
-      // Let ngModel handle the value
-      // Move focus to next input automatically
-      if (index < inputs.length) {
-        setTimeout(() => inputs[index].nativeElement.focus(), 0);
-      }
+      setTimeout(() => {
+        if (index < inputs.length) {
+          inputs[index].nativeElement.focus();
+        }
+        if (this.otp.length === 6) {
+          this.verifyOtp();
+        }
+      }, 0);
       return;
     }
 
-    // Block non-numeric keys except Tab
+    // Handle Ctrl/Cmd + V
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'v') {
+      event.preventDefault();
+      navigator.clipboard.readText().then(text => this.handlePaste(text));
+      return;
+    }
+
     if (event.key !== 'Tab') {
       event.preventDefault();
     }
   }
 
-  get otp() {
-    const otpValue = this.otp1 + this.otp2 + this.otp3 + this.otp4 + this.otp5 + this.otp6;
-    console.log('Current OTP value:', otpValue);
-    return otpValue;
+  onOtpPaste(event: ClipboardEvent) {
+    event.preventDefault();
+    const clipboardData = event.clipboardData?.getData('text') || '';
+    this.handlePaste(clipboardData);
   }
 
-  /** Verify OTP against backend */
+  private handlePaste(data: string) {
+    const digits = data.replace(/\D/g, '').slice(0, 6);
+    const inputs = this.otpInputs.toArray();
+
+    digits.split('').forEach((digit, i) => {
+      if (inputs[i]) {
+        inputs[i].nativeElement.value = digit;
+        switch (i) {
+          case 0: this.otp1 = digit; break;
+          case 1: this.otp2 = digit; break;
+          case 2: this.otp3 = digit; break;
+          case 3: this.otp4 = digit; break;
+          case 4: this.otp5 = digit; break;
+          case 5: this.otp6 = digit; break;
+        }
+      }
+    });
+
+    if (digits.length < 6) {
+      inputs[digits.length]?.nativeElement.focus();
+    } else if (digits.length === 6) {
+      this.verifyOtp();
+    }
+  }
+
   verifyOtp() {
     if (!this.otp || this.otp.length < 6) {
       window.alert('❌ Please enter the complete 6-digit OTP.');
@@ -100,40 +131,27 @@ export class LoginOtpConfirm implements OnInit {
         this.sending = false;
         if (success) {
           const role = this.authService.getCurrentUserRole();
-          if (role === 'ROLE_ADMIN') {
-            console.log('✅ OTP verified. Redirecting to Admin Menu...');
-            this.router.navigate(['/menu-admin']);
-          } else {
-            console.log('✅ OTP verified. Redirecting to User Menu...');
-            this.router.navigate(['/menu-user']);
-          }
+          this.router.navigate([role === 'ROLE_ADMIN' ? '/menu-admin' : '/menu-user']);
         } else {
           window.alert('❌ Invalid or expired OTP.');
         }
       },
-      error: (err) => {
+      error: () => {
         this.sending = false;
-        console.error('OTP verification failed:', err);
         window.alert('❌ Server error. Please try again later.');
       }
     });
   }
 
-  /** Resend OTP */
   resendOtp() {
     this.sending = true;
     this.authService.requestOtp(this.email).subscribe({
       next: (res) => {
         this.sending = false;
-        if (res?.success) {                     // ✅ check the success property
-          window.alert('✅ OTP resent successfully.');
-        } else {
-          window.alert('❌ Failed to resend OTP.');
-        }
+        window.alert(res?.success ? '✅ OTP resent successfully.' : '❌ Failed to resend OTP.');
       },
-      error: (err) => {
+      error: () => {
         this.sending = false;
-        console.error('Resend OTP failed:', err);
         window.alert('❌ Server error. Please try again later.');
       }
     });
