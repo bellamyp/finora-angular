@@ -31,22 +31,10 @@
       </button>
     </form>
 
-    <p class="text-center text-muted small mb-2">Or sign in with</p>
-
-    <!-- Social Login Buttons -->
-    <div class="d-grid gap-2">
-      <button (click)="loginWithGithub()" class="btn btn-dark btn-lg w-100 shadow-sm rounded-3">
-        <i class="bi bi-github me-2"></i> Sign in with GitHub
-      </button>
-      <button (click)="loginWithGoogle()" class="btn btn-outline-danger btn-lg w-100 shadow-sm rounded-3">
-        <i class="bi bi-google me-2"></i> Sign in with Google
-      </button>
-      <button (click)="loginWithFacebook()" class="btn btn-primary btn-lg w-100 shadow-sm rounded-3">
-        <i class="bi bi-facebook me-2"></i> Sign in with Facebook
-      </button>
-      <button (click)="loginWithIcloud()" class="btn btn-secondary btn-lg w-100 shadow-sm rounded-3">
-        <i class="bi bi-apple me-2"></i> Sign in with iCloud
-      </button>
+    <!-- Optional: Email OTP or Password Recovery links -->
+    <div class="d-flex justify-content-between mb-3">
+      <a [routerLink]="['/login-otp-request']" class="text-decoration-none small">Login with Email OTP</a>
+      <a [routerLink]="['/forgot-password']" class="text-decoration-none small">Forgot password?</a>
     </div>
 
     <p class="text-center text-muted small mt-3">
