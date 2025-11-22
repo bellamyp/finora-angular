@@ -8,11 +8,15 @@ import {BankList} from './components/bank-list/bank-list';
 import {BankCreate} from './components/bank-create/bank-create';
 import {TransactionList} from './components/transaction-list/transaction-list';
 import {TransactionCreate} from './components/transaction-create/transaction-create';
+import {LoginOtpRequest} from './components/login-otp-request/login-otp-request';
+import {LoginOtpConfirm} from './components/login-otp-confirm/login-otp-confirm';
 
 export const routes: Routes = [
 
   // Public routes
   { path: 'login', component: Login },
+  { path: 'login-otp-request', component: LoginOtpRequest },
+  { path: 'login-otp-confirm', component: LoginOtpConfirm },
   { path: 'signup', component: SignUp },
 
   // Protected routes
