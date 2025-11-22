@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { ReactiveFormsModule } from '@angular/forms';
 import { BankCreate } from './bank-create';
 import { BankService } from '../../services/bank.service';
-import { AuthService } from '../../services/auth.service';
 import { of, throwError } from 'rxjs';
 import { BankDto } from '../../dto/bank.dto';
 import { BankCreateDto } from '../../dto/bank-create.dto';
@@ -12,19 +11,14 @@ describe('BankCreate', () => {
   let component: BankCreate;
   let fixture: ComponentFixture<BankCreate>;
   let mockBankService: jasmine.SpyObj<BankService>;
-  let mockAuthService: jasmine.SpyObj<AuthService>;
 
   beforeEach(async () => {
     mockBankService = jasmine.createSpyObj('BankService', ['createBank']);
-    mockAuthService = jasmine.createSpyObj('AuthService', ['getCurrentUser']);
-
-    mockAuthService.getCurrentUser.and.returnValue({ email: 'test@email.com', role: 'ROLE_USER', userId: "1234567890"});
 
     await TestBed.configureTestingModule({
       imports: [BankCreate, ReactiveFormsModule],
       providers: [
-        { provide: BankService, useValue: mockBankService },
-        { provide: AuthService, useValue: mockAuthService }
+        { provide: BankService, useValue: mockBankService }
       ]
     }).compileComponents();
 
@@ -35,12 +29,6 @@ describe('BankCreate', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should populate userEmail from AuthService and disable the field', () => {
-    const userEmailControl = component.bankForm.get('userEmail');
-    expect(userEmailControl?.value).toBe('test@email.com');
-    expect(userEmailControl?.disabled).toBeTrue();
   });
 
   it('should mark form invalid if required fields are empty', () => {
@@ -55,15 +43,14 @@ describe('BankCreate', () => {
       name: 'Test Bank',
       openingDate: '2025-11-02',
       closingDate: null,
-      type: 'CHECKING',
-      userEmail: 'test@email.com'
+      type: 'CHECKING'
     };
 
     const mockResponse: BankDto = {
-      id: '550e8400-e29b-41d4-a716-446655440005', // UUID instead of number
+      id: '550e8400-e29b-41d4-a716-446655440005', // UUID
       name: formValue.name,
       type: formValue.type,
-      email: formValue.userEmail
+      email: 'user@example.com' // backend can still return email
     };
 
     mockBankService.createBank.and.returnValue(of(mockResponse));
@@ -82,12 +69,11 @@ describe('BankCreate', () => {
 
   it('should alert error on submit failure', fakeAsync(() => {
     spyOn(window, 'alert');
-    const formValue = {
+    const formValue: BankCreateDto = {
       name: 'Test Bank',
       openingDate: '2025-11-02',
       closingDate: null,
-      type: 'CHECKING',
-      userEmail: 'test@email.com'
+      type: 'CHECKING'
     };
 
     mockBankService.createBank.and.returnValue(throwError(() => new Error('Backend error')));

@@ -31,20 +31,19 @@ describe('BankService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should fetch banks by user email', () => {
-    const mockEmail = 'user@example.com';
+  it('should fetch all banks', () => {
     const mockResponse: BankDto[] = [
-      { id: '550e8400-e29b-41d4-a716-446655440000', name: 'Capital One Savings', type: 'SAVINGS', email: mockEmail }
+      { id: '550e8400-e29b-41d4-a716-446655440000', name: 'Capital One Savings', type: 'SAVINGS', email: 'user@example.com' }
     ];
 
-    service.getBanksByUserEmail(mockEmail).subscribe(banks => {
+    service.getBanks().subscribe(banks => {
       expect(banks.length).toBe(1);
       expect(banks[0].name).toBe('Capital One Savings');
       expect(banks[0].type).toBe('SAVINGS');
-      expect(banks[0].email).toBe(mockEmail);
+      expect(banks[0].email).toBe('user@example.com');
     });
 
-    const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/banks?email=${mockEmail}`);
+    const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/banks`);
     expect(req.request.method).toBe('GET');
     req.flush(mockResponse);
   });
@@ -54,15 +53,14 @@ describe('BankService', () => {
       name: 'Test Bank',
       openingDate: '2025-11-02',
       closingDate: null,
-      type: 'CHECKING',
-      userEmail: 'user@example.com'
+      type: 'CHECKING'
     };
 
     const mockResponse: BankDto = {
-      id: '550e8400-e29b-41d4-a716-446655440001', // UUID now
+      id: '550e8400-e29b-41d4-a716-446655440001', // UUID
       name: formValue.name,
       type: formValue.type,
-      email: formValue.userEmail
+      email: 'user@example.com' // backend can return email
     };
 
     service.createBank(formValue).subscribe(res => {
@@ -71,7 +69,7 @@ describe('BankService', () => {
 
     const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/banks`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual(formValue);
+    expect(req.request.body).toEqual(formValue); // matches updated BankCreateDto
     req.flush(mockResponse);
   });
 });
