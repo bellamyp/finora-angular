@@ -4,6 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { BrandService } from '../../services/brand.service';
 import { BrandDto } from '../../dto/brand.dto';
 import {RouterLink} from '@angular/router';
+import {TransactionTypeEnum} from '../../dto/transaction-type.enum';
+
+function enumToOptions<T extends Record<string, string>>(enumObj: T): { id: string; name: string }[] {
+  return Object.values(enumObj).map(v => ({
+    id: v as string,
+    name: (v as string).replace(/_/g, ' ')
+  }));
+}
 
 // Dummy DTOs for example
 interface BankOption { id: string; name: string; }
@@ -52,11 +60,8 @@ export class TransactionCreate implements OnInit {
       { id: 'bank2', name: 'Chase Bank' }
     ];
 
-    this.transactionTypes = [
-      { id: 'type1', name: 'Expense' },
-      { id: 'type2', name: 'Income' }
-    ];
-
+    // Load transaction types from enum
+    this.transactionTypes = enumToOptions(TransactionTypeEnum);
     this.loadBrands();
   }
 
