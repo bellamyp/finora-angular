@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BrandService } from '../../services/brand.service';
 import { BrandDto } from '../../dto/brand.dto';
+import {RouterLink} from '@angular/router';
 
 // Dummy DTOs for example
 interface BankOption { id: string; name: string; }
@@ -10,7 +11,7 @@ interface TransactionTypeOption { id: string; name: string; }
 
 @Component({
   selector: 'app-transaction-create',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './transaction-create.html',
   styleUrls: ['./transaction-create.scss'],
 })
