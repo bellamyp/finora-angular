@@ -1,90 +1,97 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule, NgForm} from '@angular/forms';
-import {TransactionTypeEnum} from '../../dto/transaction-type.enum';
-import {TransactionService} from '../../services/transaction-service';
-import {TransactionCreateDto} from '../../dto/transaction-create.dto';
-import {TransactionDto} from '../../dto/transaction.dto';
-import {AuthService} from '../../services/auth.service';
-import {BankService} from '../../services/bank.service';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { BrandService } from '../../services/brand.service';
+import { BrandDto } from '../../dto/brand.dto';
 
-interface BankOption {
-  id: string; // UUID
-  name: string;
-}
+// Dummy DTOs for example
+interface BankOption { id: string; name: string; }
+interface TransactionTypeOption { id: string; name: string; }
 
 @Component({
   selector: 'app-transaction-create',
-  imports: [CommonModule, FormsModule], // required modules for template-driven form
+  imports: [CommonModule, FormsModule],
   templateUrl: './transaction-create.html',
-  styleUrl: './transaction-create.scss',
+  styleUrls: ['./transaction-create.scss'],
 })
 export class TransactionCreate implements OnInit {
 
-  // Form fields
-  date!: string;
-  amount!: number;
-  type: TransactionTypeEnum = TransactionTypeEnum.GROCERY;
-  notes?: string;
-  bankId?: string; // UUID
-  userEmail!: string;
+  // ---------- GLOBAL GROUP FIELDS ----------
+  groupDate?: string;
+  selectedBrandId?: string; // only selection allowed
+  typeId?: string;
 
-  // Enum and banks
-  transactionTypes = Object.values(TransactionTypeEnum);
+  // ---------- ROW-LEVEL TRANSACTIONS ----------
+  transactions = [
+    { amount: null as number | null, bankId: undefined as string | undefined, notes: '' }
+  ];
+
+  // ---------- LOOKUP DROPDOWNS ----------
   banks: BankOption[] = [];
+  transactionTypes: TransactionTypeOption[] = [];
+  brands: BrandDto[] = [];
 
-  constructor(
-    private transactionService: TransactionService,
-    private bankService: BankService,
-    private authService: AuthService
-  ) {}
+  constructor(private brandService: BrandService) {}
 
-  ngOnInit() {
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
-      this.userEmail = currentUser.email;
-    } else {
-      alert('User not logged in!');
-      // Optionally redirect to login
-    }
+  ngOnInit(): void {
+    // Testing
+    console.log(this.brandService.getBrandsByUser());
+    this.brandService.getBrandsByUser();
 
-    // // Load banks for current user
-    // this.bankService.getBanksByUserEmail(this.userEmail).subscribe({
-    //   next: (res) => {
-    //     this.banks = res;
-    //   },
-    //   error: (err) => {
-    //     console.error('Error loading banks:', err);
-    //     alert('Failed to load banks');
-    //   }
-    // });
+    // Default to today
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    this.groupDate = `${yyyy}-${mm}-${dd}`;
+
+    // Load dropdowns
+    this.banks = [
+      { id: 'bank1', name: 'Bank of America' },
+      { id: 'bank2', name: 'Chase Bank' }
+    ];
+
+    this.transactionTypes = [
+      { id: 'type1', name: 'Expense' },
+      { id: 'type2', name: 'Income' }
+    ];
+
+    this.loadBrands();
   }
 
-  submitTransaction(form: NgForm) {
-    if (form.invalid) {
-      console.log("invalid");
+  // ---------------- BRAND ----------------
+  loadBrands() {
+    this.brandService.getBrandsByUser() // fetch all brands or popular ones
+      .subscribe({
+        next: (res) => this.brands = res,
+        error: (err) => console.error('[Brand] Load Error:', err)
+      });
+  }
+
+  // ---------------- ROW MANAGEMENT ----------------
+  addTransaction() {
+    this.transactions.push({ amount: null, bankId: undefined, notes: '' });
+  }
+
+  removeTransaction(index: number) {
+    this.transactions.splice(index, 1);
+  }
+
+  // ---------------- SUBMIT ----------------
+  submitGroup() {
+    if (!this.selectedBrandId) {
+      alert('Please select a brand from the dropdown.');
       return;
     }
 
-    const dto: TransactionCreateDto = {
-      date: this.date,
-      amount: this.amount,
-      type: this.type,
-      notes: this.notes,
-      bankId: this.bankId,
-      userEmail: this.userEmail
+    const payload = {
+      date: this.groupDate,
+      brandId: this.selectedBrandId,
+      typeId: this.typeId,
+      transactions: this.transactions
     };
 
-    this.transactionService.createTransaction(dto).subscribe({
-      next: (res: TransactionDto) => {
-        console.log('Transaction created:', res);
-        alert(`Transaction created! ID: ${res.id}`);
-        form.resetForm();
-      },
-      error: (err) => {
-        console.error('Error creating transaction:', err);
-        alert(`Error: ${err.error?.message || err.message}`);
-      }
-    });
+    console.log('[Transaction Group Submit]', payload);
+    // TODO: send payload to backend
   }
 }

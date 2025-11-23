@@ -1,59 +1,88 @@
-<div class="card p-4 shadow-lg rounded-4" style="max-width: 500px; margin: 20px auto;">
-  <h2 class="text-center mb-4">Create Transaction</h2>
+<div class="card p-4 shadow-lg rounded-4 mx-auto my-4" style="max-width: 800px;">
+  <h2 class="text-center mb-4 text-primary">Create Transaction Group</h2>
 
-  <form #transactionForm="ngForm" (ngSubmit)="submitTransaction(transactionForm)">
-    <!-- Date -->
-    <div class="mb-3">
-      <label for="date" class="form-label">Date</label>
-      <input type="date" id="date" name="date" class="form-control"
-             [(ngModel)]="date" #dateModel="ngModel" required />
-      <div *ngIf="dateModel.invalid && dateModel.touched" class="text-danger mt-1">
-        Date is required.
+  <form #groupForm="ngForm">
+
+    <!-- GLOBAL FIELDS -->
+    <h5 class="mb-3 text-secondary">Group Information</h5>
+
+    <div class="row g-3">
+      <!-- Date -->
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Date</label>
+        <input type="date" class="form-control"
+               [(ngModel)]="groupDate" name="groupDate" required>
+      </div>
+
+      <!-- Brand Selection -->
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Brand</label>
+        <select class="form-select" [(ngModel)]="selectedBrandId" name="brandId" required>
+          <option [ngValue]="undefined">-- Select Brand --</option>
+          <option *ngFor="let b of brands" [ngValue]="b.id">
+            {{ b.name }} ({{ b.location }})
+          </option>
+        </select>
+        <div class="mt-1">
+          <a routerLink="/brands/new" class="small text-primary">
+            + Create New Brand
+          </a>
+        </div>
+      </div>
+
+      <!-- Transaction Type -->
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Transaction Type</label>
+        <select class="form-select"
+                [(ngModel)]="typeId" name="typeId" required>
+          <option [ngValue]="undefined">-- Select Type --</option>
+          <option *ngFor="let type of transactionTypes" [ngValue]="type.id">
+            {{ type.name }}
+          </option>
+        </select>
       </div>
     </div>
 
-    <!-- Amount -->
-    <div class="mb-3">
-      <label for="amount" class="form-label">Amount</label>
-      <input type="number" id="amount" name="amount" class="form-control"
-             [(ngModel)]="amount" #amountModel="ngModel" required step="0.01" />
-      <div *ngIf="amountModel.invalid && amountModel.touched" class="text-danger mt-1">
-        Amount is required and must be a number.
-      </div>
+    <hr class="my-4">
+
+    <!-- ROW-LEVEL TRANSACTIONS -->
+    <h5 class="mb-3 text-secondary">Transactions</h5>
+
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead class="table-light">
+        <tr>
+          <th style="width: 15%">Amount</th>
+          <th style="width: 20%">Bank</th>
+          <th>Note</th>
+          <th style="width: 80px"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let t of transactions; let i = index">
+          <td><input type="number" class="form-control" [(ngModel)]="t.amount" name="amount{{i}}" step="0.01" required></td>
+          <td>
+            <select class="form-select" [(ngModel)]="t.bankId" name="bankId{{i}}" required>
+              <option [ngValue]="undefined">-- Bank --</option>
+              <option *ngFor="let b of banks" [ngValue]="b.id">{{ b.name }}</option>
+            </select>
+          </td>
+          <td><input type="text" class="form-control" [(ngModel)]="t.notes" name="notes{{i}}"></td>
+          <td class="text-center">
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeTransaction(i)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Transaction Type -->
-    <div class="mb-3">
-      <label for="type" class="form-label">Transaction Type</label>
-      <select id="type" name="type" class="form-select"
-              [(ngModel)]="type" #typeModel="ngModel" required>
-        <option [ngValue]="undefined">-- Select Transaction Type --</option>
-        <option *ngFor="let t of transactionTypes" [ngValue]="t">{{ t }}</option>
-      </select>
-      <div *ngIf="typeModel.invalid && typeModel.touched" class="text-danger mt-1">
-        Transaction type is required.
-      </div>
+    <div class="d-flex justify-content-end mb-3">
+      <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
     </div>
 
-    <!-- Bank selection -->
-    <div class="mb-3">
-      <label for="bankId" class="form-label">Bank</label>
-      <select id="bankId" name="bankId" class="form-select"
-              [(ngModel)]="bankId" #bankModel="ngModel" required>
-        <option [ngValue]="undefined">-- Select Bank --</option>
-        <option *ngFor="let b of banks" [ngValue]="b.id">{{ b.name }}</option>
-      </select>
-      <div *ngIf="bankModel.invalid && bankModel.touched" class="text-danger mt-1">
-        Bank is required.
-      </div>
-    </div>
+    <button type="button" class="btn btn-success w-100 mt-3" (click)="submitGroup()">Submit Group</button>
 
-    <!-- User Email (read-only) -->
-    <div class="mb-3">
-      <label for="userEmail" class="form-label">Your Email</label>
-      <input type="email" id="userEmail" name="userEmail" class="form-control" [(ngModel)]="userEmail" readonly />
-    </div>
-
-    <button type="submit" class="btn btn-primary w-100">Create Transaction</button>
   </form>
 </div>
