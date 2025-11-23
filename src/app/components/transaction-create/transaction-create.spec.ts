@@ -1,43 +1,51 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { TransactionCreate } from './transaction-create';
 import { of } from 'rxjs';
-import { TransactionService } from '../../services/transaction-service';
+import { BrandService } from '../../services/brand.service';
 import { BankService } from '../../services/bank.service';
-import { AuthService } from '../../services/auth.service';
-import { TransactionDto } from '../../dto/transaction.dto';
+import { TransactionGroupService } from '../../services/transaction-group.service';
+import {provideRouter, Router} from '@angular/router';
 import { TransactionTypeEnum } from '../../dto/transaction-type.enum';
+
+// Dummy route component
+import { Component } from '@angular/core';
+@Component({ template: '' })
+class DummyComponent {}
 
 describe('TransactionCreate', () => {
   let component: TransactionCreate;
   let fixture: ComponentFixture<TransactionCreate>;
 
-  // Mock services
-  const mockTransactionService = {
-    createTransaction: jasmine.createSpy('createTransaction').and.returnValue(
-      of({ id: '550e8400-e29b-41d4-a716-446655440009' } as TransactionDto)
+  const mockBrandService = {
+    getBrandsByUser: jasmine.createSpy('getBrandsByUser').and.returnValue(
+      of([{ id: 'b1', name: 'Nike', location: 'Houston' }])
     )
   };
 
   const mockBankService = {
-    getBanksByUserEmail: jasmine.createSpy('getBanksByUserEmail').and.returnValue(
-      of([{ id: '550e8400-e29b-41d4-a716-446655440010', name: 'Capital One Savings' }])
+    getBanks: jasmine.createSpy('getBanks').and.returnValue(
+      of([{ id: 'bank1', name: 'Chase' }])
     )
   };
 
-  const mockAuthService = {
-    getCurrentUser: jasmine.createSpy('getCurrentUser').and.returnValue({
-      email: 'test@example.com',
-      role: 'USER'
-    })
+  const mockTransactionGroupService = {
+    createTransactionGroup: jasmine.createSpy('createTransactionGroup').and.returnValue(
+      of({ success: true, groupId: 'tg1', message: 'Transaction group created successfully' })
+    )
   };
+
+  const mockRouter = { navigate: jasmine.createSpy('navigate') };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TransactionCreate],
+      imports: [TransactionCreate, FormsModule],
       providers: [
-        { provide: TransactionService, useValue: mockTransactionService },
+        { provide: BrandService, useValue: mockBrandService },
         { provide: BankService, useValue: mockBankService },
-        { provide: AuthService, useValue: mockAuthService }
+        { provide: TransactionGroupService, useValue: mockTransactionGroupService },
+        { provide: Router, useValue: mockRouter },
+        provideRouter([{ path: '', component: DummyComponent }])
       ]
     }).compileComponents();
 
@@ -47,54 +55,65 @@ describe('TransactionCreate', () => {
   });
 
   afterEach(() => {
-    mockTransactionService.createTransaction.calls.reset();
-    mockBankService.getBanksByUserEmail.calls.reset();
-    mockAuthService.getCurrentUser.calls.reset();
+    mockBrandService.getBrandsByUser.calls.reset();
+    mockBankService.getBanks.calls.reset();
+    mockTransactionGroupService.createTransactionGroup.calls.reset();
+    mockRouter.navigate.calls.reset();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load user email and banks on init', () => {
-    expect(component.userEmail).toBe('test@example.com');
-    // expect(component.banks.length).toBe(1);
-    // expect(component.banks[0].name).toBe('Capital One Savings');
-    expect(mockAuthService.getCurrentUser).toHaveBeenCalled();
-    // expect(mockBankService.getBanksByUserEmail).toHaveBeenCalledWith('test@example.com');
+  it('should load banks and brands on init', () => {
+    expect(component.banks.length).toBe(1);
+    expect(component.brands.length).toBe(1);
   });
 
-  it('should submit transaction', () => {
-    component.date = '2025-11-02';
-    component.amount = 100;
-    component.type = TransactionTypeEnum.GROCERY;
-    component.bankId = '550e8400-e29b-41d4-a716-446655440010';
-    component.notes = 'Test transaction';
+  it('should add and remove transactions', () => {
+    const initialLength = component.transactions.length;
+    component.addTransaction();
+    expect(component.transactions.length).toBe(initialLength + 1);
 
-    // Use a fake form object
-    const fakeForm: any = {
-      invalid: false,
-      resetForm: jasmine.createSpy('resetForm')
-    };
+    component.removeTransaction(0);
+    expect(component.transactions.length).toBe(initialLength);
+  });
 
-    component.submitTransaction(fakeForm);
+  it('should submit transaction group successfully', () => {
+    spyOn(window, 'alert');
 
-    expect(mockTransactionService.createTransaction).toHaveBeenCalledWith({
-      date: '2025-11-02',
-      amount: 100,
-      type: TransactionTypeEnum.GROCERY,
-      notes: 'Test transaction',
-      bankId: '550e8400-e29b-41d4-a716-446655440010',
-      userEmail: 'test@example.com'
+    component.selectedBrandId = 'b1';
+    component.typeId = TransactionTypeEnum.GROCERY;
+    component.transactions = [{ amount: 100, bankId: 'bank1', notes: 'Test' }];
+    component.groupDate = '2025-11-23';
+
+    component.submitGroup();
+
+    expect(mockTransactionGroupService.createTransactionGroup).toHaveBeenCalledWith({
+      date: '2025-11-23',
+      brandId: 'b1',
+      typeId: TransactionTypeEnum.GROCERY,
+      transactions: [{ amount: 100, bankId: 'bank1', notes: 'Test' }]
     });
 
-    expect(fakeForm.resetForm).toHaveBeenCalled();
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
   });
 
-  it('should not submit invalid form', () => {
-    const fakeForm: any = { invalid: true, resetForm: jasmine.createSpy('resetForm') };
-    component.submitTransaction(fakeForm);
-    expect(mockTransactionService.createTransaction).not.toHaveBeenCalled();
-    expect(fakeForm.resetForm).not.toHaveBeenCalled();
+  it('should not submit if brand or type is missing', () => {
+    spyOn(window, 'alert');
+
+    // missing brand
+    component.selectedBrandId = undefined;
+    component.typeId = TransactionTypeEnum.GROCERY;
+    component.submitGroup();
+    expect(mockTransactionGroupService.createTransactionGroup).not.toHaveBeenCalled();
+    expect(window.alert).toHaveBeenCalledWith('Please select a brand from the dropdown.');
+
+    // missing type
+    component.selectedBrandId = 'b1';
+    component.typeId = undefined;
+    component.submitGroup();
+    expect(mockTransactionGroupService.createTransactionGroup).not.toHaveBeenCalled();
+    expect(window.alert).toHaveBeenCalledWith('Please select a transaction type.');
   });
 });

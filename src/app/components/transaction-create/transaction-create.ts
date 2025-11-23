@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BrandService } from '../../services/brand.service';
 import { BrandDto } from '../../dto/brand.dto';
-import {Router, RouterLink} from '@angular/router';
+import {Router} from '@angular/router';
 import {TransactionTypeEnum} from '../../dto/transaction-type.enum';
 import {BankService} from '../../services/bank.service';
 import {TransactionGroupService} from '../../services/transaction-group.service';
@@ -22,7 +22,7 @@ interface TransactionTypeOption { id: string; name: string; }
 
 @Component({
   selector: 'app-transaction-create',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './transaction-create.html',
   styleUrls: ['./transaction-create.scss'],
 })
