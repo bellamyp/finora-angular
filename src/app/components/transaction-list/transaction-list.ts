@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {TransactionDto} from '../../dto/transaction.dto';
-import {TransactionService} from '../../services/transaction-service';
 import {CommonModule} from '@angular/common';
+import {TransactionGroupDto} from '../../dto/transaction-group.dto';
+import {TransactionGroupService} from '../../services/transaction-group.service';
 
 @Component({
   selector: 'app-transaction-list',
@@ -11,38 +11,21 @@ import {CommonModule} from '@angular/common';
 })
 export class TransactionList implements OnInit {
 
-  transactions: TransactionDto[] = [];
-  userEmail: string | null = null;
+  transactionGroups: TransactionGroupDto[] = [];
   loading = true;
 
-  constructor(private transactionService: TransactionService) {}
+  constructor(private transactionGroupService: TransactionGroupService) {}
 
   ngOnInit(): void {
-
-    const userJson = localStorage.getItem('user');
-    if (userJson) {
-      try {
-        const user = JSON.parse(userJson);
-        this.userEmail = user.email;
-      } catch {
-        console.error('Invalid user data in localStorage');
+    this.transactionGroupService.getTransactionGroups().subscribe({
+      next: (groups) => {
+        this.transactionGroups = groups;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to fetch transaction groups:', err);
+        this.loading = false;
       }
-    }
-
-    if (this.userEmail) {
-      this.transactionService.getTransactionsByEmail(this.userEmail).subscribe({
-        next: (data) => {
-          this.transactions = data;
-          this.loading = false;
-        },
-        error: (err) => {
-          console.error('Failed to fetch transactions:', err);
-          this.loading = false;
-        },
-      });
-    } else {
-      this.loading = false;
-      console.warn('No user email found in localStorage.');
-    }
+    });
   }
 }

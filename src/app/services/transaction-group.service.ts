@@ -3,6 +3,7 @@ import {BackendConfig} from '../config/backend-config';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {TransactionGroupCreateDto} from '../dto/transaction-group-create.dto';
+import {TransactionGroupDto} from '../dto/transaction-group.dto';
 
 interface TransactionGroupResponse {
   success: boolean;
@@ -25,6 +26,10 @@ export class TransactionGroupService {
    */
   createTransactionGroup(payload: TransactionGroupCreateDto): Observable<TransactionGroupResponse> {
     return this.http.post<TransactionGroupResponse>(this.apiUrl, payload);
+  }
+
+  getTransactionGroups(): Observable<TransactionGroupDto[]> {
+    return this.http.get<TransactionGroupDto[]>(this.apiUrl);
   }
 }
 
