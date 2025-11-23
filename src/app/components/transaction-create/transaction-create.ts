@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BrandService } from '../../services/brand.service';
 import { BrandDto } from '../../dto/brand.dto';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {TransactionTypeEnum} from '../../dto/transaction-type.enum';
 import {BankService} from '../../services/bank.service';
+import {TransactionGroupService} from '../../services/transaction-group.service';
+import {TransactionGroupCreateDto} from '../../dto/transaction-group-create.dto';
 
 function enumToOptions<T extends Record<string, string>>(enumObj: T): { id: string; name: string }[] {
   return Object.values(enumObj).map(v => ({
@@ -43,7 +45,9 @@ export class TransactionCreate implements OnInit {
 
   constructor(
     private brandService: BrandService,
-    private bankService: BankService
+    private bankService: BankService,
+    private transactionGroupService: TransactionGroupService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -95,15 +99,39 @@ export class TransactionCreate implements OnInit {
       alert('Please select a brand from the dropdown.');
       return;
     }
+    if (!this.typeId) {
+      alert('Please select a transaction type.');
+      return;
+    }
 
-    const payload = {
-      date: this.groupDate,
+    // Use TransactionGroupCreateDto for type safety
+    const payload: TransactionGroupCreateDto = {
+      date: this.groupDate!,
       brandId: this.selectedBrandId,
       typeId: this.typeId,
-      transactions: this.transactions
+      transactions: this.transactions.map(t => ({
+        amount: t.amount,
+        bankId: t.bankId!,
+        notes: t.notes
+      }))
     };
 
-    console.log('[Transaction Group Submit]', payload);
-    // TODO: send payload to backend
+    this.transactionGroupService.createTransactionGroup(payload).subscribe({
+      next: (res) => {
+        if (res.success) {
+          alert(`Transaction group created! ID: ${res.groupId}`);
+          console.log('Response:', res);
+
+          // Redirect to home page
+          this.router.navigate(['/']);
+        } else {
+          alert(`Failed to create transaction group: ${res.message}`);
+        }
+      },
+      error: (err) => {
+        console.error('Failed to create transaction group:', err);
+        alert('Failed to create transaction group. Check console for details.');
+      }
+    });
   }
 }
