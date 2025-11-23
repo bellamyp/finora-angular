@@ -1,45 +1,49 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TransactionList } from './transaction-list';
-import { TransactionService } from '../../services/transaction-service';
+import { TransactionGroupService } from '../../services/transaction-group.service';
 import { of, throwError } from 'rxjs';
-import { TransactionDto } from '../../dto/transaction.dto';
+import { TransactionGroupDto } from '../../dto/transaction-group.dto';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { TransactionTypeEnum } from '../../dto/transaction-type.enum';
 
 describe('TransactionList', () => {
   let component: TransactionList;
   let fixture: ComponentFixture<TransactionList>;
-  let mockTransactionService: any;
+  let mockTransactionGroupService: any;
 
-  const mockTransactions: TransactionDto[] = [
+  const mockTransactionGroups: TransactionGroupDto[] = [
     {
-      id: '550e8400-e29b-41d4-a716-446655440003', // UUID instead of number
-      date: '2025-10-09',
-      amount: 250,
-      type: TransactionTypeEnum.SAVINGS,
-      notes: 'Savings transfer',
-      bankName: 'Capital One Savings',
-      userEmail: 'bellamyphan@icloud.com'
-    },
-    {
-      id: '550e8400-e29b-41d4-a716-446655440004', // UUID instead of number
-      date: '2025-10-10',
-      amount: 30,
-      type: TransactionTypeEnum.PET,
-      notes: 'Pet supplies',
-      bankName: 'Capital One Savings',
-      userEmail: 'bellamyphan@icloud.com'
+      id: 'group1',
+      transactions: [
+        {
+          id: 'tx1',
+          date: '2025-10-09',
+          amount: 250,
+          typeId: 'SAVINGS',
+          notes: 'Savings transfer',
+          bankId: 'bank1',
+          brandId: 'brand1'
+        },
+        {
+          id: 'tx2',
+          date: '2025-10-10',
+          amount: 30,
+          typeId: 'PET',
+          notes: 'Pet supplies',
+          bankId: 'bank1',
+          brandId: 'brand1'
+        }
+      ]
     }
   ];
 
   beforeEach(async () => {
-    mockTransactionService = jasmine.createSpyObj('TransactionService', ['getTransactionsByEmail']);
+    mockTransactionGroupService = jasmine.createSpyObj('TransactionGroupService', ['getTransactionGroups']);
 
     await TestBed.configureTestingModule({
       imports: [TransactionList],
       providers: [
         provideHttpClientTesting(),
-        { provide: TransactionService, useValue: mockTransactionService }
+        { provide: TransactionGroupService, useValue: mockTransactionGroupService }
       ]
     }).compileComponents();
 
@@ -47,55 +51,38 @@ describe('TransactionList', () => {
     component = fixture.componentInstance;
   });
 
-  afterEach(() => {
-    localStorage.clear();
-  });
-
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load transactions if user email exists in localStorage', () => {
-    localStorage.setItem('user', JSON.stringify({ email: 'bellamyphan@icloud.com' }));
-    mockTransactionService.getTransactionsByEmail.and.returnValue(of(mockTransactions));
+  it('should load posted transaction groups successfully', () => {
+    mockTransactionGroupService.getTransactionGroups.and.returnValue(of(mockTransactionGroups));
 
     component.ngOnInit();
 
-    expect(component.userEmail).toBe('bellamyphan@icloud.com');
-    expect(component.transactions.length).toBe(2);
-    expect(component.transactions[0].type).toBe(TransactionTypeEnum.SAVINGS);
-    expect(component.transactions[1].type).toBe(TransactionTypeEnum.PET);
+    expect(component.transactionGroups.length).toBe(1);
+    expect(component.transactionGroups[0].id).toBe('group1');
+    expect(component.transactionGroups[0].transactions.length).toBe(2);
     expect(component.loading).toBeFalse();
   });
 
-  it('should handle missing user in localStorage', () => {
+  it('should handle empty transaction groups', () => {
+    mockTransactionGroupService.getTransactionGroups.and.returnValue(of([]));
+
     component.ngOnInit();
 
-    expect(component.userEmail).toBeNull();
-    expect(component.transactions.length).toBe(0);
+    expect(component.transactionGroups.length).toBe(0);
     expect(component.loading).toBeFalse();
   });
 
-  it('should handle invalid JSON in localStorage', () => {
-    localStorage.setItem('user', '{invalidJson');
+  it('should handle service error gracefully', () => {
     spyOn(console, 'error');
+    mockTransactionGroupService.getTransactionGroups.and.returnValue(throwError(() => new Error('Service failed')));
 
     component.ngOnInit();
 
-    expect(component.userEmail).toBeNull();
-    expect(console.error).toHaveBeenCalledWith('Invalid user data in localStorage');
+    expect(component.transactionGroups.length).toBe(0);
     expect(component.loading).toBeFalse();
-  });
-
-  it('should handle service error', () => {
-    localStorage.setItem('user', JSON.stringify({ email: 'bellamyphan@icloud.com' }));
-    mockTransactionService.getTransactionsByEmail.and.returnValue(throwError(() => new Error('Service failed')));
-    spyOn(console, 'error');
-
-    component.ngOnInit();
-
-    expect(component.transactions.length).toBe(0);
-    expect(component.loading).toBeFalse();
-    expect(console.error).toHaveBeenCalledWith('Failed to fetch transactions:', jasmine.any(Error));
+    expect(console.error).toHaveBeenCalledWith('Failed to fetch posted transaction groups:', jasmine.any(Error));
   });
 });

@@ -11,6 +11,7 @@ import {TransactionCreate} from './components/transaction-create/transaction-cre
 import {LoginOtpRequest} from './components/login-otp-request/login-otp-request';
 import {LoginOtpConfirm} from './components/login-otp-confirm/login-otp-confirm';
 import {BrandCreate} from './components/brand-create/brand-create';
+import {TransactionPendingList} from './components/transaction-pending-list/transaction-pending-list';
 
 export const routes: Routes = [
 
@@ -24,6 +25,7 @@ export const routes: Routes = [
   { path: 'menu-admin', component: MenuAdmin, canActivate: [authGuard] },
   { path: 'menu-user', component: MenuUser, canActivate: [authGuard] },
   { path: 'transaction-list', component: TransactionList, canActivate: [authGuard] },
+  { path: 'transaction-pending-list', component: TransactionPendingList, canActivate: [authGuard] },
   { path: 'transaction-create', component: TransactionCreate, canActivate: [authGuard] },
   { path: 'bank-list', component: BankList, canActivate: [authGuard] },
   { path: 'bank-create', component: BankCreate, canActivate: [authGuard] },

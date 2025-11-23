@@ -17,13 +17,14 @@ export class TransactionList implements OnInit {
   constructor(private transactionGroupService: TransactionGroupService) {}
 
   ngOnInit(): void {
-    this.transactionGroupService.getTransactionGroups().subscribe({
+    this.loading = true;
+    this.transactionGroupService.getTransactionGroups('posted').subscribe({
       next: (groups) => {
         this.transactionGroups = groups;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Failed to fetch transaction groups:', err);
+        console.error('Failed to fetch posted transaction groups:', err);
         this.loading = false;
       }
     });
