@@ -10,6 +10,7 @@ import {TransactionList} from './components/transaction-list/transaction-list';
 import {TransactionCreate} from './components/transaction-create/transaction-create';
 import {LoginOtpRequest} from './components/login-otp-request/login-otp-request';
 import {LoginOtpConfirm} from './components/login-otp-confirm/login-otp-confirm';
+import {BrandCreate} from './components/brand-create/brand-create';
 
 export const routes: Routes = [
 
@@ -26,6 +27,7 @@ export const routes: Routes = [
   { path: 'transaction-create', component: TransactionCreate, canActivate: [authGuard] },
   { path: 'bank-list', component: BankList, canActivate: [authGuard] },
   { path: 'bank-create', component: BankCreate, canActivate: [authGuard] },
+  { path: 'brand-create', component: BrandCreate, canActivate: [authGuard] },
 
   // Wildcard: redirect unmatched routes to login
   { path: '**', redirectTo: '/login', pathMatch: 'full' }

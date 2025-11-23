@@ -18,5 +18,8 @@ export enum TransactionTypeEnum {
   MEAL = 'MEAL',
   SHOP = 'SHOP',
   CLOTHES = 'CLOTHES',
-  CHARITY = 'CHARITY'
+  CHARITY = 'CHARITY',
+  CREDIT_PAYMENT = 'CREDIT_PAYMENT',
+  TRANSFER = 'TRANSFER',
+  OTHERS = 'OTHERS'
 }

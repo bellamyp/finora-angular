@@ -32,21 +32,24 @@ describe('MenuUser', () => {
   });
 
   it('should have Transactions buttons', () => {
-    // include both <button> and <a> elements
-    const transactionElements = fixture.debugElement.queryAll(By.css('.d-grid.mb-4 button, .d-grid.mb-4 a'));
-    expect(transactionElements.length).toBe(4);
+    // select all buttons and links inside the Transactions section (first .d-grid.mb-4)
+    const transactionGrid = fixture.debugElement.query(By.css('.d-grid.mb-4'));
+    const transactionElements = transactionGrid.queryAll(By.css('button, a'));
+    expect(transactionElements.length).toBe(5);
 
     const labels = transactionElements.map(el => el.nativeElement.textContent.trim());
     expect(labels).toContain('Add a Transaction');
     expect(labels).toContain('Recent Transactions');
     expect(labels).toContain('Pending Transactions');
+    expect(labels).toContain('Repeat Transactions');
     expect(labels).toContain('Search a Transaction');
   });
 
   it('should have Banks buttons', () => {
+    // second .d-grid.gap-2 inside a Banks section
     const allGrids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2'));
-    const bankGrid = allGrids[1]; // second grid
-    const bankElements = bankGrid.queryAll(By.css('button, a')); // include both <button> and <a>
+    const bankGrid = allGrids[1]; // second grid for Banks
+    const bankElements = bankGrid.queryAll(By.css('button, a'));
 
     expect(bankElements.length).toBe(3);
 
