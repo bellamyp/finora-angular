@@ -1,36 +1,36 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TransactionList } from './transaction-list';
+import { TransactionPendingList } from './transaction-pending-list';
 import { TransactionGroupService } from '../../services/transaction-group.service';
 import { of, throwError } from 'rxjs';
 import { TransactionGroupDto } from '../../dto/transaction-group.dto';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
-describe('TransactionList', () => {
-  let component: TransactionList;
-  let fixture: ComponentFixture<TransactionList>;
+describe('TransactionPendingList', () => {
+  let component: TransactionPendingList;
+  let fixture: ComponentFixture<TransactionPendingList>;
   let mockTransactionGroupService: any;
 
-  const mockTransactionGroups: TransactionGroupDto[] = [
+  const mockPendingGroups: TransactionGroupDto[] = [
     {
-      id: 'group1',
+      id: 'pending1',
       transactions: [
         {
           id: 'tx1',
-          date: '2025-10-09',
-          amount: 250,
-          typeId: 'SAVINGS',
-          notes: 'Savings transfer',
+          date: '2025-11-01',
+          amount: -50,
+          typeId: 'BILLS',
+          notes: 'Electricity',
           bankId: 'bank1',
           brandId: 'brand1'
         },
         {
           id: 'tx2',
-          date: '2025-10-10',
-          amount: 30,
-          typeId: 'PET',
-          notes: 'Pet supplies',
-          bankId: 'bank1',
-          brandId: 'brand1'
+          date: '2025-11-02',
+          amount: 120,
+          typeId: 'INCOME',
+          notes: 'Freelance',
+          bankId: 'bank2',
+          brandId: 'brand2'
         }
       ]
     }
@@ -40,14 +40,14 @@ describe('TransactionList', () => {
     mockTransactionGroupService = jasmine.createSpyObj('TransactionGroupService', ['getTransactionGroups']);
 
     await TestBed.configureTestingModule({
-      imports: [TransactionList],
+      imports: [TransactionPendingList],
       providers: [
         provideHttpClientTesting(),
         { provide: TransactionGroupService, useValue: mockTransactionGroupService }
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(TransactionList);
+    fixture = TestBed.createComponent(TransactionPendingList);
     component = fixture.componentInstance;
   });
 
@@ -55,18 +55,18 @@ describe('TransactionList', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load posted transaction groups successfully', () => {
-    mockTransactionGroupService.getTransactionGroups.and.returnValue(of(mockTransactionGroups));
+  it('should load pending transaction groups successfully', () => {
+    mockTransactionGroupService.getTransactionGroups.and.returnValue(of(mockPendingGroups));
 
     component.ngOnInit();
 
     expect(component.transactionGroups.length).toBe(1);
-    expect(component.transactionGroups[0].id).toBe('group1');
+    expect(component.transactionGroups[0].id).toBe('pending1');
     expect(component.transactionGroups[0].transactions.length).toBe(2);
     expect(component.loading).toBeFalse();
   });
 
-  it('should handle empty transaction groups', () => {
+  it('should handle empty pending transaction groups', () => {
     mockTransactionGroupService.getTransactionGroups.and.returnValue(of([]));
 
     component.ngOnInit();
@@ -75,14 +75,16 @@ describe('TransactionList', () => {
     expect(component.loading).toBeFalse();
   });
 
-  it('should handle service error gracefully', () => {
+  it('should handle service errors gracefully', () => {
     spyOn(console, 'error');
-    mockTransactionGroupService.getTransactionGroups.and.returnValue(throwError(() => new Error('Service failed')));
+    mockTransactionGroupService.getTransactionGroups.and.returnValue(
+      throwError(() => new Error('Service failed'))
+    );
 
     component.ngOnInit();
 
     expect(component.transactionGroups.length).toBe(0);
     expect(component.loading).toBeFalse();
-    expect(console.error).toHaveBeenCalledWith('Failed to fetch posted transaction groups:', jasmine.any(Error));
+    expect(console.error).toHaveBeenCalledWith('Failed to fetch pending transaction groups:', jasmine.any(Error));
   });
 });

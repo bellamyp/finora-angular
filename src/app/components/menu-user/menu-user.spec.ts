@@ -4,7 +4,7 @@ import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { Component } from '@angular/core';
 
-// Dummy root route component
+// Dummy route component
 @Component({ template: '' })
 class DummyComponent {}
 
@@ -14,12 +14,8 @@ describe('MenuUser', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        MenuUser,
-      ],
-      providers: [
-        provideRouter([{ path: '', component: DummyComponent }])
-      ],
+      imports: [MenuUser],
+      providers: [provideRouter([{ path: '', component: DummyComponent }])]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MenuUser);
@@ -32,23 +28,22 @@ describe('MenuUser', () => {
   });
 
   it('should have Transactions buttons', () => {
-    // select all buttons and links inside the Transactions section (first .d-grid.mb-4)
-    const transactionGrid = fixture.debugElement.query(By.css('.d-grid.mb-4'));
+    const transactionGrid = fixture.debugElement.query(By.css('.d-grid.gap-2.mb-4'));
     const transactionElements = transactionGrid.queryAll(By.css('button, a'));
+
     expect(transactionElements.length).toBe(5);
 
     const labels = transactionElements.map(el => el.nativeElement.textContent.trim());
     expect(labels).toContain('Add a Transaction');
-    expect(labels).toContain('Recent Transactions');
+    expect(labels).toContain('Posted Transactions');
     expect(labels).toContain('Pending Transactions');
     expect(labels).toContain('Repeat Transactions');
     expect(labels).toContain('Search a Transaction');
   });
 
   it('should have Banks buttons', () => {
-    // second .d-grid.gap-2 inside a Banks section
     const allGrids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2'));
-    const bankGrid = allGrids[1]; // second grid for Banks
+    const bankGrid = allGrids[1]; // second grid for Banks section
     const bankElements = bankGrid.queryAll(By.css('button, a'));
 
     expect(bankElements.length).toBe(3);

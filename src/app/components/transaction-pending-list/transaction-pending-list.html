@@ -1,14 +1,14 @@
 <div class="container py-5">
-  <h2 class="text-center mb-4 fw-bold text-primary">Posted Transactions</h2>
+  <h2 class="text-center mb-4 fw-bold text-warning">Pending Transactions</h2>
 
   <div *ngIf="transactionGroups.length === 0" class="text-center text-muted fs-5">
-    <i class="bi bi-wallet2" style="font-size: 2rem;"></i>
-    <div>No transactions found.</div>
+    <i class="bi bi-clock-history" style="font-size: 2rem;"></i>
+    <div>No pending transactions found.</div>
   </div>
 
   <div *ngIf="transactionGroups.length > 0" class="table-responsive">
     <table class="table table-hover align-middle shadow-sm rounded-4 bg-white">
-      <thead class="table-primary text-center">
+      <thead class="table-warning text-center">
       <tr>
         <th scope="col">Group ID</th>
         <th scope="col">Date</th>
@@ -23,7 +23,7 @@
         <tr class="table-secondary fw-bold">
           <td colspan="6" class="text-start ps-4">
             Group: {{ group.id }} &nbsp;
-            <span class="badge bg-light text-primary">
+            <span class="badge bg-light text-warning">
                 {{ group.transactions.length }} transaction(s)
               </span>
           </td>
