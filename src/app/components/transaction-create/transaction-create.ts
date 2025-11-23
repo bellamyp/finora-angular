@@ -5,6 +5,7 @@ import { BrandService } from '../../services/brand.service';
 import { BrandDto } from '../../dto/brand.dto';
 import {RouterLink} from '@angular/router';
 import {TransactionTypeEnum} from '../../dto/transaction-type.enum';
+import {BankService} from '../../services/bank.service';
 
 function enumToOptions<T extends Record<string, string>>(enumObj: T): { id: string; name: string }[] {
   return Object.values(enumObj).map(v => ({
@@ -40,7 +41,10 @@ export class TransactionCreate implements OnInit {
   transactionTypes: TransactionTypeOption[] = [];
   brands: BrandDto[] = [];
 
-  constructor(private brandService: BrandService) {}
+  constructor(
+    private brandService: BrandService,
+    private bankService: BankService
+  ) {}
 
   ngOnInit(): void {
     // Testing
@@ -54,15 +58,17 @@ export class TransactionCreate implements OnInit {
     const dd = String(today.getDate()).padStart(2, '0');
     this.groupDate = `${yyyy}-${mm}-${dd}`;
 
-    // Load dropdowns
-    this.banks = [
-      { id: 'bank1', name: 'Bank of America' },
-      { id: 'bank2', name: 'Chase Bank' }
-    ];
+    // Load banks for the current user
+    this.bankService.getBanks().subscribe({
+      next: (data) => this.banks = data,
+      error: (err) => console.error('[Bank] Load Error:', err),
+    });
 
-    // Load transaction types from enum
-    this.transactionTypes = enumToOptions(TransactionTypeEnum);
+    // Load brands for current user
     this.loadBrands();
+
+    // Load transaction types (from FE enum)
+    this.transactionTypes = enumToOptions(TransactionTypeEnum);
   }
 
   // ---------------- BRAND ----------------
