@@ -1,0 +1,38 @@
+<!-- brand-create.component.html -->
+<div class="container py-4" style="max-width: 600px;">
+  <h3 class="mb-4 text-center">Add a Brand</h3>
+
+  <form [formGroup]="brandForm" (ngSubmit)="submit()">
+    <!-- Brand Name -->
+    <div class="mb-3">
+      <label for="name" class="form-label">Brand Name</label>
+      <input
+        id="name"
+        type="text"
+        class="form-control"
+        formControlName="name"
+        placeholder="Enter brand name"
+      />
+      <div *ngIf="brandForm.get('name')?.touched && brandForm.get('name')?.invalid" class="text-danger">
+        Brand name is required.
+      </div>
+    </div>
+
+    <!-- Location (optional) -->
+    <div class="mb-3">
+      <label for="location" class="form-label">Location (optional)</label>
+      <input
+        id="location"
+        type="text"
+        class="form-control"
+        formControlName="location"
+        placeholder="Enter brand location"
+      />
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-warning w-100">
+      <i class="bi bi-plus-square me-2"></i> Add Brand
+    </button>
+  </form>
+</div>
