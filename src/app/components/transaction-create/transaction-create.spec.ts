@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { BrandService } from '../../services/brand.service';
 import { BankService } from '../../services/bank.service';
 import { TransactionGroupService } from '../../services/transaction-group.service';
-import {provideRouter, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { TransactionTypeEnum } from '../../dto/transaction-type.enum';
 
 // Dummy route component
@@ -35,17 +35,22 @@ describe('TransactionCreate', () => {
     )
   };
 
-  const mockRouter = { navigate: jasmine.createSpy('navigate') };
+  const mockRouter = {
+    navigate: jasmine.createSpy('navigate'),
+    createUrlTree: jasmine.createSpy('createUrlTree').and.callFake(() => ({})),
+    serializeUrl: jasmine.createSpy('serializeUrl').and.callFake(url => url),
+    events: of()
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TransactionCreate, FormsModule],
+      imports: [FormsModule, TransactionCreate],
       providers: [
         { provide: BrandService, useValue: mockBrandService },
         { provide: BankService, useValue: mockBankService },
         { provide: TransactionGroupService, useValue: mockTransactionGroupService },
         { provide: Router, useValue: mockRouter },
-        provideRouter([{ path: '', component: DummyComponent }])
+        { provide: ActivatedRoute, useValue: {} } // <-- ADD THIS
       ]
     }).compileComponents();
 
@@ -96,7 +101,10 @@ describe('TransactionCreate', () => {
       transactions: [{ amount: 100, bankId: 'bank1', notes: 'Test' }]
     });
 
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/transaction-pending-list']);
+    expect(window.alert).toHaveBeenCalledWith(
+      'Transaction group created and added to the Pending Transactions list! ID: tg1'
+    );
   });
 
   it('should not submit if brand or type is missing', () => {
@@ -115,5 +123,18 @@ describe('TransactionCreate', () => {
     component.submitGroup();
     expect(mockTransactionGroupService.createTransactionGroup).not.toHaveBeenCalled();
     expect(window.alert).toHaveBeenCalledWith('Please select a transaction type.');
+  });
+
+  it('should not submit if no transactions added', () => {
+    spyOn(window, 'alert');
+
+    component.transactions = [];
+    component.selectedBrandId = 'b1';
+    component.typeId = TransactionTypeEnum.GROCERY;
+
+    component.submitGroup();
+
+    expect(mockTransactionGroupService.createTransactionGroup).not.toHaveBeenCalled();
+    expect(window.alert).toHaveBeenCalledWith('You must add at least one transaction.');
   });
 });

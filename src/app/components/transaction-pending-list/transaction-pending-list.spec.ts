@@ -6,6 +6,7 @@ import { BrandService } from '../../services/brand.service';
 import { of, throwError } from 'rxjs';
 import { TransactionGroupDto } from '../../dto/transaction-group.dto';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { CommonModule } from '@angular/common';
 
 describe('TransactionPendingList', () => {
   let component: TransactionPendingList;
@@ -25,7 +26,8 @@ describe('TransactionPendingList', () => {
           typeId: 'BILLS',
           notes: 'Electricity',
           bankId: 'bank1',
-          brandId: 'brand1'
+          brandId: 'brand1',
+          posted: false
         },
         {
           id: 'tx2',
@@ -34,7 +36,8 @@ describe('TransactionPendingList', () => {
           typeId: 'INCOME',
           notes: 'Freelance',
           bankId: 'bank2',
-          brandId: 'brand2'
+          brandId: 'brand2',
+          posted: false
         }
       ]
     }
@@ -56,7 +59,7 @@ describe('TransactionPendingList', () => {
     mockBrandService = jasmine.createSpyObj('BrandService', ['getBrandsByUser']);
 
     await TestBed.configureTestingModule({
-      imports: [TransactionPendingList],
+      imports: [CommonModule, TransactionPendingList],
       providers: [
         provideHttpClientTesting(),
         { provide: TransactionGroupService, useValue: mockTransactionGroupService },
@@ -88,9 +91,13 @@ describe('TransactionPendingList', () => {
     expect(tx1.bankName).toBe('Bank A');
     expect(tx2.bankName).toBe('Bank B');
 
-    // Check brand names (with location)
+    // Check brand names with location
     expect(tx1.brandName).toBe('Brand X (NY)');
     expect(tx2.brandName).toBe('Brand Y (CA)');
+
+    // Check posted flag
+    expect(tx1.posted).toBeFalse();
+    expect(tx2.posted).toBeFalse();
 
     expect(component.loading).toBeFalse();
   });

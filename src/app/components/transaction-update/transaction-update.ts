@@ -145,8 +145,12 @@ export class TransactionUpdate implements OnInit {
 
   cancel() {
     if (window.confirm('Discard all changes?')) {
-      window.location.reload();
+      this.reloadPage();
     }
+  }
+
+  reloadPage() {
+    window.location.reload();
   }
 
   goBack() {
