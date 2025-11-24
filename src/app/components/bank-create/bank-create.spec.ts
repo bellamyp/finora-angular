@@ -5,20 +5,24 @@ import { BankService } from '../../services/bank.service';
 import { of, throwError } from 'rxjs';
 import { BankDto } from '../../dto/bank.dto';
 import { BankCreateDto } from '../../dto/bank-create.dto';
+import { Router } from '@angular/router';
 
 describe('BankCreate', () => {
 
   let component: BankCreate;
   let fixture: ComponentFixture<BankCreate>;
   let mockBankService: jasmine.SpyObj<BankService>;
+  let mockRouter: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
     mockBankService = jasmine.createSpyObj('BankService', ['createBank']);
+    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
       imports: [BankCreate, ReactiveFormsModule],
       providers: [
-        { provide: BankService, useValue: mockBankService }
+        { provide: BankService, useValue: mockBankService },
+        { provide: Router, useValue: mockRouter } // <-- mock Router here
       ]
     }).compileComponents();
 
@@ -47,10 +51,10 @@ describe('BankCreate', () => {
     };
 
     const mockResponse: BankDto = {
-      id: '550e8400-e29b-41d4-a716-446655440005', // UUID
+      id: '550e8400-e29b-41d4-a716-446655440005',
       name: formValue.name,
       type: formValue.type,
-      email: 'user@example.com' // backend can still return email
+      email: 'user@example.com'
     };
 
     mockBankService.createBank.and.returnValue(of(mockResponse));
@@ -61,10 +65,14 @@ describe('BankCreate', () => {
     component.bankForm.get('closingDate')?.setValue(formValue.closingDate);
     component.bankForm.get('type')?.setValue(formValue.type);
 
+    spyOn(window, 'alert');
+
     component.submit();
     tick();
 
     expect(mockBankService.createBank).toHaveBeenCalledWith(formValue);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/bank-list']); // <-- verify navigation
+    expect(window.alert).toHaveBeenCalledWith('Bank created successfully!');
   }));
 
   it('should alert error on submit failure', fakeAsync(() => {
@@ -88,5 +96,6 @@ describe('BankCreate', () => {
     tick();
 
     expect(window.alert).toHaveBeenCalledWith('Error creating bank: Backend error');
+    expect(mockRouter.navigate).not.toHaveBeenCalled(); // navigation should not happen
   }));
 });
