@@ -15,7 +15,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let tx of transactions; let i = index">
+      <tr *ngFor="let tx of transactions; let i = index" [ngClass]="{'posted': tx.posted}">
         <td><input type="date" class="form-control" [(ngModel)]="tx.date" name="date{{i}}"></td>
 
         <td>
@@ -60,12 +60,12 @@
   </div>
 
   <!-- BOTTOM ACTIONS -->
-  <div class="d-flex justify-content-between mt-3">
+  <div class="bottom-actions d-flex justify-content-between mt-4 p-3 shadow-sm rounded-4 bg-white">
     <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
 
-    <div>
-      <button type="button" class="btn btn-success me-2" (click)="submitAll()">Save All</button>
-      <button type="button" class="btn btn-secondary me-2" (click)="cancel()">Cancel</button>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-success" (click)="submitAll()">Save All</button>
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
       <button type="button" class="btn btn-outline-dark" (click)="goBack()">Back</button>
     </div>
   </div>
