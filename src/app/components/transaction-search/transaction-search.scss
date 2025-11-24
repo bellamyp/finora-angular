@@ -1,40 +1,31 @@
-/* transaction-search.scss */
-
-/* Make table fixed width for better layout */
+/* Fixed table layout */
 .table-fixed {
   table-layout: fixed;
   width: 100%;
 }
 
-/* Wrap text in columns and add ellipsis for overflow */
+/* Base styling for all cells */
 .table-fixed td,
 .table-fixed th {
-  overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap; /* prevent wrapping */
+  white-space: nowrap; /* prevent wrapping except notes */
+  overflow: hidden;
 }
 
-/* Allow notes to wrap */
+/* Notes column wraps text */
 .table-fixed td.notes-col {
-  white-space: normal;  /* wrap text */
+  white-space: normal;   /* allow wrapping */
   word-break: break-word;
-  max-width: 250px; /* adjust as needed */
+  max-width: 250px;
 }
 
-/* Optionally, add hover for full notes */
-.table-fixed td.notes-col:hover {
-  white-space: normal;
-  overflow: visible;
-  background-color: #f8f9fa;
-  z-index: 1;
-  position: relative;
-}
-
+/* Clickable row */
 .clickable-row {
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.clickable-row:hover {
-  background-color: #f1f1f1;
+/* Hover for entire row */
+.clickable-row:hover td {
+  background-color: #f1f1f1;  /* highlight entire row */
 }

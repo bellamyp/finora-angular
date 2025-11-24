@@ -104,7 +104,7 @@
         <td>{{ t.typeName }}</td>
         <td>{{ t.brandName }}</td>
         <td [ngClass]="{'text-danger': t.amount < 0}">${{ t.amount }}</td>
-        <td class="notes-col">{{ t.notes }}</td>
+        <td class="notes-col" [title]="t.notes">{{ t.notes }}</td>
         <td>{{ t.bankName }}</td>
       </tr>
       </tbody>
