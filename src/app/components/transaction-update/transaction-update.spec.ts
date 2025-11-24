@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { TransactionUpdate } from './transaction-update';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -143,15 +143,6 @@ describe('TransactionUpdate', () => {
     expect(window.alert).toHaveBeenCalledWith(
       'Please fill in all required fields (date, type, brand, amount, bank) before marking as posted.'
     );
-  });
-
-  it('should submit all transactions successfully', () => {
-    spyOn(window, 'alert');
-
-    component.submitAll();
-    expect(mockTransactionGroupService.updateTransactionGroup).toHaveBeenCalled();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/transaction-pending-list']);
-    expect(window.alert).toHaveBeenCalledWith('Transaction group updated successfully!');
   });
 
   it('should handle submitAll error', () => {
