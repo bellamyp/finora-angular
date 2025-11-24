@@ -10,24 +10,24 @@
       <!-- Date Range -->
       <div class="col-md-3">
         <label class="form-label">Start Date</label>
-        <input type="date" formControlName="startDate" class="form-control" />
+        <input type="date" formControlName="startDate" class="form-control"/>
       </div>
 
       <div class="col-md-3">
         <label class="form-label">End Date</label>
-        <input type="date" formControlName="endDate" class="form-control" />
+        <input type="date" formControlName="endDate" class="form-control"/>
       </div>
 
       <!-- Amount Range -->
       <div class="col-md-3">
         <label class="form-label">Min Amount</label>
-        <input type="number" step="0.01" formControlName="minAmount" class="form-control" />
+        <input type="number" step="0.01" formControlName="minAmount" class="form-control"/>
         <small class="text-muted">* Can be negative (e.g., -50.00)</small>
       </div>
 
       <div class="col-md-3">
         <label class="form-label">Max Amount</label>
-        <input type="number" step="0.01" formControlName="maxAmount" class="form-control" />
+        <input type="number" step="0.01" formControlName="maxAmount" class="form-control"/>
       </div>
 
       <!-- Bank Dropdown -->
@@ -60,7 +60,7 @@
       <!-- Keyword -->
       <div class="col-12">
         <label class="form-label">Notes contains</label>
-        <input type="text" formControlName="keyword" class="form-control" placeholder="Search notes..." />
+        <input type="text" formControlName="keyword" class="form-control" placeholder="Search notes..."/>
       </div>
 
     </div>
@@ -85,22 +85,25 @@
       <tr>
         <th>ID</th>
         <th>Date</th>
+        <th>Type</th>
+        <th>Brand</th>
         <th>Amount</th>
         <th>Notes</th>
         <th>Bank</th>
-        <th>Brand</th>
       </tr>
       </thead>
       <tbody>
       <tr *ngFor="let t of results">
         <td>{{ t.id }}</td>
         <td>{{ t.date }}</td>
+        <td>{{ t.typeName }}</td>
+        <td>{{ t.brandName }}</td>
         <td [ngClass]="{'text-danger': t.amount < 0}">${{ t.amount }}</td>
         <td>{{ t.notes }}</td>
         <td>{{ t.bankName }}</td>
-        <td>{{ t.brandName }}</td>
       </tr>
       </tbody>
     </table>
   </div>
+
 </div>

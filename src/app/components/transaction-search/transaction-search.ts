@@ -109,7 +109,19 @@ export class TransactionSearch implements OnInit {
     // Now you can send payload to the service
     this.transactionService.searchTransactions(payload).subscribe({
       next: (data) => {
-        this.results = data;
+        // Map IDs to names
+        this.results = data.map(tx => {
+          const bank = this.banks.find(b => b.id === tx.bankId);
+          const brand = this.brands.find(b => b.id === tx.brandId);
+          const type = this.transactionTypes.find(t => t.id === tx.typeId);
+
+          return {
+            ...tx,
+            bankName: bank ? bank.name : tx.bankId,
+            brandName: brand ? `${brand.name} (${brand.location})` : tx.brandId,
+            typeName: type ? type.name : tx.typeId
+          };
+        });
       },
       error: (err) => {
         console.error('Search failed', err);
