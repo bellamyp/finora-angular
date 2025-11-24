@@ -8,24 +8,9 @@ import {BankService} from '../../services/bank.service';
 import {BrandDto} from '../../dto/brand.dto';
 import {TransactionTypeEnum} from '../../dto/transaction-type.enum';
 import {BankDto} from '../../dto/bank.dto';
-
-function enumToOptions<T extends Record<string, string>>(enumObj: T): { id: string; name: string }[] {
-  return Object.values(enumObj).map(v => ({
-    id: v as string,
-    name: (v as string).replace(/_/g, ' ')
-  }));
-}
-
-interface TransactionTypeOption { id: string; name: string; }
-interface TransactionRow {
-  date: string;
-  amount: number | null;
-  bankId?: string;
-  brandId?: string;
-  typeId?: string;
-  notes: string;
-  posted?: boolean; // mock posted status
-}
+import {TransactionResponseDto} from '../../dto/transaction-group.dto';
+import {TransactionTypeOption} from '../../dto/transaction-type.dto';
+import {enumToOptions} from '../../utils/enum-utils';
 
 @Component({
   selector: 'app-transaction-update',
@@ -38,7 +23,7 @@ export class TransactionUpdate implements OnInit {
 
   loading: boolean = true;
   groupId?: string;
-  transactions: TransactionRow[] = [];
+  transactions: TransactionResponseDto[] = [];
 
   // ---------- LOOKUP DROPDOWNS ----------
   banks: BankDto[] = [];
@@ -100,16 +85,25 @@ export class TransactionUpdate implements OnInit {
   // Row-level actions
   // -------------------------------
   addTransaction() {
-    this.transactions.push({ date: '', amount: null, bankId: undefined, brandId: undefined, typeId: undefined, notes: '', posted: false });
+    this.transactions.push({
+      id: '',
+      date: '',
+      amount: 0,
+      notes: '',
+      bankId: '',
+      brandId: '',
+      typeId: '',
+      posted: false
+    });
   }
 
-  deleteTransaction(tx: TransactionRow, index: number) {
+  deleteTransaction(tx: TransactionResponseDto, index: number) {
     if (window.confirm('Are you sure you want to delete this transaction?')) {
       this.transactions.splice(index, 1);
     }
   }
 
-  markAsPosted(tx: TransactionRow) {
+  markAsPosted(tx: TransactionResponseDto) {
     tx.posted = true; // mock marking as posted
     window.alert(`Transaction on ${tx.date} marked as posted!`);
   }
