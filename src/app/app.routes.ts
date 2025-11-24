@@ -13,6 +13,8 @@ import {LoginOtpConfirm} from './components/login-otp-confirm/login-otp-confirm'
 import {BrandCreate} from './components/brand-create/brand-create';
 import {TransactionPendingList} from './components/transaction-pending-list/transaction-pending-list';
 import {TransactionUpdate} from './components/transaction-update/transaction-update';
+import {TransactionSearch} from './components/transaction-search/transaction-search';
+import {TransactionView} from './components/transaction-view/transaction-view';
 
 export const routes: Routes = [
 
@@ -26,9 +28,11 @@ export const routes: Routes = [
   { path: 'menu-admin', component: MenuAdmin, canActivate: [authGuard] },
   { path: 'menu-user', component: MenuUser, canActivate: [authGuard] },
   { path: 'transaction-list', component: TransactionList, canActivate: [authGuard] },
+  { path: 'transaction-search', component: TransactionSearch, canActivate: [authGuard] },
   { path: 'transaction-pending-list', component: TransactionPendingList, canActivate: [authGuard] },
   { path: 'transaction-create', component: TransactionCreate, canActivate: [authGuard] },
   { path: 'transaction-update/:groupId', component: TransactionUpdate, canActivate: [authGuard] },
+  { path: 'transaction-view/:groupId', component: TransactionView, canActivate: [authGuard] },
   { path: 'bank-list', component: BankList, canActivate: [authGuard] },
   { path: 'bank-create', component: BankCreate, canActivate: [authGuard] },
   { path: 'brand-create', component: BrandCreate, canActivate: [authGuard] },

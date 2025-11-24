@@ -7,6 +7,7 @@ import {BrandService} from '../../services/brand.service';
 import {forkJoin} from 'rxjs';
 import {BankDto} from '../../dto/bank.dto';
 import {BrandDto} from '../../dto/brand.dto';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-transaction-list',
@@ -24,7 +25,8 @@ export class TransactionList implements OnInit {
   constructor(
     private transactionGroupService: TransactionGroupService,
     private bankService: BankService,
-    private brandService: BrandService
+    private brandService: BrandService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -70,5 +72,9 @@ export class TransactionList implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  openTransactionGroup(groupId: string) {
+    this.router.navigate(['/transaction-view', groupId]);
   }
 }

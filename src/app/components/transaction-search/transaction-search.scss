@@ -1,0 +1,31 @@
+/* Fixed table layout */
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Base styling for all cells */
+.table-fixed td,
+.table-fixed th {
+  text-overflow: ellipsis;
+  white-space: nowrap; /* prevent wrapping except notes */
+  overflow: hidden;
+}
+
+/* Notes column wraps text */
+.table-fixed td.notes-col {
+  white-space: normal;   /* allow wrapping */
+  word-break: break-word;
+  max-width: 250px;
+}
+
+/* Clickable row */
+.clickable-row {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* Hover for entire row */
+.clickable-row:hover td {
+  background-color: #f1f1f1;  /* highlight entire row */
+}

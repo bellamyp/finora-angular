@@ -28,12 +28,12 @@
       <tbody class="text-center">
       <ng-container *ngFor="let group of transactionGroups">
         <!-- Group header row -->
-        <tr class="table-secondary fw-bold">
+        <tr class="table-secondary fw-bold clickable-row" (click)="openTransactionGroup(group.id)">
           <td colspan="6" class="text-start ps-4">
-            Group: {{ group.id }} &nbsp;
+            Group: {{ group.id }} &nbsp; (Select to see details)
             <span class="badge bg-light text-primary">
-                  {{ group.transactions.length }} transaction(s)
-              </span>
+              {{ group.transactions.length }} transaction(s)
+            </span>
           </td>
         </tr>
 

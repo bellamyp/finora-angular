@@ -1,0 +1,59 @@
+<div class="container py-5">
+
+  <h2 class="text-center mb-4 fw-bold text-primary">
+    Transaction Group: {{ groupId }}
+  </h2>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center text-muted fs-5">
+    <i class="bi bi-hourglass-split" style="font-size: 2rem;"></i>
+    <div>Loading transaction group...</div>
+  </div>
+
+  <!-- No transactions -->
+  <div *ngIf="!loading && transactions.length === 0" class="text-center text-muted fs-5">
+    <i class="bi bi-clock-history" style="font-size: 2rem;"></i>
+    <div>No transactions found in this group.</div>
+  </div>
+
+  <!-- Transactions Table -->
+  <div *ngIf="transactions.length > 0" class="table-responsive">
+    <table class="table table-hover table-bordered align-middle shadow-sm rounded-4 bg-white">
+      <thead class="table-primary text-center">
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Brand</th>
+        <th>Amount</th>
+        <th>Notes</th>
+        <th>Bank</th>
+        <th>Status</th>
+      </tr>
+      </thead>
+      <tbody class="text-center">
+      <tr *ngFor="let tx of transactions" [ngClass]="{'posted-row': tx.posted, 'pending-row': !tx.posted}">
+        <td>{{ tx.date }}</td>
+        <td>{{ tx.typeId }}</td>
+        <td>{{ getBrandName(tx.brandId) }}</td>
+        <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}">
+          ${{ tx.amount }}
+        </td>
+        <td>{{ tx.notes }}</td>
+        <td>{{ getBankName(tx.bankId) }}</td>
+        <td>
+            <span class="badge" [ngClass]="tx.posted ? 'bg-success' : 'bg-warning text-dark'">
+              {{ tx.posted ? 'Posted' : 'Pending' }}
+            </span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="btn-toolbar mb-4 flex-wrap">
+    <button class="nav-btn" routerLink="/transaction-list">Posted Transactions</button>
+    <button class="nav-btn pending-btn" routerLink="/transaction-pending-list">Pending Transactions</button>
+    <button class="nav-btn search-btn" routerLink="/transaction-search">Search Transactions</button>
+    <button class="nav-btn menu-btn" routerLink="/menu-user">Main Menu</button>
+  </div>
+</div>

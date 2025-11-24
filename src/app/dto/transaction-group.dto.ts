@@ -9,6 +9,7 @@ export interface TransactionResponseDto {
   typeId: string;
 
   // OPTIONAL fields
+  groupId?: string;
   bankName?: string;
   brandName?: string;
   posted: boolean;
