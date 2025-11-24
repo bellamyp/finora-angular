@@ -2,6 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TransactionGroupDto} from '../../dto/transaction-group.dto';
 import {TransactionGroupService} from '../../services/transaction-group.service';
+import {BankService} from '../../services/bank.service';
+import {BrandService} from '../../services/brand.service';
+import {forkJoin} from 'rxjs';
+import {BankDto} from '../../dto/bank.dto';
+import {BrandDto} from '../../dto/brand.dto';
 
 @Component({
   selector: 'app-transaction-list',
@@ -11,16 +16,53 @@ import {TransactionGroupService} from '../../services/transaction-group.service'
 })
 export class TransactionList implements OnInit {
 
-  transactionGroups: TransactionGroupDto[] = [];
   loading = true;
+  transactionGroups: TransactionGroupDto[] = [];
+  bankMap: Record<string, string> = {};
+  brandMap: Record<string, string> = {};
 
-  constructor(private transactionGroupService: TransactionGroupService) {}
+  constructor(
+    private transactionGroupService: TransactionGroupService,
+    private bankService: BankService,
+    private brandService: BrandService
+  ) {}
 
   ngOnInit(): void {
+    this.fetchPostedTransactionGroups();
+  }
+
+  fetchPostedTransactionGroups(): void {
     this.loading = true;
-    this.transactionGroupService.getTransactionGroups('posted').subscribe({
-      next: (groups) => {
-        this.transactionGroups = groups;
+
+    forkJoin({
+      banks: this.bankService.getBanks(),
+      brands: this.brandService.getBrandsByUser(),
+      groups: this.transactionGroupService.getTransactionGroups('posted')
+    }).subscribe({
+      next: ({ banks, brands, groups }) => {
+
+        // Build map: { bankId → bankName }
+        this.bankMap = banks.reduce((map: Record<string, string>, bank: BankDto) => {
+          map[bank.id] = bank.name;
+          return map;
+        }, {});
+
+        // Build map: { brandId → "name (location)" }
+        this.brandMap = brands.reduce((map: Record<string, string>, brand: BrandDto) => {
+          map[brand.id] = `${brand.name} (${brand.location})`;
+          return map;
+        }, {});
+
+        // Map bankName and brandName into each transaction
+        this.transactionGroups = groups.map(group => ({
+          ...group,
+          transactions: group.transactions.map(tx => ({
+            ...tx,
+            bankName: this.bankMap[tx.bankId] ?? tx.bankId,
+            brandName: this.brandMap[tx.brandId] ?? tx.brandId
+          }))
+        }));
+
         this.loading = false;
       },
       error: (err) => {

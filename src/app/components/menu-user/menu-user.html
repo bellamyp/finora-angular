@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-center align-items-start py-5">
   <div class="card p-4 shadow-lg rounded-4" style="max-width: 400px; width: 100%;">
 
-    <h2 class="text-center mb-4 fw-bold text-primary">Menu</h2>
+    <h2 class="text-center mb-4 fw-bold text-primary">User Menu</h2>
 
     <!-- Transactions Section -->
     <h5 class="mb-3">Transactions</h5>
@@ -9,18 +9,18 @@
       <a class="btn btn-warning btn-lg" [routerLink]="['/transaction-create']">
         <i class="bi bi-plus-circle me-2"></i> Add a Transaction
       </a>
-      <a class="btn btn-secondary btn-lg" [routerLink]="['/transaction-list']">
-        <i class="bi bi-clock-history me-2"></i> Posted Transactions
-      </a>
       <a class="btn btn-secondary btn-lg" [routerLink]="['/transaction-pending-list']">
         <i class="bi bi-hourglass-split me-2"></i> Pending Transactions
-      </a>
-      <a class="btn btn-secondary btn-lg" [routerLink]="['/transaction-repeat']">
-        <i class="bi bi-repeat me-2"></i> Repeat Transactions
       </a>
       <button class="btn btn-secondary btn-lg">
         <i class="bi bi-search me-2"></i> Search a Transaction
       </button>
+      <a class="btn btn-secondary btn-lg" [routerLink]="['/transaction-list']">
+        <i class="bi bi-clock-history me-2"></i> Posted Transactions
+      </a>
+      <a class="btn btn-secondary btn-lg" [routerLink]="['/transaction-repeat']">
+        <i class="bi bi-repeat me-2"></i> Repeat Transactions
+      </a>
     </div>
 
     <!-- Banks Section -->
@@ -36,6 +36,5 @@
         <i class="bi bi-pencil-square me-2"></i> Edit a Bank
       </button>
     </div>
-
   </div>
 </div>
