@@ -33,6 +33,14 @@ export class TransactionPendingList implements OnInit {
     this.fetchPendingTransactionGroups();
   }
 
+  editTransaction() {
+    window.alert("This function is not ready yet")
+  }
+
+  markAsPosted() {
+    window.alert("This function is not ready yet")
+  }
+
   /**
    * Fetch pending transaction groups only
    */

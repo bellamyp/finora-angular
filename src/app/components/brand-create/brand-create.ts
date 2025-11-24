@@ -41,7 +41,7 @@ export class BrandCreate {
     this.brandService.createBrand(payload).subscribe({
       next: () => {
         alert('Brand created successfully!');
-        this.router.navigate(['/transactions-create']);
+        this.router.navigate(['/transaction-create']);
       },
       error: () => alert('Failed to create brand.')
     });

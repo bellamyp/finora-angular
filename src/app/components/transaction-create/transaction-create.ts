@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BrandService } from '../../services/brand.service';
 import { BrandDto } from '../../dto/brand.dto';
-import {Router} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {TransactionTypeEnum} from '../../dto/transaction-type.enum';
 import {BankService} from '../../services/bank.service';
 import {TransactionGroupService} from '../../services/transaction-group.service';
@@ -22,7 +22,7 @@ interface TransactionTypeOption { id: string; name: string; }
 
 @Component({
   selector: 'app-transaction-create',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './transaction-create.html',
   styleUrls: ['./transaction-create.scss'],
 })
@@ -119,11 +119,12 @@ export class TransactionCreate implements OnInit {
     this.transactionGroupService.createTransactionGroup(payload).subscribe({
       next: (res) => {
         if (res.success) {
-          alert(`Transaction group created! ID: ${res.groupId}`);
+          // Inform the user that the transaction is now pending
+          alert(`Transaction group created and added to the Pending Transactions list! ID: ${res.groupId}`);
           console.log('Response:', res);
 
-          // Redirect to home page
-          this.router.navigate(['/']);
+          // Redirect to home page or pending transactions page
+          this.router.navigate(['/transaction-pending-list']);
         } else {
           alert(`Failed to create transaction group: ${res.message}`);
         }
