@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {BankCreateDto} from '../../dto/bank-create.dto';
 import {BankService} from '../../services/bank.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-bank-create',
@@ -17,6 +18,7 @@ export class BankCreate {
 
   constructor(
     private fb: FormBuilder,
+    private router: Router,
     private bankService: BankService
   ) {
     // Only the backend-required fields
@@ -46,7 +48,8 @@ export class BankCreate {
     this.bankService.createBank(payload).subscribe({
       next: () => {
         alert('Bank created successfully!');
-        this.bankForm.reset();
+        this.router.navigate(['/bank-list']);
+
       },
       error: (err) => {
         alert('Error creating bank: ' + err.message);
