@@ -1,55 +1,54 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 
-// Dummy DTOs for mock
 interface BankOption { id: string; name: string; }
 interface TransactionTypeOption { id: string; name: string; }
-interface TransactionRow { amount: number | null; bankId?: string; notes: string; }
+interface BrandOption { id: string; name: string; location: string; }
+interface TransactionRow {
+  date: string;
+  amount: number | null;
+  bankId?: string;
+  brandId?: string;
+  typeId?: string;
+  notes: string;
+}
 
 @Component({
   selector: 'app-transaction-update',
-  imports: [CommonModule, FormsModule, RouterModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],  // ✅ Add FormsModule for ngModel
   templateUrl: './transaction-update.html',
-  styleUrls: ['./transaction-update.scss'],
+  styleUrls: ['./transaction-update.scss']
 })
 export class TransactionUpdate implements OnInit {
 
-  // Mock group info
-  groupId = 'GRP-001';
-  groupDate = '2025-11-23';
-  selectedBrandId = 'BR-123';
-  typeId = 'INCOME';
+  groupId = 'GRP-001'; // just for display
 
-  // Mock dropdowns
   banks: BankOption[] = [
     { id: 'B1', name: 'Bank A' },
-    { id: 'B2', name: 'Bank B' },
+    { id: 'B2', name: 'Bank B' }
+  ];
+  brands: BrandOption[] = [
+    { id: 'BR-1', name: 'Brand One', location: 'NY' },
+    { id: 'BR-2', name: 'Brand Two', location: 'CA' }
   ];
   transactionTypes: TransactionTypeOption[] = [
     { id: 'INCOME', name: 'Income' },
-    { id: 'EXPENSE', name: 'Expense' },
-  ];
-  brands = [
-    { id: 'BR-123', name: 'Brand One', location: 'NY' },
-    { id: 'BR-456', name: 'Brand Two', location: 'CA' },
+    { id: 'EXPENSE', name: 'Expense' }
   ];
 
-  // Mock transactions
   transactions: TransactionRow[] = [
-    { amount: 100, bankId: 'B1', notes: 'First transaction' },
-    { amount: -50, bankId: 'B2', notes: 'Second transaction' },
+    { date: '2025-11-20', amount: 100, bankId: 'B1', brandId: 'BR-1', typeId: 'INCOME', notes: 'Payment received' },
+    { date: '2025-11-21', amount: -50, bankId: 'B2', brandId: 'BR-2', typeId: 'EXPENSE', notes: 'Office supplies' }
   ];
 
   constructor() {}
 
-  ngOnInit(): void {
-    // Here you could load actual transaction data from BE later
-  }
+  ngOnInit(): void {}
 
   addTransaction() {
-    this.transactions.push({ amount: null, bankId: undefined, notes: '' });
+    this.transactions.push({ date: '', amount: null, bankId: undefined, brandId: undefined, typeId: undefined, notes: '' });
   }
 
   removeTransaction(index: number) {
@@ -57,6 +56,6 @@ export class TransactionUpdate implements OnInit {
   }
 
   saveChanges() {
-    window.alert('Save function not implemented yet (mock)');
+    alert('Mock save, not wired yet');
   }
 }
