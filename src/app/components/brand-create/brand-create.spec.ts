@@ -34,6 +34,7 @@ describe('BrandCreate', () => {
     mockRouter.navigate.calls.reset();
   });
 
+  // Trigger commit git
   it('should create', () => {
     expect(component).toBeTruthy();
   });
