@@ -10,6 +10,7 @@ import { BrandDto } from '../../dto/brand.dto';
 import { TransactionTypeOption } from '../../dto/transaction-type.dto';
 import {TransactionSearchDto} from '../../dto/transaction-search.dto';
 import {TransactionService} from '../../services/transaction.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-transaction-search',
@@ -31,6 +32,7 @@ export class TransactionSearch implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private router: Router,
     private bankService: BankService,
     private brandService: BrandService,
     private transactionService: TransactionService
@@ -116,7 +118,8 @@ export class TransactionSearch implements OnInit {
             ...tx,
             bankName: bank ? bank.name : tx.bankId,
             brandName: brand ? `${brand.name} (${brand.location})` : tx.brandId,
-            typeName: type ? type.name : tx.typeId
+            typeName: type ? type.name : tx.typeId,
+            groupId: tx.groupId
           };
         });
         this.loading = false; // <-- done loading
@@ -127,6 +130,10 @@ export class TransactionSearch implements OnInit {
         this.loading = false; // <-- done loading
       }
     });
+  }
+
+  openTransactionGroup(groupId: string) {
+    this.router.navigate(['/transaction-view', groupId]);
   }
 }
 

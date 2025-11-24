@@ -98,7 +98,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let t of results">
+      <tr *ngFor="let t of results" (click)="openTransactionGroup(t.groupId)" class="clickable-row">
         <td>{{ t.id }}</td>
         <td>{{ t.date }}</td>
         <td>{{ t.typeName }}</td>
