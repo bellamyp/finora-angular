@@ -87,6 +87,11 @@ export class TransactionCreate implements OnInit {
 
   // ---------------- SUBMIT ----------------
   submitGroup() {
+    // Most important: must have at least 1 row
+    if (this.transactions.length === 0) {
+      alert('You must add at least one transaction.');
+      return;
+    }
     if (!this.selectedBrandId) {
       alert('Please select a brand from the dropdown.');
       return;
