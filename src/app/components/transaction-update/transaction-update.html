@@ -11,7 +11,7 @@
         <th>Amount</th>
         <th>Notes</th>
         <th>Bank</th>
-        <th style="width: 80px;"></th> <!-- for remove button -->
+        <th style="width: 180px;">Actions</th>
       </tr>
       </thead>
       <tbody>
@@ -43,10 +43,19 @@
           </select>
         </td>
 
+        <!-- ROW ACTION BUTTONS -->
         <td class="text-center">
-          <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeTransaction(i)">
-            <i class="bi bi-trash"></i>
-          </button>
+          <div class="d-flex justify-content-center gap-1">
+            <button type="button" class="btn btn-sm btn-success" (click)="saveTransaction()">
+              Save
+            </button>
+            <button type="button" class="btn btn-sm btn-danger" (click)="deleteTransaction()">
+              Delete
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" (click)="markAsPosted()">
+              Posted
+            </button>
+          </div>
         </td>
       </tr>
       </tbody>
@@ -55,6 +64,5 @@
 
   <div class="d-flex justify-content-between mt-3">
     <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
-    <button type="button" class="btn btn-success" (click)="saveChanges()">Save Changes</button>
   </div>
 </div>

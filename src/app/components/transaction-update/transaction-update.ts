@@ -51,11 +51,15 @@ export class TransactionUpdate implements OnInit {
     this.transactions.push({ date: '', amount: null, bankId: undefined, brandId: undefined, typeId: undefined, notes: '' });
   }
 
-  removeTransaction(index: number) {
-    this.transactions.splice(index, 1);
+  saveTransaction() {
+    window.alert('Save transaction not implemented yet!');
   }
 
-  saveChanges() {
-    alert('Mock save, not wired yet');
+  deleteTransaction() {
+    window.alert('Delete transaction not implemented yet!');
+  }
+
+  markAsPosted() {
+    window.alert('Mark as posted not implemented yet!');
   }
 }
