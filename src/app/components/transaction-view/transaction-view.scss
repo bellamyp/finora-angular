@@ -1,0 +1,59 @@
+.table-hover tbody tr:hover {
+  background-color: #e9f5ff; // subtle hover effect
+}
+
+.posted-row {
+  background-color: #f0f9f0; // light green for posted
+}
+
+.pending-row {
+  background-color: #fff9f0; // light yellow for pending
+}
+
+.table th, .table td {
+  vertical-align: middle; // good, keeps table clean
+}
+
+.container .btn {
+  min-width: 160px; // OK, affects all buttons inside container
+}
+
+.btn-toolbar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe); // default gradient
+}
+
+.nav-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+}
+
+.pending-btn {
+  background: linear-gradient(135deg, #fdcb6e, #e17055);
+}
+
+.search-btn {
+  background: linear-gradient(135deg, #00b894, #55efc4);
+}
+
+.menu-btn {
+  background: linear-gradient(135deg, #636e72, #b2bec3);
+}
+
+.nav-btn:focus {
+  outline: 2px solid #ffeaa7;
+  outline-offset: 2px;
+}

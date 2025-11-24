@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import { TransactionGroupService } from '../../services/transaction-group.service';
 import { BrandService } from '../../services/brand.service';
 import { BankService } from '../../services/bank.service';
 import { BrandDto } from '../../dto/brand.dto';
 import { BankDto } from '../../dto/bank.dto';
-import { TransactionGroupDto, TransactionResponseDto } from '../../dto/transaction-group.dto';
+import { TransactionResponseDto } from '../../dto/transaction-group.dto';
 
 @Component({
   selector: 'app-transaction-view',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './transaction-view.html',
   styleUrls: ['./transaction-view.scss']
 })
@@ -26,7 +26,6 @@ export class TransactionView implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private transactionGroupService: TransactionGroupService,
     private bankService: BankService,
     private brandService: BrandService
@@ -73,9 +72,5 @@ export class TransactionView implements OnInit {
   getBrandName(brandId: string) {
     const brand = this.brands.find(b => b.id === brandId);
     return brand ? `${brand.name} (${brand.location})` : brandId;
-  }
-
-  goBack() {
-    this.router.navigate(['/transaction-list']);
   }
 }
