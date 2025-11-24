@@ -50,7 +50,8 @@ export class TransactionUpdate implements OnInit {
 
             this.transactions = group.transactions.map(tx => ({
               ...tx,
-              posted: false
+              posted: false,
+              deleted: false
             }));
 
             this.loading = false;   // <-- STOP LOADING
@@ -93,7 +94,8 @@ export class TransactionUpdate implements OnInit {
       bankId: '',
       brandId: '',
       typeId: '',
-      posted: false
+      posted: false,
+      deleted: false
     });
   }
 
@@ -104,7 +106,7 @@ export class TransactionUpdate implements OnInit {
   }
 
   markAsPosted(tx: TransactionResponseDto) {
-    tx.posted = true; // mock marking as posted
+    tx.posted = true;
     window.alert(`Transaction on ${tx.date} marked as posted!`);
   }
 
