@@ -53,6 +53,21 @@ export class TransactionSearch implements OnInit {
     this.loadBanks();
     this.loadBrands();
     this.transactionTypes = enumToOptions(TransactionTypeEnum);
+
+    // --- Auto-sync min -> max until user changes max ---
+    let maxEdited = false;
+
+    // Track if user types in maxAmount
+    this.searchForm.get('maxAmount')?.valueChanges.subscribe(() => {
+      maxEdited = true;
+    });
+
+    // Track minAmount changes
+    this.searchForm.get('minAmount')?.valueChanges.subscribe((minVal: string | number) => {
+      if (!maxEdited) {
+        this.searchForm.get('maxAmount')?.setValue(minVal, { emitEvent: false });
+      }
+    });
   }
 
   loadBanks() {
