@@ -12,7 +12,6 @@
     <table class="table table-hover align-middle shadow-sm rounded-4 bg-white pending-transactions-table">
       <thead class="table-warning text-center">
       <tr>
-        <th scope="col">Group ID</th>
         <th scope="col">Date</th>
         <th scope="col">Type</th>
         <th scope="col">Amount</th>
@@ -24,17 +23,16 @@
       <ng-container *ngFor="let group of transactionGroups">
         <!-- Group header row -->
         <tr class="table-secondary fw-bold">
-          <td colspan="6" class="text-start ps-4">
+          <td colspan="5" class="text-start ps-4">
             Group: {{ group.id }} &nbsp;
             <span class="badge bg-light text-warning">
-                  {{ group.transactions.length }} transaction(s)
+                {{ group.transactions.length }} transaction(s)
               </span>
           </td>
         </tr>
 
         <!-- Transaction rows -->
         <tr *ngFor="let tx of group.transactions">
-          <td></td>
           <td>{{ tx.date }}</td>
 
           <!-- Type column -->

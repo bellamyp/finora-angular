@@ -13,15 +13,14 @@
 
   .notes-column {
     white-space: normal !important;  // allow wrapping
-    word-break: break-word;
+    word-break: break-word;          // break long words
     text-align: left;
   }
 
-  // Optional: column widths
-  th:nth-child(1), td:nth-child(1) { width: 12%; }  // Group ID
-  th:nth-child(2), td:nth-child(2) { width: 10%; }  // Date
-  th:nth-child(3), td:nth-child(3) { width: 12%; }  // Type
-  th:nth-child(4), td:nth-child(4) { width: 10%; }  // Amount
-  th:nth-child(6), td:nth-child(6) { width: 12%; }  // Bank
-  th:nth-child(5), td:nth-child(5) { width: auto; }  // Notes column auto-expand
+  // Optional: column widths for 5-column table
+  th:nth-child(1), td:nth-child(1) { width: 12%; } // Date
+  th:nth-child(2), td:nth-child(2) { width: 12%; } // Type
+  th:nth-child(3), td:nth-child(3) { width: 10%; } // Amount
+  th:nth-child(5), td:nth-child(5) { width: 12%; } // Bank
+  th:nth-child(4), td:nth-child(4) { width: auto; } // Notes column auto-expand
 }
