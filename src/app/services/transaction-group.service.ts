@@ -36,5 +36,13 @@ export class TransactionGroupService {
     const params = new HttpParams().set('status', status);
     return this.http.get<TransactionGroupDto[]>(this.apiUrl, { params });
   }
+
+  /**
+   * Get a single transaction group by ID for the current user
+   */
+  getTransactionGroupById(groupId: string): Observable<TransactionGroupDto> {
+    const url = `${this.apiUrl}/${groupId}`;
+    return this.http.get<TransactionGroupDto>(url);
+  }
 }
 
