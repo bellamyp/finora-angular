@@ -26,7 +26,7 @@ describe('TransactionView', () => {
     const mockActivatedRoute = {
       snapshot: {
         paramMap: {
-          get: (key: string) => 'group123'
+          get: () => 'group123'
         }
       }
     };
