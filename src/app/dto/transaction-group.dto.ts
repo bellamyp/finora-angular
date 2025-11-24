@@ -10,6 +10,7 @@ export interface TransactionResponseDto {
 
   // OPTIONAL fields
   bankName?: string;
+  brandName?: string;
 }
 
 export interface TransactionGroupDto {
