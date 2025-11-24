@@ -1,46 +1,48 @@
-<div class="card p-4 shadow-lg rounded-4 mx-auto my-4" style="max-width: 900px;">
-  <h2 class="text-center mb-4 text-primary">Edit Transaction Group</h2>
-
-  <div class="mb-3 text-secondary">
-    <strong>Group ID:</strong> {{ groupId }}
-  </div>
+<div class="container py-5">
+  <h2 class="text-center mb-4 fw-bold text-primary">Edit Transaction Group: {{ groupId }}</h2>
 
   <div class="table-responsive">
-    <table class="table table-bordered align-middle">
+    <table class="table table-bordered align-middle shadow-sm rounded-4 bg-white edit-transactions-table">
       <thead class="table-light text-center">
       <tr>
         <th>Date</th>
-        <th>Amount</th>
-        <th>Bank</th>
-        <th>Brand</th>
         <th>Type</th>
+        <th>Brand</th>
+        <th>Amount</th>
         <th>Notes</th>
-        <th style="width: 80px;"></th>
+        <th>Bank</th>
+        <th style="width: 80px;"></th> <!-- for remove button -->
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let t of transactions; let i = index">
-        <td><input type="date" class="form-control" [(ngModel)]="t.date" name="date{{i}}"></td>
-        <td><input type="number" class="form-control" [(ngModel)]="t.amount" name="amount{{i}}" step="0.01"></td>
+      <tr *ngFor="let tx of transactions; let i = index">
+        <td><input type="date" class="form-control" [(ngModel)]="tx.date" name="date{{i}}"></td>
+
         <td>
-          <select class="form-select" [(ngModel)]="t.bankId" name="bank{{i}}">
-            <option [ngValue]="undefined">-- Select Bank --</option>
-            <option *ngFor="let b of banks" [ngValue]="b.id">{{ b.name }}</option>
+          <select class="form-select" [(ngModel)]="tx.typeId" name="type{{i}}">
+            <option [ngValue]="undefined">-- Type --</option>
+            <option *ngFor="let t of transactionTypes" [ngValue]="t.id">{{ t.name }}</option>
           </select>
         </td>
+
         <td>
-          <select class="form-select" [(ngModel)]="t.brandId" name="brand{{i}}">
-            <option [ngValue]="undefined">-- Select Brand --</option>
+          <select class="form-select" [(ngModel)]="tx.brandId" name="brand{{i}}">
+            <option [ngValue]="undefined">-- Brand --</option>
             <option *ngFor="let b of brands" [ngValue]="b.id">{{ b.name }} ({{ b.location }})</option>
           </select>
         </td>
+
+        <td><input type="number" class="form-control" [(ngModel)]="tx.amount" name="amount{{i}}" step="0.01"></td>
+
+        <td><input type="text" class="form-control" [(ngModel)]="tx.notes" name="notes{{i}}"></td>
+
         <td>
-          <select class="form-select" [(ngModel)]="t.typeId" name="type{{i}}">
-            <option [ngValue]="undefined">-- Type --</option>
-            <option *ngFor="let type of transactionTypes" [ngValue]="type.id">{{ type.name }}</option>
+          <select class="form-select" [(ngModel)]="tx.bankId" name="bank{{i}}">
+            <option [ngValue]="undefined">-- Bank --</option>
+            <option *ngFor="let b of banks" [ngValue]="b.id">{{ b.name }}</option>
           </select>
         </td>
-        <td><input type="text" class="form-control" [(ngModel)]="t.notes" name="notes{{i}}"></td>
+
         <td class="text-center">
           <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeTransaction(i)">
             <i class="bi bi-trash"></i>
@@ -51,9 +53,8 @@
     </table>
   </div>
 
-  <div class="d-flex justify-content-end mb-3">
+  <div class="d-flex justify-content-between mt-3">
     <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
+    <button type="button" class="btn btn-success" (click)="saveChanges()">Save Changes</button>
   </div>
-
-  <button type="button" class="btn btn-success w-100" (click)="saveChanges()">Save Changes</button>
 </div>
