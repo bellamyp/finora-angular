@@ -23,6 +23,7 @@ export class TransactionSearch implements OnInit {
   searchForm!: FormGroup;
   results: any[] = [];
   searched = false;
+  loading = false; // <-- new loading flag
 
   banks: BankDto[] = [];
   brands: BrandDto[] = [];
@@ -38,7 +39,6 @@ export class TransactionSearch implements OnInit {
   ngOnInit(): void {
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
     const format = (d: Date) => d.toISOString().substring(0, 10);
 
     this.searchForm = this.fb.group({
@@ -89,10 +89,10 @@ export class TransactionSearch implements OnInit {
 
   onSearch() {
     this.searched = true;
+    this.loading = true; // <-- start loading
 
     // Build payload from form
     const formValue = this.searchForm.value;
-
     const payload: TransactionSearchDto = {
       startDate: formValue.startDate || null,
       endDate: formValue.endDate || null,
@@ -104,9 +104,6 @@ export class TransactionSearch implements OnInit {
       keyword: formValue.keyword?.trim() || null
     };
 
-    console.log('Search Payload:', payload);
-
-    // Now you can send payload to the service
     this.transactionService.searchTransactions(payload).subscribe({
       next: (data) => {
         // Map IDs to names
@@ -122,11 +119,14 @@ export class TransactionSearch implements OnInit {
             typeName: type ? type.name : tx.typeId
           };
         });
+        this.loading = false; // <-- done loading
       },
       error: (err) => {
         console.error('Search failed', err);
         this.results = [];
+        this.loading = false; // <-- done loading
       }
     });
   }
 }
+
