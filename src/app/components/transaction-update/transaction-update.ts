@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {TransactionGroupService} from '../../services/transaction-group.service';
 import {BrandService} from '../../services/brand.service';
 import {BankService} from '../../services/bank.service';
@@ -17,7 +17,6 @@ function enumToOptions<T extends Record<string, string>>(enumObj: T): { id: stri
 
 interface BankOption { id: string; name: string; }
 interface TransactionTypeOption { id: string; name: string; }
-interface BrandOption { id: string; name: string; location: string; }
 interface TransactionRow {
   date: string;
   amount: number | null;
@@ -37,12 +36,9 @@ interface TransactionRow {
 })
 export class TransactionUpdate implements OnInit {
 
+  loading: boolean = true;
   groupId?: string;
-
-  transactions: TransactionRow[] = [
-    { date: '2025-11-20', amount: 100, bankId: 'B1', brandId: 'BR-1', typeId: 'INCOME', notes: 'Payment received', posted: false },
-    { date: '2025-11-21', amount: -50, bankId: 'B2', brandId: 'BR-2', typeId: 'EXPENSE', notes: 'Office supplies', posted: false }
-  ];
+  transactions: TransactionRow[] = [];
 
   // ---------- LOOKUP DROPDOWNS ----------
   banks: BankOption[] = [];
@@ -51,6 +47,7 @@ export class TransactionUpdate implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private transactionGroupService: TransactionGroupService,
     private bankService: BankService,
     private brandService: BrandService
@@ -58,41 +55,44 @@ export class TransactionUpdate implements OnInit {
 
   ngOnInit(): void {
     this.groupId = this.route.snapshot.paramMap.get('groupId') || '';
-    console.log('Transaction Update Component initialized with groupId:', this.groupId);
+    console.log('Transaction Update initialized with groupId:', this.groupId);
 
-    // Testing
     if (this.groupId) {
       this.transactionGroupService.getTransactionGroupById(this.groupId)
         .subscribe({
           next: (group) => {
             console.log('Fetched transaction group from BE:', group);
+
             this.transactions = group.transactions.map(tx => ({
               ...tx,
-              posted: false // or whatever default you want
+              posted: false
             }));
+
+            this.loading = false;   // <-- STOP LOADING
           },
           error: (err) => {
             console.error('Failed to fetch transaction group:', err);
+            this.loading = false;   // <-- ENSURE STOP LOADING ON ERROR
           }
         });
     } else {
       console.warn('No groupId provided in route!');
+      this.loading = false;
     }
 
-    // Load banks for the current user
+    // Load banks
     this.bankService.getBanks().subscribe({
       next: (data) => this.banks = data,
       error: (err) => console.error('[Bank] Load Error:', err),
     });
 
-    // Load brands for the current user
-    this.brandService.getBrandsByUser() // fetch all brands or popular ones
-      .subscribe({
-        next: (data) => this.brands = data,
-        error: (err) => console.error('[Brand] Load Error:', err)
-      });
+    // Load brands
+    this.brandService.getBrandsByUser().subscribe({
+      next: (data) => this.brands = data,
+      error: (err) => console.error('[Brand] Load Error:', err)
+    });
 
-    // Load transaction types (from FE enum)
+    // Load types
     this.transactionTypes = enumToOptions(TransactionTypeEnum);
   }
 
@@ -130,7 +130,6 @@ export class TransactionUpdate implements OnInit {
   }
 
   goBack() {
-    window.alert('Going back to previous page (mock)');
-    // Optional: router.navigate(['/previous-page']);
+    this.router.navigate(['/transaction-pending-list']);
   }
 }
