@@ -19,9 +19,15 @@ export class TransactionSearch implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    // format to YYYY-MM-DD for input[type="date"]
+    const format = (d: Date) => d.toISOString().substring(0, 10);
+
     this.searchForm = this.fb.group({
-      startDate: [''],
-      endDate: [''],
+      startDate: [format(firstDayOfMonth)],
+      endDate: [format(today)],
       minAmount: [''],
       maxAmount: [''],
       bankId: [''],
