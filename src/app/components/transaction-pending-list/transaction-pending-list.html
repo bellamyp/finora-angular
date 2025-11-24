@@ -1,8 +1,13 @@
 <div class="container py-5">
   <h2 class="text-center mb-4 fw-bold text-warning">Pending Transactions</h2>
 
-  <!-- No transactions -->
-  <div *ngIf="transactionGroups.length === 0" class="text-center text-muted fs-5">
+  <!-- Loading / No transactions -->
+  <div *ngIf="loading" class="text-center text-muted fs-5">
+    <i class="bi bi-hourglass-split" style="font-size: 2rem;"></i>
+    <div>Loading pending transactions...</div>
+  </div>
+
+  <div *ngIf="!loading && transactionGroups.length === 0" class="text-center text-muted fs-5">
     <i class="bi bi-clock-history" style="font-size: 2rem;"></i>
     <div>No pending transactions found.</div>
   </div>
@@ -20,14 +25,24 @@
         <th scope="col">Bank</th>
       </tr>
       </thead>
+
       <tbody class="text-center">
       <ng-container *ngFor="let group of transactionGroups">
-        <!-- Group header row -->
+
+        <!-- Group header row with buttons -->
         <tr class="table-secondary fw-bold">
           <td colspan="6" class="text-start ps-4">
             Group: {{ group.id }} &nbsp;
-            <span class="badge bg-light text-warning">
-                {{ group.transactions.length }} transaction(s)
+            <span class="badge bg-light text-warning">{{ group.transactions.length }} transaction(s)</span>
+
+            <!-- Buttons on the same line -->
+            <span class="float-end">
+                <button type="button" class="btn btn-sm btn-primary me-1" (click)="editTransaction(group.id)">
+                  Edit/View
+                </button>
+                <button type="button" class="btn btn-sm btn-success" (click)="markAsPosted()">
+                  Mark as Posted
+                </button>
               </span>
           </td>
         </tr>
@@ -35,26 +50,15 @@
         <!-- Transaction rows -->
         <tr *ngFor="let tx of group.transactions">
           <td>{{ tx.date }}</td>
-
-          <!-- Type column -->
-          <td>
-            <span class="badge bg-info text-dark">{{ tx.typeId }}</span>
-          </td>
-
-          <!-- Brand column -->
+          <td><span class="badge bg-info text-dark">{{ tx.typeId }}</span></td>
           <td>{{ tx.brandName }}</td>
-
-          <!-- Amount column -->
           <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}">
             ${{ tx.amount }}
           </td>
-
-          <!-- Notes column (wraps) -->
           <td class="notes-column">{{ tx.notes }}</td>
-
-          <!-- Bank column -->
           <td>{{ tx.bankName }}</td>
         </tr>
+
       </ng-container>
       </tbody>
     </table>

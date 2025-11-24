@@ -7,6 +7,7 @@ import {forkJoin} from 'rxjs';
 import {BankDto} from '../../dto/bank.dto';
 import {BrandService} from '../../services/brand.service';
 import {BrandDto} from '../../dto/brand.dto';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-transaction-pending-list',
@@ -26,11 +27,20 @@ export class TransactionPendingList implements OnInit {
   constructor(
     private transactionGroupService: TransactionGroupService,
     private bankService: BankService,
-    private brandService: BrandService
+    private brandService: BrandService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.fetchPendingTransactionGroups();
+  }
+
+  editTransaction(groupId: string) {
+    this.router.navigate(['/transaction-update', groupId]);
+  }
+
+  markAsPosted() {
+    window.alert("This function is not ready yet")
   }
 
   /**

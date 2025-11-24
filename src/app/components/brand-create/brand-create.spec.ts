@@ -34,6 +34,7 @@ describe('BrandCreate', () => {
     mockRouter.navigate.calls.reset();
   });
 
+  // Trigger commit git
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -57,7 +58,7 @@ describe('BrandCreate', () => {
     tick();
 
     expect(mockBrandService.createBrand).toHaveBeenCalledWith(formValue);
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/transactions-create']);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/transaction-create']);
   }));
 
   it('should alert error on submit failure', fakeAsync(() => {

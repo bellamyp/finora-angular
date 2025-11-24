@@ -1,0 +1,83 @@
+<div class="container py-5">
+  <h2 class="text-center mb-4 fw-bold text-primary">Edit Transaction Group: {{ groupId }}</h2>
+
+  <!-- Loading UI -->
+  <div *ngIf="loading" class="text-center text-muted fs-5">
+    <i class="bi bi-hourglass-split" style="font-size: 2rem;"></i>
+    <div>Loading transaction group...</div>
+  </div>
+
+  <!-- No transactions UI -->
+  <div *ngIf="!loading && transactions.length === 0" class="text-center text-muted fs-5">
+    <i class="bi bi-clock-history" style="font-size: 2rem;"></i>
+    <div>No transactions found in this group.</div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle shadow-sm rounded-4 bg-white edit-transactions-table">
+      <thead class="table-light text-center">
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Brand</th>
+        <th>Amount</th>
+        <th>Notes</th>
+        <th>Bank</th>
+        <th style="width: 120px;">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let tx of transactions; let i = index" [ngClass]="{'posted': tx.posted}">
+        <td><input type="date" class="form-control" [(ngModel)]="tx.date" name="date{{i}}" [disabled]="tx.posted"></td>
+
+        <td>
+          <select class="form-select" [(ngModel)]="tx.typeId" name="type{{i}}" [disabled]="tx.posted">
+            <option [ngValue]="undefined">-- Type --</option>
+            <option *ngFor="let t of transactionTypes" [ngValue]="t.id">{{ t.name }}</option>
+          </select>
+        </td>
+
+        <td>
+          <select class="form-select" [(ngModel)]="tx.brandId" name="brand{{i}}" [disabled]="tx.posted">
+            <option [ngValue]="undefined">-- Brand --</option>
+            <option *ngFor="let b of brands" [ngValue]="b.id">{{ b.name }} ({{ b.location }})</option>
+          </select>
+        </td>
+
+        <td><input type="number" class="form-control" [(ngModel)]="tx.amount" name="amount{{i}}" step="0.01" [disabled]="tx.posted"></td>
+
+        <td><input type="text" class="form-control" [(ngModel)]="tx.notes" name="notes{{i}}" [disabled]="tx.posted"></td>
+
+        <td>
+          <select class="form-select" [(ngModel)]="tx.bankId" name="bank{{i}}" [disabled]="tx.posted">
+            <option [ngValue]="undefined">-- Bank --</option>
+            <option *ngFor="let b of banks" [ngValue]="b.id">{{ b.name }}</option>
+          </select>
+        </td>
+
+        <td class="text-center">
+          <div class="d-flex justify-content-center gap-1">
+            <button type="button" class="btn btn-sm btn-primary" (click)="markAsPosted(tx)" [disabled]="tx.posted">
+              Posted
+            </button>
+            <button type="button" class="btn btn-sm btn-danger" (click)="deleteTransaction(tx, i)" [disabled]="tx.posted">
+              Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BOTTOM ACTIONS -->
+  <div class="bottom-actions d-flex justify-content-between mt-4 p-3 shadow-sm rounded-4 bg-white">
+    <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
+
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-success" (click)="submitAll()">Submit</button>
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+      <button type="button" class="btn btn-outline-dark" (click)="goBack()">Go Back</button>
+    </div>
+  </div>
+</div>

@@ -29,12 +29,28 @@ export class TransactionGroupService {
   }
 
   /**
+   * Update an existing transaction group
+   * @param payload Updated transaction group payload
+   */
+  updateTransactionGroup(payload: TransactionGroupDto) {
+    return this.http.put<{ success: boolean; message: string }>(this.apiUrl, payload);
+  }
+
+  /**
    * Get transaction groups, optionally filtered by status.
    * @param status 'posted' (default) or 'pending'
    */
   getTransactionGroups(status: 'posted' | 'pending' = 'posted'): Observable<TransactionGroupDto[]> {
     const params = new HttpParams().set('status', status);
     return this.http.get<TransactionGroupDto[]>(this.apiUrl, { params });
+  }
+
+  /**
+   * Get a single transaction group by ID for the current user
+   */
+  getTransactionGroupById(groupId: string): Observable<TransactionGroupDto> {
+    const url = `${this.apiUrl}/${groupId}`;
+    return this.http.get<TransactionGroupDto>(url);
   }
 }
 

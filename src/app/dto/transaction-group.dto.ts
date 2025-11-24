@@ -11,6 +11,7 @@ export interface TransactionResponseDto {
   // OPTIONAL fields
   bankName?: string;
   brandName?: string;
+  posted: boolean;
 }
 
 export interface TransactionGroupDto {

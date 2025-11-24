@@ -3,26 +3,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BrandService } from '../../services/brand.service';
 import { BrandDto } from '../../dto/brand.dto';
-import {Router} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {TransactionTypeEnum} from '../../dto/transaction-type.enum';
 import {BankService} from '../../services/bank.service';
 import {TransactionGroupService} from '../../services/transaction-group.service';
 import {TransactionGroupCreateDto} from '../../dto/transaction-group-create.dto';
-
-function enumToOptions<T extends Record<string, string>>(enumObj: T): { id: string; name: string }[] {
-  return Object.values(enumObj).map(v => ({
-    id: v as string,
-    name: (v as string).replace(/_/g, ' ')
-  }));
-}
-
-// Dummy DTOs for example
-interface BankOption { id: string; name: string; }
-interface TransactionTypeOption { id: string; name: string; }
+import {enumToOptions} from '../../utils/enum-utils';
+import {BankDto} from '../../dto/bank.dto';
+import {TransactionTypeOption} from '../../dto/transaction-type.dto';
 
 @Component({
   selector: 'app-transaction-create',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './transaction-create.html',
   styleUrls: ['./transaction-create.scss'],
 })
@@ -39,7 +31,7 @@ export class TransactionCreate implements OnInit {
   ];
 
   // ---------- LOOKUP DROPDOWNS ----------
-  banks: BankOption[] = [];
+  banks: BankDto[] = [];
   transactionTypes: TransactionTypeOption[] = [];
   brands: BrandDto[] = [];
 
@@ -68,7 +60,7 @@ export class TransactionCreate implements OnInit {
       error: (err) => console.error('[Bank] Load Error:', err),
     });
 
-    // Load brands for current user
+    // Load brands for the current user
     this.loadBrands();
 
     // Load transaction types (from FE enum)
@@ -95,6 +87,11 @@ export class TransactionCreate implements OnInit {
 
   // ---------------- SUBMIT ----------------
   submitGroup() {
+    // Most important: must have at least 1 row
+    if (this.transactions.length === 0) {
+      alert('You must add at least one transaction.');
+      return;
+    }
     if (!this.selectedBrandId) {
       alert('Please select a brand from the dropdown.');
       return;
@@ -119,11 +116,12 @@ export class TransactionCreate implements OnInit {
     this.transactionGroupService.createTransactionGroup(payload).subscribe({
       next: (res) => {
         if (res.success) {
-          alert(`Transaction group created! ID: ${res.groupId}`);
+          // Inform the user that the transaction is now pending
+          alert(`Transaction group created and added to the Pending Transactions list! ID: ${res.groupId}`);
           console.log('Response:', res);
 
-          // Redirect to home page
-          this.router.navigate(['/']);
+          // Redirect to the home page or pending transactions page
+          this.router.navigate(['/transaction-pending-list']);
         } else {
           alert(`Failed to create transaction group: ${res.message}`);
         }

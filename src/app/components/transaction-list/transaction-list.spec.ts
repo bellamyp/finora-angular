@@ -25,7 +25,8 @@ describe('TransactionList', () => {
           typeId: 'SAVINGS',
           notes: 'Savings transfer',
           bankId: 'bank1',
-          brandId: 'brand1'
+          brandId: 'brand1',
+          posted: false
         },
         {
           id: 'tx2',
@@ -34,7 +35,8 @@ describe('TransactionList', () => {
           typeId: 'PET',
           notes: 'Pet supplies',
           bankId: 'bank1',
-          brandId: 'brand1'
+          brandId: 'brand1',
+          posted: false
         }
       ]
     }

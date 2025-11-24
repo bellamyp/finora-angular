@@ -1,10 +1,15 @@
 <div class="container py-5">
   <h2 class="text-center mb-4 fw-bold text-primary">Posted Transactions</h2>
 
-  <!-- No transactions -->
-  <div *ngIf="transactionGroups.length === 0" class="text-center text-muted fs-5">
+  <!-- Loading / No transactions -->
+  <div *ngIf="loading" class="text-center text-muted fs-5">
+    <i class="bi bi-hourglass-split" style="font-size: 2rem;"></i>
+    <div>Loading posted transactions...</div>
+  </div>
+
+  <div *ngIf="!loading && transactionGroups.length === 0" class="text-center text-muted fs-5">
     <i class="bi bi-wallet2" style="font-size: 2rem;"></i>
-    <div>No transactions found.</div>
+    <div>No posted transactions found.</div>
   </div>
 
   <!-- Transactions table -->
