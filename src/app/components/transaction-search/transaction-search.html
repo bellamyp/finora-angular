@@ -1,1 +1,77 @@
-<p>transaction-search works!</p>
+<div class="container py-4">
+
+  <h2 class="mb-4 fw-bold text-primary">Search Transactions</h2>
+
+  <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="search-card">
+
+    <div class="row g-3">
+
+      <!-- Date Range -->
+      <div class="col-md-3">
+        <label class="form-label">Start Date</label>
+        <input type="date" formControlName="startDate" class="form-control" />
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">End Date</label>
+        <input type="date" formControlName="endDate" class="form-control" />
+      </div>
+
+      <!-- Amount Range -->
+      <div class="col-md-3">
+        <label class="form-label">Min Amount</label>
+        <input type="number" step="0.01" formControlName="minAmount" class="form-control" />
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Max Amount</label>
+        <input type="number" step="0.01" formControlName="maxAmount" class="form-control" />
+      </div>
+
+      <!-- Bank -->
+      <div class="col-md-4">
+        <label class="form-label">Bank</label>
+        <input type="text" formControlName="bankId" class="form-control" placeholder="Bank ID or name" />
+      </div>
+
+      <!-- Brand -->
+      <div class="col-md-4">
+        <label class="form-label">Brand</label>
+        <input type="text" formControlName="brandId" class="form-control" placeholder="Brand ID or name" />
+      </div>
+
+      <!-- Type -->
+      <div class="col-md-4">
+        <label class="form-label">Type</label>
+        <input type="text" formControlName="typeId" class="form-control" placeholder="Type ID" />
+      </div>
+
+      <!-- Keyword -->
+      <div class="col-12">
+        <label class="form-label">Notes contains</label>
+        <input type="text" formControlName="keyword" class="form-control" placeholder="Search notes..." />
+      </div>
+
+    </div>
+
+    <button class="btn btn-primary mt-3 px-4">Search</button>
+
+  </form>
+
+  <!-- Results -->
+  <div class="mt-4" *ngIf="results.length > 0">
+
+    <h4 class="fw-bold">Results ({{ results.length }})</h4>
+
+    <ul class="list-group mt-3">
+      <li class="list-group-item" *ngFor="let t of results">
+        <div><strong>ID:</strong> {{ t.id }}</div>
+        <div><strong>Date:</strong> {{ t.date }}</div>
+        <div><strong>Amount:</strong> ${{ t.amount }}</div>
+        <div><strong>Notes:</strong> {{ t.notes }}</div>
+      </li>
+    </ul>
+
+  </div>
+
+</div>
