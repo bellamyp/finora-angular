@@ -14,6 +14,7 @@
       <tr>
         <th scope="col">Date</th>
         <th scope="col">Type</th>
+        <th scope="col">Brand</th>
         <th scope="col">Amount</th>
         <th scope="col">Notes</th>
         <th scope="col">Bank</th>
@@ -23,7 +24,7 @@
       <ng-container *ngFor="let group of transactionGroups">
         <!-- Group header row -->
         <tr class="table-secondary fw-bold">
-          <td colspan="5" class="text-start ps-4">
+          <td colspan="6" class="text-start ps-4">
             Group: {{ group.id }} &nbsp;
             <span class="badge bg-light text-warning">
                 {{ group.transactions.length }} transaction(s)
@@ -39,6 +40,9 @@
           <td>
             <span class="badge bg-info text-dark">{{ tx.typeId }}</span>
           </td>
+
+          <!-- Brand column -->
+          <td>{{ tx.brandId }}</td>
 
           <!-- Amount column -->
           <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}">
