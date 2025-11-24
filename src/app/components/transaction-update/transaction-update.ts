@@ -7,6 +7,7 @@ import {BrandService} from '../../services/brand.service';
 import {BankService} from '../../services/bank.service';
 import {BrandDto} from '../../dto/brand.dto';
 import {TransactionTypeEnum} from '../../dto/transaction-type.enum';
+import {BankDto} from '../../dto/bank.dto';
 
 function enumToOptions<T extends Record<string, string>>(enumObj: T): { id: string; name: string }[] {
   return Object.values(enumObj).map(v => ({
@@ -15,7 +16,6 @@ function enumToOptions<T extends Record<string, string>>(enumObj: T): { id: stri
   }));
 }
 
-interface BankOption { id: string; name: string; }
 interface TransactionTypeOption { id: string; name: string; }
 interface TransactionRow {
   date: string;
@@ -41,7 +41,7 @@ export class TransactionUpdate implements OnInit {
   transactions: TransactionRow[] = [];
 
   // ---------- LOOKUP DROPDOWNS ----------
-  banks: BankOption[] = [];
+  banks: BankDto[] = [];
   transactionTypes: TransactionTypeOption[] = [];
   brands: BrandDto[] = [];
 
