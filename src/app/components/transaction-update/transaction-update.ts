@@ -104,6 +104,11 @@ export class TransactionUpdate implements OnInit {
   }
 
   markAsPosted(tx: TransactionResponseDto) {
+    if (!this.validateTransaction(tx)) {
+      window.alert('Please fill in all required fields (date, type, brand, amount, bank) before marking as posted.');
+      return;
+    }
+
     tx.posted = true;
   }
 
@@ -124,5 +129,13 @@ export class TransactionUpdate implements OnInit {
 
   goBack() {
     this.router.navigate(['/transaction-pending-list']);
+  }
+
+  validateTransaction(tx: TransactionResponseDto): boolean {
+    return !!tx.date &&
+      !!tx.typeId &&
+      !!tx.brandId &&
+      tx.amount !== null && tx.amount !== undefined &&
+      !!tx.bankId;
   }
 }
