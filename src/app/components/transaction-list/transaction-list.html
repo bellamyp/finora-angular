@@ -12,9 +12,9 @@
     <table class="table table-hover align-middle shadow-sm rounded-4 bg-white posted-transactions-table">
       <thead class="table-primary text-center">
       <tr>
-        <th scope="col">Group ID</th>
         <th scope="col">Date</th>
         <th scope="col">Type</th>
+        <th scope="col">Brand</th>
         <th scope="col">Amount</th>
         <th scope="col">Notes</th>
         <th scope="col">Bank</th>
@@ -34,13 +34,15 @@
 
         <!-- Transaction rows -->
         <tr *ngFor="let tx of group.transactions">
-          <td></td>
           <td>{{ tx.date }}</td>
 
           <!-- Type column -->
           <td>
             <span class="badge bg-info text-dark">{{ tx.typeId }}</span>
           </td>
+
+          <!-- Brand column -->
+          <td>{{ tx.brandName }}</td>
 
           <!-- Amount column -->
           <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}">
