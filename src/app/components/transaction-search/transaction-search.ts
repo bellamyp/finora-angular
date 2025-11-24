@@ -1,5 +1,4 @@
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {HttpClient} from '@angular/common/http';
 import {Component, OnInit} from '@angular/core';
 import {CommonModule, NgClass} from '@angular/common';
 
@@ -16,8 +15,7 @@ export class TransactionSearch implements OnInit {
   searched = false; // <-- controls when the bottom shows
 
   constructor(
-    private fb: FormBuilder,
-    private http: HttpClient,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {

@@ -25,3 +25,12 @@
   th:nth-child(6), td:nth-child(6) { width: 12%; } // Bank
   th:nth-child(5), td:nth-child(5) { width: auto; } // Notes column auto-expand
 }
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clickable-row:hover {
+  background-color: #e9ecef;
+}
