@@ -8,6 +8,8 @@ import { enumToOptions } from '../../utils/enum-utils';
 import { BankDto } from '../../dto/bank.dto';
 import { BrandDto } from '../../dto/brand.dto';
 import { TransactionTypeOption } from '../../dto/transaction-type.dto';
+import {TransactionSearchDto} from '../../dto/transaction-search.dto';
+import {TransactionService} from '../../services/transaction.service';
 
 @Component({
   selector: 'app-transaction-search',
@@ -29,7 +31,8 @@ export class TransactionSearch implements OnInit {
   constructor(
     private fb: FormBuilder,
     private bankService: BankService,
-    private brandService: BrandService
+    private brandService: BrandService,
+    private transactionService: TransactionService
   ) {}
 
   ngOnInit(): void {
@@ -87,11 +90,31 @@ export class TransactionSearch implements OnInit {
   onSearch() {
     this.searched = true;
 
-    // Mock results for demo (replace with actual API call)
-    this.results = [
-      { id: 'T1001', date: '2025-02-10', bankName: 'Chase', brandName: 'Walmart', amount: -45.50, notes: 'Groceries' },
-      { id: 'T1002', date: '2025-02-09', bankName: 'Discover', brandName: 'Starbucks', amount: 12.75, notes: 'Coffee' },
-      { id: 'T1003', date: '2025-02-08', bankName: 'Amex', brandName: 'Amazon', amount: -89.99, notes: 'Online purchase' }
-    ];
+    // Build payload from form
+    const formValue = this.searchForm.value;
+
+    const payload: TransactionSearchDto = {
+      startDate: formValue.startDate || null,
+      endDate: formValue.endDate || null,
+      minAmount: formValue.minAmount !== '' ? Number(formValue.minAmount) : null,
+      maxAmount: formValue.maxAmount !== '' ? Number(formValue.maxAmount) : null,
+      bankId: formValue.bankId || null,
+      brandId: formValue.brandId || null,
+      typeId: formValue.typeId || null,
+      keyword: formValue.keyword?.trim() || null
+    };
+
+    console.log('Search Payload:', payload);
+
+    // Now you can send payload to the service
+    this.transactionService.searchTransactions(payload).subscribe({
+      next: (data) => {
+        this.results = data;
+      },
+      error: (err) => {
+        console.error('Search failed', err);
+        this.results = [];
+      }
+    });
   }
 }
