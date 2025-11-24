@@ -29,6 +29,14 @@ export class TransactionGroupService {
   }
 
   /**
+   * Update an existing transaction group
+   * @param payload Updated transaction group payload
+   */
+  updateTransactionGroup(payload: TransactionGroupDto) {
+    return this.http.put<{ success: boolean; message: string }>(this.apiUrl, payload);
+  }
+
+  /**
    * Get transaction groups, optionally filtered by status.
    * @param status 'posted' (default) or 'pending'
    */

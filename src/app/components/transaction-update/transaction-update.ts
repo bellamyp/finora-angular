@@ -8,7 +8,7 @@ import {BankService} from '../../services/bank.service';
 import {BrandDto} from '../../dto/brand.dto';
 import {TransactionTypeEnum} from '../../dto/transaction-type.enum';
 import {BankDto} from '../../dto/bank.dto';
-import {TransactionResponseDto} from '../../dto/transaction-group.dto';
+import {TransactionGroupDto, TransactionResponseDto} from '../../dto/transaction-group.dto';
 import {TransactionTypeOption} from '../../dto/transaction-type.dto';
 import {enumToOptions} from '../../utils/enum-utils';
 
@@ -116,8 +116,31 @@ export class TransactionUpdate implements OnInit {
   // Bottom-level actions
   // -------------------------------
   submitAll() {
-    console.log('Submitting all transactions:', this.transactions);
-    window.alert('All transactions submitted (mock)!');
+    if (!this.groupId) {
+      window.alert('Group ID not found, cannot submit.');
+      return;
+    }
+
+    const payload: TransactionGroupDto = {
+      id: this.groupId!,  // already included
+      transactions: this.transactions
+    };
+
+    this.transactionGroupService.updateTransactionGroup(payload)
+      .subscribe({
+        next: (res) => {
+          if (res.success) {
+            window.alert('Transaction group updated successfully!');
+            this.router.navigate(['/transaction-pending-list']);
+          } else {
+            window.alert('Failed to update transaction group: ' + res.message);
+          }
+        },
+        error: (err) => {
+          console.error('Error updating transaction group:', err);
+          window.alert('An error occurred while submitting the transaction group.');
+        }
+      });
   }
 
   cancel() {
