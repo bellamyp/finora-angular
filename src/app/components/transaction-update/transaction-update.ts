@@ -12,12 +12,13 @@ interface TransactionRow {
   brandId?: string;
   typeId?: string;
   notes: string;
+  posted?: boolean; // mock posted status
 }
 
 @Component({
   selector: 'app-transaction-update',
   standalone: true,
-  imports: [CommonModule, FormsModule],  // ✅ Add FormsModule for ngModel
+  imports: [CommonModule, FormsModule],
   templateUrl: './transaction-update.html',
   styleUrls: ['./transaction-update.scss']
 })
@@ -39,27 +40,49 @@ export class TransactionUpdate implements OnInit {
   ];
 
   transactions: TransactionRow[] = [
-    { date: '2025-11-20', amount: 100, bankId: 'B1', brandId: 'BR-1', typeId: 'INCOME', notes: 'Payment received' },
-    { date: '2025-11-21', amount: -50, bankId: 'B2', brandId: 'BR-2', typeId: 'EXPENSE', notes: 'Office supplies' }
+    { date: '2025-11-20', amount: 100, bankId: 'B1', brandId: 'BR-1', typeId: 'INCOME', notes: 'Payment received', posted: false },
+    { date: '2025-11-21', amount: -50, bankId: 'B2', brandId: 'BR-2', typeId: 'EXPENSE', notes: 'Office supplies', posted: false }
   ];
 
   constructor() {}
 
   ngOnInit(): void {}
 
+  // -------------------------------
+  // Row-level actions
+  // -------------------------------
   addTransaction() {
-    this.transactions.push({ date: '', amount: null, bankId: undefined, brandId: undefined, typeId: undefined, notes: '' });
+    this.transactions.push({ date: '', amount: null, bankId: undefined, brandId: undefined, typeId: undefined, notes: '', posted: false });
   }
 
-  saveTransaction() {
-    window.alert('Save transaction not implemented yet!');
+  deleteTransaction(tx: TransactionRow, index: number) {
+    if (window.confirm('Are you sure you want to delete this transaction?')) {
+      this.transactions.splice(index, 1);
+    }
   }
 
-  deleteTransaction() {
-    window.alert('Delete transaction not implemented yet!');
+  markAsPosted(tx: TransactionRow) {
+    tx.posted = true; // mock marking as posted
+    window.alert(`Transaction on ${tx.date} marked as posted!`);
   }
 
-  markAsPosted() {
-    window.alert('Mark as posted not implemented yet!');
+  // -------------------------------
+  // Bottom-level actions
+  // -------------------------------
+  submitAll() {
+    console.log('Submitting all transactions:', this.transactions);
+    window.alert('All transactions submitted (mock)!');
+  }
+
+  cancel() {
+    if (window.confirm('Discard all changes?')) {
+      window.alert('Changes discarded (mock)');
+      // Optional: reload original transactions if needed
+    }
+  }
+
+  goBack() {
+    window.alert('Going back to previous page (mock)');
+    // Optional: router.navigate(['/previous-page']);
   }
 }
