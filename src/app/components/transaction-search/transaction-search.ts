@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule, NgClass} from '@angular/common';
 
 @Component({
   selector: 'app-transaction-search',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgClass, CommonModule],
   templateUrl: './transaction-search.html',
   styleUrl: './transaction-search.scss',
 })
@@ -12,6 +13,7 @@ export class TransactionSearch implements OnInit {
 
   searchForm!: FormGroup;
   results: any[] = [];
+  searched = false; // <-- controls when the bottom shows
 
   constructor(
     private fb: FormBuilder,
@@ -22,7 +24,6 @@ export class TransactionSearch implements OnInit {
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    // format to YYYY-MM-DD for input[type="date"]
     const format = (d: Date) => d.toISOString().substring(0, 10);
 
     this.searchForm = this.fb.group({
@@ -38,11 +39,35 @@ export class TransactionSearch implements OnInit {
   }
 
   onSearch() {
-    const criteria = this.searchForm.value;
+    this.searched = true; // show results section
 
-    this.http.post<any[]>('/api/transactions/search', criteria)
-      .subscribe(res => {
-        this.results = res;
-      });
+    // Mock result list
+    this.results = [
+      {
+        id: 'T1001',
+        date: '2025-02-10',
+        bankName: 'Chase',
+        brandName: 'Walmart',
+        amount: -45.50,
+        notes: 'Groceries'
+      },
+      {
+        id: 'T1002',
+        date: '2025-02-09',
+        bankName: 'Discover',
+        brandName: 'Starbucks',
+        amount: 12.75,
+        notes: 'Coffee'
+      },
+      {
+        id: 'T1003',
+        date: '2025-02-08',
+        bankName: 'Amex',
+        brandName: 'Amazon',
+        amount: -89.99,
+        notes: 'Online purchase'
+      }
+    ];
   }
+
 }
