@@ -122,8 +122,7 @@ export class TransactionUpdate implements OnInit {
 
   cancel() {
     if (window.confirm('Discard all changes?')) {
-      window.alert('Changes discarded (mock)');
-      // Optional: reload original transactions if needed
+      window.location.reload();
     }
   }
 
