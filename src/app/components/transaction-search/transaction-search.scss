@@ -1,0 +1,31 @@
+/* transaction-search.scss */
+
+/* Make table fixed width for better layout */
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Wrap text in columns and add ellipsis for overflow */
+.table-fixed td,
+.table-fixed th {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* prevent wrapping */
+}
+
+/* Allow notes to wrap */
+.table-fixed td.notes-col {
+  white-space: normal;  /* wrap text */
+  word-break: break-word;
+  max-width: 250px; /* adjust as needed */
+}
+
+/* Optionally, add hover for full notes */
+.table-fixed td.notes-col:hover {
+  white-space: normal;
+  overflow: visible;
+  background-color: #f8f9fa;
+  z-index: 1;
+  position: relative;
+}
