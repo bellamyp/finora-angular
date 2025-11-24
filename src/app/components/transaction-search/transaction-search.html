@@ -30,22 +30,31 @@
         <input type="number" step="0.01" formControlName="maxAmount" class="form-control" />
       </div>
 
-      <!-- Bank -->
+      <!-- Bank Dropdown -->
       <div class="col-md-4">
         <label class="form-label">Bank</label>
-        <input type="text" formControlName="bankId" class="form-control" placeholder="Bank ID or name" />
+        <select formControlName="bankId" class="form-select">
+          <option value="">-- Select Bank --</option>
+          <option *ngFor="let b of banks" [value]="b.id">{{ b.name }}</option>
+        </select>
       </div>
 
-      <!-- Brand -->
+      <!-- Brand Dropdown -->
       <div class="col-md-4">
         <label class="form-label">Brand</label>
-        <input type="text" formControlName="brandId" class="form-control" placeholder="Brand ID or name" />
+        <select formControlName="brandId" class="form-select">
+          <option value="">-- Select Brand --</option>
+          <option *ngFor="let b of brands" [value]="b.id">{{ b.name }} ({{ b.location }})</option>
+        </select>
       </div>
 
-      <!-- Type -->
+      <!-- Type Dropdown -->
       <div class="col-md-4">
         <label class="form-label">Type</label>
-        <input type="text" formControlName="typeId" class="form-control" placeholder="Type ID" />
+        <select formControlName="typeId" class="form-select">
+          <option value="">-- Select Type --</option>
+          <option *ngFor="let t of transactionTypes" [value]="t.id">{{ t.name }}</option>
+        </select>
       </div>
 
       <!-- Keyword -->
@@ -60,7 +69,6 @@
 
   </form>
 
-
   <!-- RESULTS TABLE -->
   <div class="mt-5" *ngIf="searched">
 
@@ -73,7 +81,6 @@
 
     <!-- Results Table -->
     <table *ngIf="results.length > 0" class="table table-striped table-bordered">
-
       <thead class="table-light">
       <tr>
         <th>ID</th>
@@ -84,22 +91,16 @@
         <th>Brand</th>
       </tr>
       </thead>
-
       <tbody>
       <tr *ngFor="let t of results">
         <td>{{ t.id }}</td>
         <td>{{ t.date }}</td>
-        <td [ngClass]="{'text-danger': t.amount < 0}">
-          ${{ t.amount }}
-        </td>
+        <td [ngClass]="{'text-danger': t.amount < 0}">${{ t.amount }}</td>
         <td>{{ t.notes }}</td>
         <td>{{ t.bankName }}</td>
         <td>{{ t.brandName }}</td>
       </tr>
       </tbody>
-
     </table>
-
   </div>
-
 </div>

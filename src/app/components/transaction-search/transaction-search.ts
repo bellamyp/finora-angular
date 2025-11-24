@@ -1,21 +1,35 @@
-import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {Component, OnInit} from '@angular/core';
-import {CommonModule, NgClass} from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, NgClass } from '@angular/common';
+import { BankService } from '../../services/bank.service';
+import { BrandService } from '../../services/brand.service';
+import { TransactionTypeEnum } from '../../dto/transaction-type.enum';
+import { enumToOptions } from '../../utils/enum-utils';
+import { BankDto } from '../../dto/bank.dto';
+import { BrandDto } from '../../dto/brand.dto';
+import { TransactionTypeOption } from '../../dto/transaction-type.dto';
 
 @Component({
   selector: 'app-transaction-search',
+  standalone: true,
   imports: [ReactiveFormsModule, NgClass, CommonModule],
   templateUrl: './transaction-search.html',
-  styleUrl: './transaction-search.scss',
+  styleUrls: ['./transaction-search.scss'],
 })
 export class TransactionSearch implements OnInit {
 
   searchForm!: FormGroup;
   results: any[] = [];
-  searched = false; // <-- controls when the bottom shows
+  searched = false;
+
+  banks: BankDto[] = [];
+  brands: BrandDto[] = [];
+  transactionTypes: TransactionTypeOption[] = [];
 
   constructor(
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private bankService: BankService,
+    private brandService: BrandService
   ) {}
 
   ngOnInit(): void {
@@ -34,38 +48,35 @@ export class TransactionSearch implements OnInit {
       typeId: [''],
       keyword: [''],
     });
+
+    // Load lookup data
+    this.loadBanks();
+    this.loadBrands();
+    this.transactionTypes = enumToOptions(TransactionTypeEnum);
+  }
+
+  loadBanks() {
+    this.bankService.getBanks().subscribe({
+      next: (data) => this.banks = data,
+      error: (err) => console.error('[Bank] Load Error:', err),
+    });
+  }
+
+  loadBrands() {
+    this.brandService.getBrandsByUser().subscribe({
+      next: (data) => this.brands = data,
+      error: (err) => console.error('[Brand] Load Error:', err),
+    });
   }
 
   onSearch() {
-    this.searched = true; // show results section
+    this.searched = true;
 
-    // Mock result list
+    // Mock results for demo (replace with actual API call)
     this.results = [
-      {
-        id: 'T1001',
-        date: '2025-02-10',
-        bankName: 'Chase',
-        brandName: 'Walmart',
-        amount: -45.50,
-        notes: 'Groceries'
-      },
-      {
-        id: 'T1002',
-        date: '2025-02-09',
-        bankName: 'Discover',
-        brandName: 'Starbucks',
-        amount: 12.75,
-        notes: 'Coffee'
-      },
-      {
-        id: 'T1003',
-        date: '2025-02-08',
-        bankName: 'Amex',
-        brandName: 'Amazon',
-        amount: -89.99,
-        notes: 'Online purchase'
-      }
+      { id: 'T1001', date: '2025-02-10', bankName: 'Chase', brandName: 'Walmart', amount: -45.50, notes: 'Groceries' },
+      { id: 'T1002', date: '2025-02-09', bankName: 'Discover', brandName: 'Starbucks', amount: 12.75, notes: 'Coffee' },
+      { id: 'T1003', date: '2025-02-08', bankName: 'Amex', brandName: 'Amazon', amount: -89.99, notes: 'Online purchase' }
     ];
   }
-
 }
