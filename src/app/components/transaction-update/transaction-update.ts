@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
 
 interface BankOption { id: string; name: string; }
 interface TransactionTypeOption { id: string; name: string; }
@@ -44,9 +45,14 @@ export class TransactionUpdate implements OnInit {
     { date: '2025-11-21', amount: -50, bankId: 'B2', brandId: 'BR-2', typeId: 'EXPENSE', notes: 'Office supplies', posted: false }
   ];
 
-  constructor() {}
+  constructor(
+    private route: ActivatedRoute
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.groupId = this.route.snapshot.paramMap.get('groupId') || '';
+    console.log('Transaction Update Component initialized with groupId:', this.groupId);
+  }
 
   // -------------------------------
   // Row-level actions

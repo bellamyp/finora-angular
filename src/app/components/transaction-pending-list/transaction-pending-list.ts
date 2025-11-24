@@ -35,8 +35,8 @@ export class TransactionPendingList implements OnInit {
     this.fetchPendingTransactionGroups();
   }
 
-  editTransaction() {
-    this.router.navigate(['/transaction-update']);
+  editTransaction(groupId: string) {
+    this.router.navigate(['/transaction-update', groupId]);
   }
 
   markAsPosted() {

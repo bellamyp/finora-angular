@@ -28,7 +28,7 @@ export const routes: Routes = [
   { path: 'transaction-list', component: TransactionList, canActivate: [authGuard] },
   { path: 'transaction-pending-list', component: TransactionPendingList, canActivate: [authGuard] },
   { path: 'transaction-create', component: TransactionCreate, canActivate: [authGuard] },
-  { path: 'transaction-update', component: TransactionUpdate, canActivate: [authGuard] },
+  { path: 'transaction-update/:groupId', component: TransactionUpdate, canActivate: [authGuard] },
   { path: 'bank-list', component: BankList, canActivate: [authGuard] },
   { path: 'bank-create', component: BankCreate, canActivate: [authGuard] },
   { path: 'brand-create', component: BrandCreate, canActivate: [authGuard] },
