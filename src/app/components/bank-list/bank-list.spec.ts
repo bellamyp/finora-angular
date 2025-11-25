@@ -57,9 +57,9 @@ describe('BankList', () => {
     expect(window.alert).toHaveBeenCalledWith('Edit bank not implemented yet!');
   });
 
-  it('should call viewBank when view button clicked', () => {
-    spyOn(window, 'alert');
+  it('should navigate to bank-view when view button clicked', () => {
+    const routerSpy = spyOn(component['router'], 'navigate');
     component.viewBank(component.banks[0]);
-    expect(window.alert).toHaveBeenCalledWith('View bank details not implemented yet!');
+    expect(routerSpy).toHaveBeenCalledWith(['/bank-view', component.banks[0].id]);
   });
 });
