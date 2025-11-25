@@ -7,6 +7,7 @@ import { BankService } from '../../services/bank.service';
 import { BrandDto } from '../../dto/brand.dto';
 import { BankDto } from '../../dto/bank.dto';
 import { TransactionResponseDto } from '../../dto/transaction-group.dto';
+import {TransactionGroupRepeatService} from '../../services/transaction-group-repeat.service';
 
 @Component({
   selector: 'app-transaction-view',
@@ -27,6 +28,7 @@ export class TransactionView implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private transactionGroupService: TransactionGroupService,
+    private transactionGroupRepeatService: TransactionGroupRepeatService,
     private bankService: BankService,
     private brandService: BrandService
   ) {}
@@ -75,8 +77,28 @@ export class TransactionView implements OnInit {
   }
 
   markAsRepeat(groupId?: string) {
-    window.alert(`Mark group ${groupId} as repeat - not implemented yet`);
+    if (!groupId) {
+      window.alert('Invalid group ID');
+      return;
+    }
+
+    this.transactionGroupRepeatService.markAsRepeat(groupId).subscribe({
+      next: (result) => {
+        console.log('Marked as repeat:', result);
+        window.alert('This group has been marked as repeat.');
+      },
+      error: (err) => {
+        console.error(err);
+
+        if (err.status === 403) {
+          window.alert('You are not allowed to mark this group as repeat.');
+        } else {
+          window.alert('Failed to mark group as repeat. Please try again.');
+        }
+      }
+    });
   }
+
 
   repeatThisGroup(groupId?: string) {
     window.alert(`Repeat group ${groupId} - not implemented yet`);

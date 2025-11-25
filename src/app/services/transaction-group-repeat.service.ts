@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BackendConfig } from '../config/backend-config';
+import {TransactionGroupDto} from '../dto/transaction-group.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class TransactionGroupRepeatService {
    * @param groupId The ID of the transaction group
    * @returns Observable of the repeat group
    */
-  markAsRepeat(groupId: string): Observable<RepeatTransactionGroupDto> {
-    return this.http.post<RepeatTransactionGroupDto>(`${this.apiUrl}/${groupId}`, {});
+  markAsRepeat(groupId: string): Observable<TransactionGroupDto> {
+    return this.http.post<TransactionGroupDto>(`${this.apiUrl}/${groupId}`, {});
   }
 }
