@@ -18,27 +18,27 @@
     <table class="table table-hover align-middle shadow-sm rounded-4 bg-white pending-transactions-table">
       <thead class="table-warning text-center">
       <tr>
-        <th>ID</th>
         <th>Date</th>
         <th>Type</th>
         <th>Brand</th>
-        <th>Amount</th>
-        <th>Notes</th>
+        <th class="text-end">Amount</th>
+        <th style="width: 35%;">Notes</th>
         <th>Bank</th>
       </tr>
       </thead>
-      <tbody class="text-center">
+      <tbody>
       <tr *ngFor="let tx of results"
           (click)="tx.groupId ? openTransactionGroup(tx.groupId) : null"
           class="clickable-row">
-        <td>{{ tx.id }}</td>
         <td>{{ tx.date }}</td>
-        <td><span class="badge bg-info text-dark">{{ tx.typeId }}</span></td>
+        <td class="text-center">
+          <span class="badge bg-info text-dark">{{ tx.typeId }}</span>
+        </td>
         <td>{{ tx.brandName }}</td>
-        <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}">
+        <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}" class="text-end">
           ${{ tx.amount }}
         </td>
-        <td class="notes-column" [title]="tx.notes">{{ tx.notes }}</td>
+        <td class="notes-column text-wrap" style="max-width: 400px;">{{ tx.notes }}</td>
         <td>{{ tx.bankName }}</td>
       </tr>
       </tbody>
