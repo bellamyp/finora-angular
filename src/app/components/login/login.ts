@@ -15,10 +15,11 @@ import { RouterModule } from '@angular/router';
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
-export class Login implements OnInit{
+export class Login implements OnInit {
 
   email = '';
   password = '';
+  loading = false; // Prevent multiple clicks
 
   constructor(
     private auth: AuthService,
@@ -26,54 +27,53 @@ export class Login implements OnInit{
 
   ngOnInit() {
     if (this.auth.isLoggedIn()) {
-      const role = this.auth.getCurrentUserRole();
-      if (role === 'ROLE_ADMIN') {
-        this.router.navigate(['/menu-admin']);
-      } else {
-        this.router.navigate(['/menu-user']);
-      }
+      this.redirectByRole();
     }
   }
 
   login() {
+    if (!this.email || !this.password) {
+      window.alert('⚠️ Please enter both email and password.');
+      return;
+    }
+
+    this.loading = true;
+
     this.auth.login(this.email, this.password).subscribe({
       next: success => {
+        this.loading = false;
         if (success) {
-          // Role is now retrieved from JWT token via AuthService
-          const role = this.auth.getCurrentUserRole();
-
-          if (role === 'ROLE_ADMIN') {
-            console.log('Redirect to Admin Menu');
-            this.router.navigate(['/menu-admin']);
-          } else {
-            console.log('Redirect to User Menu');
-            this.router.navigate(['/menu-user']);
-          }
+          this.redirectByRole();
         } else {
+          // 401 Unauthorized
           window.alert('❌ Login failed: Invalid email or password.');
         }
       },
       error: err => {
-        console.error('Login error', err);
-        window.alert('❌ Login failed: Network or server error.');
+        this.loading = false;
+
+        // Match the structure returned by AuthService.login()
+        if (err.type === 'server') {
+          window.alert('❌ Login failed: Server error. Please try again later.');
+        } else if (err.type === 'network') {
+          window.alert('❌ Login failed: Network unavailable. Check your connection.');
+        } else {
+          window.alert('❌ Login failed: Unknown error.');
+        }
+
+        console.error('Login error:', err);
       }
     });
   }
 
-  loginWithGithub() {
-    // Show warning
-    window.alert('⚠️ This button is not working yet.');
-  }
-
-  loginWithGoogle() {
-    this.loginWithGithub();
-  }
-
-  loginWithFacebook() {
-    this.loginWithGithub();
-  }
-
-  loginWithIcloud() {
-    this.loginWithGithub();
+  redirectByRole() {
+    const role = this.auth.getCurrentUserRole();
+    if (role === 'ROLE_ADMIN') {
+      console.log('Redirect to Admin Menu');
+      this.router.navigate(['/menu-admin']);
+    } else {
+      console.log('Redirect to User Menu');
+      this.router.navigate(['/menu-user']);
+    }
   }
 }

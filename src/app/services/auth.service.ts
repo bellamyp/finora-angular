@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BackendConfig } from '../config/backend-config';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { catchError, map, Observable, of } from 'rxjs';
+import {catchError, map, Observable, of, throwError} from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
 interface JwtPayload {
@@ -36,9 +36,18 @@ export class AuthService {
           }
           return false;
         }),
-        catchError(() => {
+        catchError(err => {
           this.logout();
-          return of(false);
+
+          if (err.status === 401) {
+            return of(false); // wrong credentials
+          }
+
+          if (err.status >= 400) {
+            return throwError(() => ({ type: 'server', error: err })); // server error
+          }
+
+          return throwError(() => ({ type: 'network', error: err })); // network error
         })
       );
   }
@@ -133,7 +142,7 @@ export class AuthService {
     localStorage.removeItem('token');
   }
 
-  /** Check if user is logged in */
+  /** Check if a user is logged in */
   isLoggedIn(): boolean {
     return this.checkTokenValid();
   }

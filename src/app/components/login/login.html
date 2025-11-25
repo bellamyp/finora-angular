@@ -26,8 +26,12 @@
         />
       </div>
 
-      <button type="submit" class="btn btn-primary w-100 mb-3 btn-lg fw-semibold shadow-sm">
-        Login
+      <button
+        type="submit"
+        class="btn btn-primary w-100 mb-3 btn-lg fw-semibold shadow-sm"
+        [disabled]="loading"
+      >
+        {{ loading ? 'Logging in...' : 'Login' }}
       </button>
     </form>
 

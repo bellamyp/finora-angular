@@ -112,26 +112,6 @@ describe('Login', () => {
     expect(alertSpy).toHaveBeenCalledWith('❌ Login failed: Network or server error.');
   }));
 
-  it('should show alert when clicking loginWithGithub', () => {
-    component.loginWithGithub();
-    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
-  });
-
-  it('should show alert when clicking loginWithGoogle', () => {
-    component.loginWithGoogle();
-    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
-  });
-
-  it('should show alert when clicking loginWithFacebook', () => {
-    component.loginWithFacebook();
-    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
-  });
-
-  it('should show alert when clicking loginWithIcloud', () => {
-    component.loginWithIcloud();
-    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
-  });
-
   it('should update component properties from input fields', () => {
     fixture.detectChanges();
     const emailInput = fixture.debugElement.query(By.css('input[name="email"]')).nativeElement;
