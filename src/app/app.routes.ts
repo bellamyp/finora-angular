@@ -16,6 +16,7 @@ import {TransactionUpdate} from './components/transaction-update/transaction-upd
 import {TransactionSearch} from './components/transaction-search/transaction-search';
 import {TransactionView} from './components/transaction-view/transaction-view';
 import {BankView} from './components/bank-view/bank-view';
+import {TransactionRepeatList} from './components/transaction-repeat-list/transaction-repeat-list';
 
 export const routes: Routes = [
 
@@ -31,6 +32,7 @@ export const routes: Routes = [
   { path: 'transaction-list', component: TransactionList, canActivate: [authGuard] },
   { path: 'transaction-search', component: TransactionSearch, canActivate: [authGuard] },
   { path: 'transaction-pending-list', component: TransactionPendingList, canActivate: [authGuard] },
+  { path: 'transaction-repeat-list', component: TransactionRepeatList, canActivate: [authGuard] },
   { path: 'transaction-create', component: TransactionCreate, canActivate: [authGuard] },
   { path: 'transaction-update/:groupId', component: TransactionUpdate, canActivate: [authGuard] },
   { path: 'transaction-view/:groupId', component: TransactionView, canActivate: [authGuard] },
