@@ -130,8 +130,7 @@ export class TransactionUpdate implements OnInit {
       .subscribe({
         next: (res) => {
           if (res.success) {
-            window.alert('Transaction group updated successfully!');
-            this.router.navigate(['/transaction-pending-list']);
+            this.router.navigate(['/transaction-view', this.groupId]);
           } else {
             window.alert('Failed to update transaction group: ' + res.message);
           }
@@ -144,9 +143,7 @@ export class TransactionUpdate implements OnInit {
   }
 
   cancel() {
-    if (window.confirm('Discard all changes?')) {
-      this.reloadPage();
-    }
+    this.reloadPage();
   }
 
   reloadPage() {
