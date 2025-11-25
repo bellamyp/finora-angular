@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {BankDto} from '../../dto/bank.dto';
 import {BankService} from '../../services/bank.service';
 import {CommonModule} from '@angular/common';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-bank-list',
@@ -13,7 +14,10 @@ export class BankList implements OnInit {
 
   banks: BankDto[] = [];
 
-  constructor(private bankService: BankService) {}
+  constructor(
+    private bankService: BankService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.bankService.getBanks().subscribe({
@@ -28,7 +32,6 @@ export class BankList implements OnInit {
   }
 
   viewBank(bank: BankDto): void {
-    window.alert('View bank details not implemented yet!');
-    console.log('View bank details:', bank);
+    this.router.navigate(['/bank-view', bank.id]);
   }
 }

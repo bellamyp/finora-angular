@@ -15,6 +15,7 @@ import {TransactionPendingList} from './components/transaction-pending-list/tran
 import {TransactionUpdate} from './components/transaction-update/transaction-update';
 import {TransactionSearch} from './components/transaction-search/transaction-search';
 import {TransactionView} from './components/transaction-view/transaction-view';
+import {BankView} from './components/bank-view/bank-view';
 
 export const routes: Routes = [
 
@@ -34,6 +35,7 @@ export const routes: Routes = [
   { path: 'transaction-update/:groupId', component: TransactionUpdate, canActivate: [authGuard] },
   { path: 'transaction-view/:groupId', component: TransactionView, canActivate: [authGuard] },
   { path: 'bank-list', component: BankList, canActivate: [authGuard] },
+  { path: 'bank-view/:bankId', component: BankView, canActivate: [authGuard] },
   { path: 'bank-create', component: BankCreate, canActivate: [authGuard] },
   { path: 'brand-create', component: BrandCreate, canActivate: [authGuard] },
 
