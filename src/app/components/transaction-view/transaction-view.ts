@@ -73,4 +73,12 @@ export class TransactionView implements OnInit {
     const brand = this.brands.find(b => b.id === brandId);
     return brand ? `${brand.name} (${brand.location})` : brandId;
   }
+
+  markAsRepeat(groupId?: string) {
+    window.alert(`Mark group ${groupId} as repeat - not implemented yet`);
+  }
+
+  repeatThisGroup(groupId?: string) {
+    window.alert(`Repeat group ${groupId} - not implemented yet`);
+  }
 }
