@@ -2,12 +2,19 @@
   <ng-container *ngIf="bank; else errorTpl">
     <h2 class="text-primary mb-4">Bank Details</h2>
 
-    <div class="card p-4 shadow-sm rounded-4">
+    <div class="card p-4 shadow-sm rounded-4 mb-4">
       <p><strong>ID:</strong> {{ bank!.id }}</p>
       <p><strong>Name:</strong> {{ bank!.name }}</p>
       <p><strong>Type:</strong> {{ bank!.type }}</p>
       <p><strong>Email:</strong> {{ bank!.email }}</p>
       <p><strong>Balance:</strong> ${{ bank!.balance | number:'1.2-2' }}</p>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex gap-2">
+      <button class="btn btn-secondary" (click)="goToMainMenu()">Main Menu</button>
+      <button class="btn btn-primary" (click)="goToBankList()">List All Banks</button>
+      <button class="btn btn-warning" (click)="editBank()">Edit This Bank</button>
     </div>
   </ng-container>
 </div>

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BankService } from '../../services/bank.service';
 import { BankDto } from '../../dto/bank.dto';
-import {CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-bank-view',
@@ -18,6 +18,7 @@ export class BankView implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private bankService: BankService
   ) {}
 
@@ -39,5 +40,17 @@ export class BankView implements OnInit {
       this.error = 'Bank ID not found in route.';
       this.loading = false;
     }
+  }
+
+  goToMainMenu(): void {
+    this.router.navigate(['/menu-user']); // or /menu-admin depending on your app
+  }
+
+  goToBankList(): void {
+    this.router.navigate(['/bank-list']);
+  }
+
+  editBank(): void {
+    window.alert('Edit bank not implemented yet!');
   }
 }
