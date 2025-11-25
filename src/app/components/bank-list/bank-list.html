@@ -1,12 +1,18 @@
 <div class="container py-5">
   <h2 class="text-center mb-4 fw-bold text-primary">Your Banks</h2>
 
-  <div *ngIf="banks.length === 0" class="text-center text-muted fs-5">
-    <i class="bi bi-bank" style="font-size: 2rem;"></i>
-    <div>No banks found.</div>
+  <!-- Loading state -->
+  <div *ngIf="loading" class="text-center py-5">
+    <p>Loading banks...</p>
   </div>
 
-  <div *ngIf="banks.length > 0" class="table-responsive">
+  <!-- Error state -->
+  <div *ngIf="!loading && error" class="alert alert-danger text-center">
+    {{ error }}
+  </div>
+
+  <!-- Banks table -->
+  <div *ngIf="!loading && !error && banks.length > 0" class="table-responsive">
     <table class="table table-hover align-middle shadow-sm rounded-4 bg-white">
       <thead class="table-primary text-center">
       <tr>
@@ -24,7 +30,7 @@
         <td>
           <span class="badge bg-info text-dark">{{ bank.type }}</span>
         </td>
-        <td>${{ '0.00' }}</td>
+        <td>${{ bank.balance ?? '0.00' }}</td>
         <td>
           <button class="btn btn-sm btn-primary me-2" (click)="editBank(bank)">Edit</button>
           <button class="btn btn-sm btn-outline-secondary" (click)="viewBank(bank)">View</button>
@@ -32,5 +38,11 @@
       </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- No banks found -->
+  <div *ngIf="!loading && !error && banks.length === 0" class="text-center text-muted fs-5">
+    <i class="bi bi-bank" style="font-size: 2rem;"></i>
+    <div>No banks found.</div>
   </div>
 </div>
