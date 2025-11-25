@@ -19,6 +19,7 @@ import {TransactionGroupRepeatService} from '../../services/transaction-group-re
 export class TransactionView implements OnInit {
 
   loading = true;
+  isRepeat = false;
   groupId?: string;
   transactions: TransactionResponseDto[] = [];
 
@@ -36,6 +37,7 @@ export class TransactionView implements OnInit {
   ngOnInit(): void {
     this.groupId = this.route.snapshot.paramMap.get('groupId') || '';
     if (this.groupId) {
+      // Load transaction group from BE
       this.transactionGroupService.getTransactionGroupById(this.groupId)
         .subscribe({
           next: (group) => {
@@ -50,6 +52,16 @@ export class TransactionView implements OnInit {
             this.loading = false;
           }
         });
+      // Check if group is already marked as repeat
+      this.transactionGroupRepeatService.isRepeat(this.groupId).subscribe({
+        next: (exists) => {
+          this.isRepeat = exists;
+        },
+        error: (err) => {
+          console.error('Failed to check repeat status:', err);
+          this.isRepeat = false; // fallback
+        }
+      });
     } else {
       console.warn('No groupId provided in route!');
       this.loading = false;
@@ -85,7 +97,7 @@ export class TransactionView implements OnInit {
     this.transactionGroupRepeatService.markAsRepeat(groupId).subscribe({
       next: (result) => {
         console.log('Marked as repeat:', result);
-        window.alert('This group has been marked as repeat.');
+        this.isRepeat = true;
       },
       error: (err) => {
         console.error(err);

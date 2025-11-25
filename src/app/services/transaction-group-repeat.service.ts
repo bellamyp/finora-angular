@@ -21,4 +21,14 @@ export class TransactionGroupRepeatService {
   markAsRepeat(groupId: string): Observable<TransactionGroupDto> {
     return this.http.post<TransactionGroupDto>(`${this.apiUrl}/${groupId}`, {});
   }
+
+  /**
+   * Checks whether a transaction group is marked as repeat.
+   * @param groupId The ID of the transaction group
+   * @returns Observable<boolean>
+   */
+  isRepeat(groupId: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/${groupId}/is-repeat`);
+  }
+
 }
