@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BackendConfig } from '../config/backend-config';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { catchError, map, Observable, of } from 'rxjs';
+import {catchError, map, Observable, of, throwError} from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
 interface JwtPayload {
@@ -36,46 +36,66 @@ export class AuthService {
           }
           return false;
         }),
-        catchError(() => {
+        catchError(err => {
           this.logout();
-          return of(false);
+
+          if (err.status === 401) {
+            return of(false); // wrong credentials
+          }
+
+          if (err.status >= 400) {
+            return throwError(() => ({ type: 'server', error: err })); // server error
+          }
+
+          return throwError(() => ({ type: 'network', error: err })); // network error
         })
       );
   }
 
   /** Request OTP */
-  requestOtp(email: string): Observable<{ success: boolean; message: string } | null> {
+  requestOtp(email: string): Observable<{ success: boolean; message: string }> {
     const params = new HttpParams().set('email', email);
     return this.http.post<{ success: boolean; message: string }>(
-      `${this.apiUrl}/login/otp/request`, null, { params })
-      .pipe(
-        catchError(err => {
-          console.error('OTP request error:', err);
-          return of(null);
-        })
-      );
+      `${this.apiUrl}/login/otp/request`,
+      null,
+      { params }
+    ).pipe(
+      catchError(err => {
+        console.error('OTP request error:', err);
+
+        // Backend/server error
+        if (err.status >= 400) return throwError(() => ({ type: 'server', error: err }));
+        // Network error / no response
+        return throwError(() => ({ type: 'network', error: err }));
+      })
+    );
   }
 
   /** Verify OTP */
   verifyOtp(email: string, otp: string): Observable<boolean> {
     const params = new HttpParams().set('email', email).set('otp', otp);
     return this.http.post<{ success: boolean, message: string, token?: string }>(
-      `${this.apiUrl}/login/otp/verify`, null, { params })
-      .pipe(
-        map(res => {
-          if (res.success && res.token) {
-            this.storeToken(res.token);
-            return true;
-          }
-          console.warn('OTP verification failed:', res.message);
-          return false;
-        }),
-        catchError(err => {
-          console.error('OTP verify error:', err);
-          this.logout();
-          return of(false);
-        })
-      );
+      `${this.apiUrl}/login/otp/verify`,
+      null,
+      { params }
+    ).pipe(
+      map(res => {
+        if (res.success && res.token) {
+          this.storeToken(res.token);
+          return true;
+        }
+        console.warn('OTP verification failed:', res.message);
+        return false;
+      }),
+      catchError(err => {
+        console.error('OTP verify error:', err);
+        this.logout();
+
+        // Distinguish server vs network errors
+        if (err.status >= 400) return throwError(() => ({ type: 'server', error: err }));
+        return throwError(() => ({ type: 'network', error: err }));
+      })
+    );
   }
 
   /** Store token in localStorage */
@@ -133,7 +153,7 @@ export class AuthService {
     localStorage.removeItem('token');
   }
 
-  /** Check if user is logged in */
+  /** Check if a user is logged in */
   isLoggedIn(): boolean {
     return this.checkTokenValid();
   }

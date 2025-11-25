@@ -28,7 +28,9 @@
     </form>
 
     <div class="d-flex justify-content-between mt-2">
-      <a href="#" (click)="resendOtp()" class="text-decoration-none small">Resend OTP</a>
+      <button type="button" (click)="resendOtp()" class="btn btn-link p-0 small text-decoration-none">
+        Resend OTP
+      </button>
       <a [routerLink]="['/login']" class="text-decoration-none small">Back to login</a>
     </div>
   </div>

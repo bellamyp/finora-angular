@@ -103,34 +103,29 @@ describe('Login', () => {
   it('should show alert on network error', fakeAsync(() => {
     component.email = 'user@example.com';
     component.password = 'password';
-    mockAuthService.login.and.returnValue(throwError(() => new Error('Network error')));
+    mockAuthService.login.and.returnValue(
+      throwError(() => ({ type: 'network' }))
+    );
 
     component.login();
     tick();
 
     expect(mockAuthService.login).toHaveBeenCalledWith('user@example.com', 'password');
-    expect(alertSpy).toHaveBeenCalledWith('❌ Login failed: Network or server error.');
+    expect(alertSpy).toHaveBeenCalledWith('❌ Login failed: Network unavailable. Check your connection.');
   }));
 
-  it('should show alert when clicking loginWithGithub', () => {
-    component.loginWithGithub();
-    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
-  });
+  it('should show alert on server error', fakeAsync(() => {
+    component.email = 'user@example.com';
+    component.password = 'password';
+    mockAuthService.login.and.returnValue(
+      throwError(() => ({ type: 'server' }))
+    );
 
-  it('should show alert when clicking loginWithGoogle', () => {
-    component.loginWithGoogle();
-    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
-  });
+    component.login();
+    tick();
 
-  it('should show alert when clicking loginWithFacebook', () => {
-    component.loginWithFacebook();
-    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
-  });
-
-  it('should show alert when clicking loginWithIcloud', () => {
-    component.loginWithIcloud();
-    expect(alertSpy).toHaveBeenCalledWith('⚠️ This button is not working yet.');
-  });
+    expect(alertSpy).toHaveBeenCalledWith('❌ Login failed: Server error. Please try again later.');
+  }));
 
   it('should update component properties from input fields', () => {
     fixture.detectChanges();

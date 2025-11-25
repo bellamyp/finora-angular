@@ -17,8 +17,17 @@
         <label for="emailInput">Email</label>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100 btn-lg fw-semibold shadow-sm">
-        Send OTP
+      <!-- Inline error message -->
+      <div *ngIf="error" class="text-danger mb-3 small">
+        {{ error }}
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary w-100 btn-lg fw-semibold shadow-sm"
+        [disabled]="sending"
+      >
+        {{ sending ? 'Sending...' : 'Send OTP' }}
       </button>
     </form>
 

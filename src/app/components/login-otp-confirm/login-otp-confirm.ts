@@ -136,23 +136,51 @@ export class LoginOtpConfirm implements OnInit {
           window.alert('❌ Invalid or expired OTP.');
         }
       },
-      error: () => {
+      error: (err) => {
         this.sending = false;
-        window.alert('❌ Server error. Please try again later.');
+
+        if (err.type === 'server') {
+          window.alert('❌ Server error. Please try again later.');
+        } else if (err.type === 'network') {
+          window.alert('❌ Network unavailable. Check your connection.');
+        } else {
+          window.alert('❌ Unknown error occurred.');
+        }
+
+        console.error('OTP verification failed with error:', err);
       }
     });
   }
 
   resendOtp() {
+    if (!this.email) {
+      window.alert('❌ Email not found. Cannot resend OTP.');
+      return;
+    }
+
     this.sending = true;
     this.authService.requestOtp(this.email).subscribe({
       next: (res) => {
         this.sending = false;
-        window.alert(res?.success ? '✅ OTP resent successfully.' : '❌ Failed to resend OTP.');
+        if (res?.success) {
+          window.alert('✅ OTP resent successfully. Please check your email.');
+          // Stay on the same page, do not navigate
+        } else {
+          window.alert(res?.message || '❌ Failed to resend OTP.');
+        }
       },
-      error: () => {
+      error: (err) => {
         this.sending = false;
-        window.alert('❌ Server error. Please try again later.');
+
+        if (err.type === 'server') {
+          window.alert('❌ Server error. Please try again later.');
+        } else if (err.type === 'network') {
+          window.alert('❌ Network unavailable. Check your connection.');
+        } else {
+          window.alert('❌ Unknown error occurred.');
+        }
+
+        console.error('OTP resend failed with error:', err);
       }
     });
   }
