@@ -103,13 +103,28 @@ describe('Login', () => {
   it('should show alert on network error', fakeAsync(() => {
     component.email = 'user@example.com';
     component.password = 'password';
-    mockAuthService.login.and.returnValue(throwError(() => new Error('Network error')));
+    mockAuthService.login.and.returnValue(
+      throwError(() => ({ type: 'network' }))
+    );
 
     component.login();
     tick();
 
     expect(mockAuthService.login).toHaveBeenCalledWith('user@example.com', 'password');
-    expect(alertSpy).toHaveBeenCalledWith('❌ Login failed: Network or server error.');
+    expect(alertSpy).toHaveBeenCalledWith('❌ Login failed: Network unavailable. Check your connection.');
+  }));
+
+  it('should show alert on server error', fakeAsync(() => {
+    component.email = 'user@example.com';
+    component.password = 'password';
+    mockAuthService.login.and.returnValue(
+      throwError(() => ({ type: 'server' }))
+    );
+
+    component.login();
+    tick();
+
+    expect(alertSpy).toHaveBeenCalledWith('❌ Login failed: Server error. Please try again later.');
   }));
 
   it('should update component properties from input fields', () => {

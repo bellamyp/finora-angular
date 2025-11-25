@@ -70,12 +70,26 @@ describe('LoginOtpRequest', () => {
 
   it('should handle requestOtp errors', fakeAsync(() => {
     component.email = 'test@example.com';
-    mockAuthService.requestOtp.and.returnValue(throwError(() => new Error('Network error')));
 
+    // simulate server error
+    mockAuthService.requestOtp.and.returnValue(throwError(() => ({ type: 'server' })));
     component.sendOtp();
     tick();
-
     expect(component.error).toBe('Server error. Please try again later.');
+    expect(component.sending).toBeFalse();
+
+    // simulate network error
+    mockAuthService.requestOtp.and.returnValue(throwError(() => ({ type: 'network' })));
+    component.sendOtp();
+    tick();
+    expect(component.error).toBe('Network unavailable. Check your connection.');
+    expect(component.sending).toBeFalse();
+
+    // simulate unknown error
+    mockAuthService.requestOtp.and.returnValue(throwError(() => ({})));
+    component.sendOtp();
+    tick();
+    expect(component.error).toBe('Unknown error occurred.');
     expect(component.sending).toBeFalse();
   }));
 });

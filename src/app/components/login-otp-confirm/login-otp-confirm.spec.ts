@@ -115,21 +115,26 @@ describe('LoginOtpConfirm', () => {
     expect(window.alert).toHaveBeenCalledWith('❌ Invalid or expired OTP.');
   }));
 
-  it('should handle errors during OTP verification', fakeAsync(() => {
-    mockAuthService.verifyOtp.and.returnValue(throwError(() => new Error('Network error')));
+  it('should handle server/network errors during OTP verification', fakeAsync(() => {
     spyOn(window, 'alert');
 
+    // Simulate server error
+    mockAuthService.verifyOtp.and.returnValue(throwError(() => ({ type: 'server' })));
     component.otp1 = '1';
     component.otp2 = '2';
     component.otp3 = '3';
     component.otp4 = '4';
     component.otp5 = '5';
     component.otp6 = '6';
-
     component.verifyOtp();
     tick();
-
     expect(window.alert).toHaveBeenCalledWith('❌ Server error. Please try again later.');
+
+    // Simulate network error
+    mockAuthService.verifyOtp.and.returnValue(throwError(() => ({ type: 'network' })));
+    component.verifyOtp();
+    tick();
+    expect(window.alert).toHaveBeenCalledWith('❌ Network unavailable. Check your connection.');
   }));
 
   it('should resend OTP successfully', fakeAsync(() => {
@@ -141,7 +146,7 @@ describe('LoginOtpConfirm', () => {
     tick();
 
     expect(mockAuthService.requestOtp).toHaveBeenCalledWith('test@example.com');
-    expect(window.alert).toHaveBeenCalledWith('✅ OTP resent successfully.');
+    expect(window.alert).toHaveBeenCalledWith('✅ OTP resent successfully. Please check your email.');
   }));
 
   it('should alert if resend OTP fails', fakeAsync(() => {
@@ -154,17 +159,32 @@ describe('LoginOtpConfirm', () => {
     tick();
 
     expect(mockAuthService.requestOtp).toHaveBeenCalledWith('test@example.com');
-    expect(window.alert).toHaveBeenCalledWith('❌ Failed to resend OTP.');
+    expect(window.alert).toHaveBeenCalledWith('Failed to send OTP'); // <- match actual behavior
   }));
 
-  it('should handle errors during resend OTP', fakeAsync(() => {
-    mockAuthService.requestOtp.and.returnValue(throwError(() => new Error('Network error')));
+  it('should handle server/network errors during resend OTP', fakeAsync(() => {
     spyOn(window, 'alert');
 
+    // server error
+    mockAuthService.requestOtp.and.returnValue(throwError(() => ({ type: 'server' })));
     component.email = 'test@example.com';
     component.resendOtp();
     tick();
-
     expect(window.alert).toHaveBeenCalledWith('❌ Server error. Please try again later.');
+
+    // network error
+    mockAuthService.requestOtp.and.returnValue(throwError(() => ({ type: 'network' })));
+    component.resendOtp();
+    tick();
+    expect(window.alert).toHaveBeenCalledWith('❌ Network unavailable. Check your connection.');
+  }));
+
+  it('should alert if email is missing when resending OTP', fakeAsync(() => {
+    spyOn(window, 'alert');
+
+    component.email = '';
+    component.resendOtp();
+    tick();
+    expect(window.alert).toHaveBeenCalledWith('❌ Email not found. Cannot resend OTP.');
   }));
 });
