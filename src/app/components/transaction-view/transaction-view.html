@@ -50,10 +50,13 @@
     </table>
   </div>
 
-  <div class="btn-toolbar mb-4 flex-wrap">
-    <button class="nav-btn" routerLink="/transaction-list">Posted Transactions</button>
-    <button class="nav-btn pending-btn" routerLink="/transaction-pending-list">Pending Transactions</button>
-    <button class="nav-btn search-btn" routerLink="/transaction-search">Search Transactions</button>
-    <button class="nav-btn menu-btn" routerLink="/menu-user">Main Menu</button>
+  <div class="btn-toolbar mb-4 flex-wrap justify-content-center">
+    <button class="nav-btn me-2 mb-2" routerLink="/transaction-list">Posted Transactions</button>
+    <button class="nav-btn pending-btn me-2 mb-2" routerLink="/transaction-pending-list">Pending Transactions</button>
+    <button class="nav-btn search-btn me-2 mb-2" routerLink="/transaction-search">Search Transactions</button>
+    <button class="nav-btn edit-group-btn me-2 mb-2" [routerLink]="['/transaction-update', groupId]">
+      Edit this group
+    </button>
+    <button class="nav-btn menu-btn me-2 mb-2" routerLink="/menu-user">Main Menu</button>
   </div>
 </div>
