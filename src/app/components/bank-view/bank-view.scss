@@ -1,0 +1,27 @@
+.bank-card {
+  background: linear-gradient(145deg, #f0f4ff, #ffffff);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+  }
+
+  .detail-line {
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+  }
+}
+
+.btn-hover {
+  transition: transform 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  }
+}
+
+h2 {
+  letter-spacing: 0.5px;
+}

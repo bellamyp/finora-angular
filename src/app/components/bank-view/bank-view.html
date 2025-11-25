@@ -1,30 +1,52 @@
 <div class="container py-5" *ngIf="!loading">
   <ng-container *ngIf="bank; else errorTpl">
-    <h2 class="text-primary mb-4">Bank Details</h2>
 
-    <div class="card p-4 shadow-sm rounded-4 mb-4">
-      <p><strong>ID:</strong> {{ bank!.id }}</p>
-      <p><strong>Name:</strong> {{ bank!.name }}</p>
-      <p><strong>Type:</strong> {{ bank!.type }}</p>
-      <p><strong>Email:</strong> {{ bank!.email }}</p>
-      <p><strong>Balance:</strong> ${{ bank!.balance | number:'1.2-2' }}</p>
+    <h2 class="text-center mb-5 fw-bold text-primary">Bank Details</h2>
+
+    <div class="card rounded-5 shadow p-4 mb-4 bank-card">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <p class="detail-line"><strong>ID: </strong> <span class="text-muted">{{ bank!.id }}</span></p>
+          <p class="detail-line"><strong>Name: </strong> <span class="text-muted">{{ bank!.name }}</span></p>
+          <p class="detail-line"><strong>Type: </strong>
+            <span class="badge rounded-pill bg-info text-dark">{{ bank!.type }}</span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <p class="detail-line"><strong>Email: </strong> <span class="text-muted">{{ bank!.email }}</span></p>
+          <p class="detail-line"><strong>Balance: </strong>
+            <span class="text-success fw-bold fs-5">${{ bank!.balance | number:'1.2-2' }}</span>
+          </p>
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        <button class="btn btn-secondary btn-lg btn-hover" (click)="goToMainMenu()">
+          <i class="bi bi-house-door-fill me-2"></i>Main Menu
+        </button>
+        <button class="btn btn-primary btn-lg btn-hover" (click)="goToBankList()">
+          <i class="bi bi-card-list me-2"></i>List All Banks
+        </button>
+        <button class="btn btn-warning btn-lg btn-hover" (click)="editBank()">
+          <i class="bi bi-pencil-fill me-2"></i>Edit This Bank
+        </button>
+      </div>
     </div>
 
-    <!-- Buttons -->
-    <div class="d-flex gap-2">
-      <button class="btn btn-secondary" (click)="goToMainMenu()">Main Menu</button>
-      <button class="btn btn-primary" (click)="goToBankList()">List All Banks</button>
-      <button class="btn btn-warning" (click)="editBank()">Edit This Bank</button>
-    </div>
   </ng-container>
 </div>
 
 <ng-template #errorTpl>
-  <div class="alert alert-danger" role="alert">
-    {{ error }}
+  <div class="alert alert-danger text-center fw-bold py-3" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
   </div>
 </ng-template>
 
 <div *ngIf="loading" class="text-center py-5">
-  <p>Loading bank details...</p>
+  <div class="spinner-border text-primary mb-3" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <p class="fs-5 text-muted">Loading bank details...</p>
 </div>
