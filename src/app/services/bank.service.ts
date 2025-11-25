@@ -18,6 +18,11 @@ export class BankService {
     return this.http.get<BankDto[]>(this.apiUrl);
   }
 
+  // GET a single bank by ID
+  getBankById(bankId: string): Observable<BankDto> {
+    return this.http.get<BankDto>(`${this.apiUrl}/${bankId}`);
+  }
+
   createBank(payload: BankCreateDto): Observable<BankDto> {
     return this.http.post<BankDto>(this.apiUrl, payload);
   }
