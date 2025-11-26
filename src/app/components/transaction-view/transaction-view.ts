@@ -52,7 +52,7 @@ export class TransactionView implements OnInit {
             this.loading = false;
           }
         });
-      // Check if group is already marked as repeat
+      // Check if a group is already marked as repeat
       this.transactionGroupRepeatService.isRepeat(this.groupId).subscribe({
         next: (exists) => {
           this.isRepeat = exists;

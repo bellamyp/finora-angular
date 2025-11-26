@@ -11,14 +11,13 @@ import { BankDto } from '../../dto/bank.dto';
 import { TransactionGroupDto, TransactionResponseDto } from '../../dto/transaction-group.dto';
 import { TransactionTypeOption } from '../../dto/transaction-type.dto';
 import { enumToOptions } from '../../utils/enum-utils';
-import { NgSelectModule } from '@ng-select/ng-select';
 
 type Mode = 'create' | 'update' | 'repeat';
 
 @Component({
   selector: 'app-transaction-update',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgSelectModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './transaction-update.html',
   styleUrls: ['./transaction-update.scss']
 })
@@ -99,9 +98,7 @@ export class TransactionUpdate implements OnInit {
       notes: '',
       bankId: '',
       brandId: '',
-      brandName: '',      // for ng-select new entry
       locationId: '',
-      locationName: '',   // for ng-select new entry
       typeId: '',
       posted: false
     });
@@ -121,6 +118,7 @@ export class TransactionUpdate implements OnInit {
     tx.posted = true;
   }
 
+  /** Submit all transactions */
   submitAll() {
     if (!this.transactions.length) {
       window.alert('Add at least one transaction.');
@@ -129,48 +127,35 @@ export class TransactionUpdate implements OnInit {
 
     const payload: TransactionGroupDto = {
       id: this.mode === 'update' ? this.groupId! : undefined,
-      transactions: this.transactions.map(tx => ({
-        ...tx,
-        // Send typed brand/location name if no ID
-        brandName: tx.brandId ? undefined : tx.brandName,
-        locationName: tx.locationId ? undefined : tx.locationName
-      }))
+      transactions: this.transactions
     };
 
-    if (this.mode === 'create' || this.mode === 'repeat') {
-      // POST
-      this.transactionGroupService.createTransactionGroup(payload).subscribe({
-        next: res => {
-          if (res.success) this.router.navigate(['/transaction-view', res.groupId]);
-          else window.alert(res.message);
-        },
-        error: err => console.error('Error creating transaction group:', err)
-      });
-    } else if (this.mode === 'update') {
-      // PUT
-      this.transactionGroupService.updateTransactionGroup(payload).subscribe({
-        next: res => {
-          if (res.success) this.router.navigate(['/transaction-view', this.groupId]);
-          else window.alert(res.message);
-        },
-        error: err => console.error('Error updating transaction group:', err)
-      });
-    }
+    const request$ = this.mode === 'update'
+      ? this.transactionGroupService.updateTransactionGroup(payload)
+      : this.transactionGroupService.createTransactionGroup(payload);
+
+    request$.subscribe({
+      next: res => {
+        if (res.success) {
+          this.router.navigate(['/transaction-view', res.groupId || this.groupId]);
+        } else {
+          window.alert(res.message);
+        }
+      },
+      error: err => console.error('Error submitting transaction group:', err)
+    });
   }
 
-  cancel() {
-    window.location.reload();
+  /** Validation (no brandName or locationName anymore) */
+  validateTransaction(tx: TransactionResponseDto): boolean {
+    return !!tx.date &&
+      !!tx.typeId &&
+      !!tx.brandId &&
+      !!tx.locationId &&
+      tx.amount !== null && tx.amount !== undefined &&
+      !!tx.bankId;
   }
 
   cancel() { window.location.reload(); }
   goBack() { this.router.navigate(['/transaction-pending-list']); }
-
-  validateTransaction(tx: TransactionResponseDto): boolean {
-    return !!tx.date &&
-      !!tx.typeId &&
-      (!!tx.brandId || !!tx.brandName) &&
-      (!!tx.locationId || !!tx.locationName) &&
-      tx.amount !== null && tx.amount !== undefined &&
-      !!tx.bankId;
-  }
 }
