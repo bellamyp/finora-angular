@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TransactionGroupDto } from '../../dto/transaction-group.dto';
-import { TransactionGroupService } from '../../services/transaction-group.service';
-import {BankService} from '../../services/bank.service';
-import {forkJoin} from 'rxjs';
-import {BankDto} from '../../dto/bank.dto';
-import {BrandService} from '../../services/brand.service';
-import {BrandDto} from '../../dto/brand.dto';
-import {Router} from '@angular/router';
+import { TransactionResponseDto } from '../../dto/transaction-group.dto';
+import { TransactionService } from '../../services/transaction.service';
+import { BankService } from '../../services/bank.service';
+import { BrandService } from '../../services/brand.service';
+import { forkJoin } from 'rxjs';
+import { BankDto } from '../../dto/bank.dto';
+import { BrandDto } from '../../dto/brand.dto';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-transaction-pending-list',
@@ -18,73 +18,60 @@ import {Router} from '@angular/router';
 export class TransactionPendingList implements OnInit {
 
   loading = true;
-  transactionGroups: TransactionGroupDto[] = [];
-  // bankId -> bankName mapping
+  results: TransactionResponseDto[] = [];
   bankMap: Record<string, string> = {};
-  // brandId -> brandName mapping
   brandMap: Record<string, string> = {};
 
   constructor(
-    private transactionGroupService: TransactionGroupService,
+    private transactionService: TransactionService,
     private bankService: BankService,
     private brandService: BrandService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.fetchPendingTransactionGroups();
+    this.fetchPendingTransactions();
   }
 
-  editTransaction(groupId: string) {
+  openTransactionGroup(groupId: string) {
     this.router.navigate(['/transaction-update', groupId]);
   }
 
-  markAsPosted() {
-    window.alert("This function is not ready yet")
-  }
-
-  /**
-   * Fetch pending transaction groups only
-   */
-  fetchPendingTransactionGroups(): void {
+  fetchPendingTransactions(): void {
     this.loading = true;
 
-    // load banks + groups at same time
     forkJoin({
       banks: this.bankService.getBanks(),
       brands: this.brandService.getBrandsByUser(),
-      groups: this.transactionGroupService.getTransactionGroups('pending')
+      transactions: this.transactionService.getPendingTransactions()
     }).subscribe({
-      next: ({ banks, brands, groups }) => {
+      next: ({ banks, brands, transactions }) => {
 
-        // Build map: { bankId → bankName }
+        // Build lookup maps
         this.bankMap = banks.reduce((map: Record<string, string>, bank: BankDto) => {
           map[bank.id] = bank.name;
           return map;
         }, {});
 
-        // Build map: { brandId → brandName }
         this.brandMap = brands.reduce((map: Record<string, string>, brand: BrandDto) => {
           map[brand.id] = `${brand.name} (${brand.location})`;
           return map;
         }, {});
 
-        // Map bankName into each transaction
-        this.transactionGroups = groups.map(group => ({
-          ...group,
-          transactions: group.transactions.map(tx => ({
-            ...tx,
-            bankName: this.bankMap[tx.bankId] ?? tx.bankId,
-            brandName: this.brandMap[tx.brandId] ?? tx.brandId
-          }))
+        // Map bankName / brandName into transactions
+        this.results = transactions.map(tx => ({
+          ...tx,
+          bankName: this.bankMap[tx.bankId] ?? tx.bankId,
+          brandName: this.brandMap[tx.brandId] ?? tx.brandId
         }));
 
         this.loading = false;
       },
       error: (err) => {
-        console.error('Failed to fetch pending transaction groups:', err);
+        console.error('Failed to fetch pending transactions:', err);
         this.loading = false;
       }
     });
   }
+
 }

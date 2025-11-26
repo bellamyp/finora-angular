@@ -23,4 +23,11 @@ export class TransactionService {
     return this.http.post<TransactionResponseDto[]>(url, payload);
   }
 
+  /**
+   * Fetch all pending transactions for the current user
+   */
+  getPendingTransactions(): Observable<TransactionResponseDto[]> {
+    const url = `${this.apiUrl}/pending`;
+    return this.http.get<TransactionResponseDto[]>(url);
+  }
 }

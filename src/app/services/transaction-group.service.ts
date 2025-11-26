@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import {BackendConfig} from '../config/backend-config';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {TransactionGroupCreateDto} from '../dto/transaction-group-create.dto';
-import {TransactionGroupDto} from '../dto/transaction-group.dto';
+import { BackendConfig } from '../config/backend-config';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { TransactionGroupCreateDto } from '../dto/transaction-group-create.dto';
+import { TransactionGroupDto } from '../dto/transaction-group.dto';
 
 interface TransactionGroupResponse {
   success: boolean;
@@ -22,7 +22,6 @@ export class TransactionGroupService {
 
   /**
    * Create a new transaction group
-   * @param payload TransactionGroupCreateDto from FE
    */
   createTransactionGroup(payload: TransactionGroupCreateDto): Observable<TransactionGroupResponse> {
     return this.http.post<TransactionGroupResponse>(this.apiUrl, payload);
@@ -30,7 +29,6 @@ export class TransactionGroupService {
 
   /**
    * Update an existing transaction group
-   * @param payload Updated transaction group payload
    */
   updateTransactionGroup(payload: TransactionGroupDto) {
     return this.http.put<{ success: boolean; message: string }>(this.apiUrl, payload);
@@ -38,9 +36,9 @@ export class TransactionGroupService {
 
   /**
    * Get transaction groups, optionally filtered by status.
-   * @param status 'posted' (default) or 'pending'
+   * Accepts 'posted' (default), 'pending', or 'repeat'.
    */
-  getTransactionGroups(status: 'posted' | 'pending' = 'posted'): Observable<TransactionGroupDto[]> {
+  getTransactionGroups(status: 'posted' | 'pending' | 'repeat' = 'posted'): Observable<TransactionGroupDto[]> {
     const params = new HttpParams().set('status', status);
     return this.http.get<TransactionGroupDto[]>(this.apiUrl, { params });
   }
@@ -53,4 +51,3 @@ export class TransactionGroupService {
     return this.http.get<TransactionGroupDto>(url);
   }
 }
-
