@@ -23,7 +23,7 @@ export class TransactionGroupService {
   /**
    * Create a new transaction group
    */
-  createTransactionGroup(payload: TransactionGroupCreateDto): Observable<TransactionGroupResponse> {
+  createTransactionGroup(payload: TransactionGroupDto): Observable<TransactionGroupResponse> {
     return this.http.post<TransactionGroupResponse>(this.apiUrl, payload);
   }
 

@@ -27,13 +27,16 @@
       </thead>
       <tbody class="text-center">
       <ng-container *ngFor="let group of transactionGroups">
+
         <!-- Group header row -->
-        <tr class="table-secondary fw-bold clickable-row" (click)="openTransactionGroup(group.id)">
+        <tr class="table-secondary fw-bold clickable-row"
+            [class.disabled]="!group.id"
+            (click)="group.id && openTransactionGroup(group.id)">
           <td colspan="6" class="text-start ps-4">
-            Group: {{ group.id }} &nbsp; (Select to see details)
+            Group: {{ group.id || 'N/A' }} &nbsp; (Select to see details)
             <span class="badge bg-light text-primary">
-              {{ group.transactions.length }} transaction(s)
-            </span>
+                {{ group.transactions.length }} transaction(s)
+              </span>
           </td>
         </tr>
 
@@ -60,6 +63,7 @@
           <!-- Bank column -->
           <td>{{ tx.bankName }}</td>
         </tr>
+
       </ng-container>
       </tbody>
     </table>
