@@ -31,4 +31,11 @@ export class TransactionGroupRepeatService {
     return this.http.get<boolean>(`${this.apiUrl}/${groupId}/is-repeat`);
   }
 
+  /**
+   * Removes the repeat status from a transaction group.
+   */
+  removeRepeat(groupId: string): Observable<string> {
+    return this.http.delete(`${this.apiUrl}/${groupId}`, { responseType: 'text' });
+  }
+
 }

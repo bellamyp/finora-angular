@@ -7,6 +7,7 @@ import { BrandService } from '../../services/brand.service';
 import { forkJoin } from 'rxjs';
 import { BankDto } from '../../dto/bank.dto';
 import { BrandDto } from '../../dto/brand.dto';
+import {TransactionGroupRepeatService} from '../../services/transaction-group-repeat.service';
 
 @Component({
   selector: 'app-transaction-repeat-list',
@@ -24,6 +25,7 @@ export class TransactionRepeatList implements OnInit {
 
   constructor(
     private transactionGroupService: TransactionGroupService,
+    private transactionGroupRepeatService: TransactionGroupRepeatService,
     private bankService: BankService,
     private brandService: BrandService
   ) {}
@@ -78,6 +80,23 @@ export class TransactionRepeatList implements OnInit {
   }
 
   removeRepeatTag(groupId: string) {
-    window.alert(`MOCK Remove repeat tag clicked: ${groupId}`);
+    if (!groupId) return;
+
+    // Show loading and clear current list
+    this.loading = true;
+    this.transactionGroups = [];
+
+    this.transactionGroupRepeatService.removeRepeat(groupId).subscribe({
+      next: () => {
+        // After deletion, fetch the updated list
+        this.fetchRepeatTransactionGroups();
+      },
+      error: (err) => {
+        console.error(err);
+        window.alert(`Failed to remove repeat tag: ${err.error || err.message}`);
+        // Stop loading even if error occurs
+        this.loading = false;
+      }
+    });
   }
 }
