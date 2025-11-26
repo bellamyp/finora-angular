@@ -32,6 +32,7 @@ export class TransactionUpdate implements OnInit {
   banks: BankDto[] = [];
   transactionTypes: TransactionTypeOption[] = [];
   brands: BrandDto[] = [];
+  locations: { id: string, name: string }[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -112,6 +113,7 @@ export class TransactionUpdate implements OnInit {
       notes: '',
       bankId: '',
       brandId: '',
+      locationId: '',
       typeId: '',
       posted: false
     });

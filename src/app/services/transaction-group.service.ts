@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BackendConfig } from '../config/backend-config';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TransactionGroupCreateDto } from '../dto/transaction-group-create.dto';
 import { TransactionGroupDto } from '../dto/transaction-group.dto';
 
 interface TransactionGroupResponse {
