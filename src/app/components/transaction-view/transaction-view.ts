@@ -94,14 +94,31 @@ export class TransactionView implements OnInit {
       return;
     }
 
+    // Show loading and clear current transactions
+    this.loading = true;
+    this.transactions = [];
+
     this.transactionGroupRepeatService.markAsRepeat(groupId).subscribe({
-      next: (result) => {
-        console.log('Marked as repeat:', result);
-        this.isRepeat = true;
+      next: () => {
+        // After marking as repeat, reload the group
+        this.transactionGroupService.getTransactionGroupById(groupId).subscribe({
+          next: (group) => {
+            this.transactions = group.transactions.map(tx => ({
+              ...tx,
+              posted: tx.posted ?? false
+            }));
+            this.isRepeat = true;  // mark as repeat in UI
+            this.loading = false;
+          },
+          error: (err) => {
+            console.error('Failed to reload transaction group:', err);
+            this.loading = false;
+          }
+        });
       },
       error: (err) => {
         console.error(err);
-
+        this.loading = false;
         if (err.status === 403) {
           window.alert('You are not allowed to mark this group as repeat.');
         } else {
