@@ -6,13 +6,12 @@ export interface TransactionResponseDto {
   amount: number;
   notes: string;
   bankId: string;
-  brandId: string;
-  locationId: string;
-  typeId: string;
-
-  // OPTIONAL fields
   bankName?: string;
+  brandId: string;
   brandName?: string;
+  locationId: string;
+  locationName?: string;
+  typeId: string;
   posted: boolean;
 }
 

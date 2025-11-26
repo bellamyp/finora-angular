@@ -4,9 +4,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TransactionGroupDto } from '../dto/transaction-group.dto';
 
-interface TransactionGroupResponse {
+export interface TransactionGroupResponse {
   success: boolean;
-  groupId: string;
+  groupId?: string; // optional, for update/create response
   message: string;
 }
 
@@ -29,8 +29,9 @@ export class TransactionGroupService {
   /**
    * Update an existing transaction group
    */
-  updateTransactionGroup(payload: TransactionGroupDto) {
-    return this.http.put<{ success: boolean; message: string }>(this.apiUrl, payload);
+  updateTransactionGroup(payload: TransactionGroupDto): Observable<TransactionGroupResponse> {
+    const url = `${this.apiUrl}/${payload.id}`;
+    return this.http.put<TransactionGroupResponse>(url, payload);
   }
 
   /**

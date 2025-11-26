@@ -73,12 +73,8 @@
         <!-- Actions -->
         <td class="text-center">
           <div class="d-flex justify-content-center gap-1">
-            <button type="button" class="btn btn-sm btn-primary" (click)="markAsPosted(tx)" [disabled]="tx.posted">
-              Posted
-            </button>
-            <button type="button" class="btn btn-sm btn-danger" (click)="deleteTransaction(tx, i)" [disabled]="tx.posted">
-              Delete
-            </button>
+            <button type="button" class="btn btn-sm btn-primary" (click)="markAsPosted(tx)" [disabled]="tx.posted">Posted</button>
+            <button type="button" class="btn btn-sm btn-danger" (click)="deleteTransaction(tx, i)" [disabled]="tx.posted">Delete</button>
           </div>
         </td>
       </tr>
@@ -86,11 +82,9 @@
     </table>
   </div>
 
-
-  <!-- BOTTOM ACTIONS -->
+  <!-- Bottom actions -->
   <div class="bottom-actions d-flex justify-content-between mt-4 p-3 shadow-sm rounded-4 bg-white">
     <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
-
     <div class="d-flex gap-2">
       <button type="button" class="btn btn-success" (click)="submitAll()">Submit</button>
       <button type="button" class="btn btn-secondary" (click)="cancel()">Reset</button>

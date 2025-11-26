@@ -11,13 +11,14 @@ import { BankDto } from '../../dto/bank.dto';
 import { TransactionGroupDto, TransactionResponseDto } from '../../dto/transaction-group.dto';
 import { TransactionTypeOption } from '../../dto/transaction-type.dto';
 import { enumToOptions } from '../../utils/enum-utils';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 type Mode = 'create' | 'update' | 'repeat';
 
 @Component({
   selector: 'app-transaction-update',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgSelectModule],
   templateUrl: './transaction-update.html',
   styleUrls: ['./transaction-update.scss']
 })
@@ -25,10 +26,10 @@ export class TransactionUpdate implements OnInit {
 
   loading: boolean = true;
   groupId?: string;
-  mode: Mode = 'create'; // default to create
+  mode: Mode = 'create';
   transactions: TransactionResponseDto[] = [];
 
-  // ---------- LOOKUP DROPDOWNS ----------
+  // Lookup dropdowns
   banks: BankDto[] = [];
   transactionTypes: TransactionTypeOption[] = [];
   brands: BrandDto[] = [];
@@ -47,43 +48,34 @@ export class TransactionUpdate implements OnInit {
     this.groupId = this.route.snapshot.paramMap.get('groupId') || undefined;
     const isRepeat = this.route.snapshot.url.some(seg => seg.path === 'repeat');
 
-    if (this.groupId && isRepeat) {
-      this.mode = 'repeat';
-      console.log('Mode: repeat, groupId:', this.groupId);
-    } else if (this.groupId) {
-      this.mode = 'update';
-      console.log('Mode: update, groupId:', this.groupId);
-    } else {
-      this.mode = 'create';
-      console.log('Mode: create (new transaction group)');
-      this.loading = false;
-    }
+    if (this.groupId && isRepeat) this.mode = 'repeat';
+    else if (this.groupId) this.mode = 'update';
+    else this.mode = 'create';
 
-    // Load lookups
+    // Load lookup data
     this.loadLookups();
 
-    // If update or repeat, fetch the group
+    // Load the existing group if update or repeat
     if (this.mode === 'update' || this.mode === 'repeat') {
       this.transactionGroupService.getTransactionGroupById(this.groupId!)
         .subscribe({
-          next: (group) => {
+          next: group => {
             this.transactions = group.transactions.map(tx => ({
               ...tx,
               posted: this.mode === 'repeat' ? false : tx.posted ?? false
             }));
             this.loading = false;
           },
-          error: (err) => {
+          error: err => {
             console.error('Failed to fetch transaction group:', err);
             this.loading = false;
           }
         });
+    } else {
+      this.loading = false;
     }
   }
 
-  // -------------------------------
-  // Add the getter here
-  // -------------------------------
   get pageTitle(): string {
     switch (this.mode) {
       case 'create': return 'Create New Group';
@@ -94,14 +86,8 @@ export class TransactionUpdate implements OnInit {
   }
 
   loadLookups() {
-    this.bankService.getBanks().subscribe({
-      next: data => this.banks = data,
-      error: err => console.error('[Bank] Load Error:', err)
-    });
-    this.brandService.getBrandsByUser().subscribe({
-      next: data => this.brands = data,
-      error: err => console.error('[Brand] Load Error:', err)
-    });
+    this.bankService.getBanks().subscribe({ next: data => this.banks = data });
+    this.brandService.getBrandsByUser().subscribe({ next: data => this.brands = data });
     this.transactionTypes = enumToOptions(TransactionTypeEnum);
   }
 
@@ -113,7 +99,9 @@ export class TransactionUpdate implements OnInit {
       notes: '',
       bankId: '',
       brandId: '',
+      brandName: '',      // for ng-select new entry
       locationId: '',
+      locationName: '',   // for ng-select new entry
       typeId: '',
       posted: false
     });
@@ -141,7 +129,12 @@ export class TransactionUpdate implements OnInit {
 
     const payload: TransactionGroupDto = {
       id: this.mode === 'update' ? this.groupId! : undefined,
-      transactions: this.transactions
+      transactions: this.transactions.map(tx => ({
+        ...tx,
+        // Send typed brand/location name if no ID
+        brandName: tx.brandId ? undefined : tx.brandName,
+        locationName: tx.locationId ? undefined : tx.locationName
+      }))
     };
 
     if (this.mode === 'create' || this.mode === 'repeat') {
@@ -169,14 +162,14 @@ export class TransactionUpdate implements OnInit {
     window.location.reload();
   }
 
-  goBack() {
-    this.router.navigate(['/transaction-pending-list']);
-  }
+  cancel() { window.location.reload(); }
+  goBack() { this.router.navigate(['/transaction-pending-list']); }
 
   validateTransaction(tx: TransactionResponseDto): boolean {
     return !!tx.date &&
       !!tx.typeId &&
-      !!tx.brandId &&
+      (!!tx.brandId || !!tx.brandName) &&
+      (!!tx.locationId || !!tx.locationName) &&
       tx.amount !== null && tx.amount !== undefined &&
       !!tx.bankId;
   }
