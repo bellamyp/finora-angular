@@ -27,10 +27,10 @@
       </thead>
       <tbody class="text-center">
       <ng-container *ngFor="let group of transactionGroups">
-        <!-- Group header row -->
-        <tr class="table-secondary fw-bold clickable-row" (click)="openTransactionGroup(group.id)">
+        <!-- Group header row (non-clickable) -->
+        <tr class="table-secondary fw-bold">
           <td colspan="6" class="text-start ps-4">
-            Group: {{ group.id }} &nbsp; (Select to see details)
+            Group: {{ group.id }}
             <span class="badge bg-light text-primary">
                 {{ group.transactions.length }} transaction(s)
               </span>
@@ -40,24 +40,12 @@
         <!-- Transaction rows -->
         <tr *ngFor="let tx of group.transactions">
           <td>{{ tx.date }}</td>
-
-          <!-- Type column -->
-          <td>
-            <span class="badge bg-info text-dark">{{ tx.typeId }}</span>
-          </td>
-
-          <!-- Brand column -->
+          <td><span class="badge bg-info text-dark">{{ tx.typeId }}</span></td>
           <td>{{ tx.brandName }}</td>
-
-          <!-- Amount column -->
           <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}">
             ${{ tx.amount }}
           </td>
-
-          <!-- Notes column -->
           <td class="notes-column">{{ tx.notes }}</td>
-
-          <!-- Bank column -->
           <td>{{ tx.bankName }}</td>
         </tr>
       </ng-container>
