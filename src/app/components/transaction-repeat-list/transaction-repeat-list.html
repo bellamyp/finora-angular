@@ -27,13 +27,29 @@
       </thead>
       <tbody class="text-center">
       <ng-container *ngFor="let group of transactionGroups">
-        <!-- Group header row (non-clickable) -->
+
+        <!-- Group header row with buttons -->
         <tr class="table-secondary fw-bold">
-          <td colspan="6" class="text-start ps-4">
-            Group: {{ group.id }}
-            <span class="badge bg-light text-primary">
-                {{ group.transactions.length }} transaction(s)
-              </span>
+          <td colspan="6" class="p-2">
+            <div class="d-flex justify-content-between align-items-center w-100">
+              <!-- Left: Group info -->
+              <div class="group-info">
+                Group: {{ group.id }}
+                <span class="badge bg-light text-primary">
+            {{ group.transactions.length }} transaction(s)
+          </span>
+              </div>
+
+              <!-- Right: Buttons -->
+              <div class="group-actions">
+                <button class="btn btn-sm btn-success me-1" (click)="repeatGroup(group.id)">
+                  Repeat
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="removeRepeatTag(group.id)">
+                  Remove Repeat
+                </button>
+              </div>
+            </div>
           </td>
         </tr>
 
@@ -48,7 +64,9 @@
           <td class="notes-column">{{ tx.notes }}</td>
           <td>{{ tx.bankName }}</td>
         </tr>
+
       </ng-container>
+
       </tbody>
     </table>
   </div>

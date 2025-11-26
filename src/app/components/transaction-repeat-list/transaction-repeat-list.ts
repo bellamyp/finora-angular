@@ -75,7 +75,11 @@ export class TransactionRepeatList implements OnInit {
     });
   }
 
-  openTransactionGroup(groupId: string) {
-    this.router.navigate(['/transaction-view', groupId]);
+  repeatGroup(groupId: string) {
+    window.alert(`MOCK Repeat group clicked: ${groupId}`);
+  }
+
+  removeRepeatTag(groupId: string) {
+    window.alert(`MOCK Remove repeat tag clicked: ${groupId}`);
   }
 }

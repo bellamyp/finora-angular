@@ -1,0 +1,44 @@
+/* Repeat transactions table */
+.repeat-transactions-table {
+  .group-header-row {
+    font-size: 0.95rem;
+  }
+
+  .group-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* space between group label and badge */
+  }
+
+  .group-actions {
+    display: flex;
+    gap: 0.25rem; /* keeps buttons close together */
+  }
+
+  .notes-column {
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  td, th {
+    vertical-align: middle;
+  }
+
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Optional: responsive for small screens */
+@media (max-width: 576px) {
+  .group-header-row td {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .group-actions {
+    justify-content: flex-start;
+  }
+}
