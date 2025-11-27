@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {ActivatedRoute, RouterLink} from '@angular/router';
-import { TransactionGroupService } from '../../services/transaction-group.service';
-import { BrandService } from '../../services/brand.service';
-import { BankService } from '../../services/bank.service';
-import { BrandDto } from '../../dto/brand.dto';
-import { BankDto } from '../../dto/bank.dto';
-import { TransactionResponseDto } from '../../dto/transaction-group.dto';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {TransactionGroupService} from '../../services/transaction-group.service';
+import {BrandService} from '../../services/brand.service';
+import {BankService} from '../../services/bank.service';
+import {BrandDto} from '../../dto/brand.dto';
+import {BankDto} from '../../dto/bank.dto';
+import {TransactionResponseDto} from '../../dto/transaction-group.dto';
 import {TransactionGroupRepeatService} from '../../services/transaction-group-repeat.service';
 
 @Component({
@@ -27,7 +27,8 @@ export class TransactionView implements OnInit {
   brands: BrandDto[] = [];
 
   constructor(
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
     private transactionGroupService: TransactionGroupService,
     private transactionGroupRepeatService: TransactionGroupRepeatService,
     private bankService: BankService,
@@ -35,7 +36,7 @@ export class TransactionView implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.groupId = this.route.snapshot.paramMap.get('groupId') || '';
+    this.groupId = this.activatedRoute.snapshot.paramMap.get('groupId') || '';
     if (this.groupId) {
       // Load transaction group from BE
       this.transactionGroupService.getTransactionGroupById(this.groupId)
@@ -136,8 +137,11 @@ export class TransactionView implements OnInit {
     });
   }
 
-
   repeatThisGroup(groupId?: string) {
-    window.alert(`Repeat group ${groupId} - not implemented yet`);
+    if (!groupId) {
+      window.alert('Invalid group ID');
+      return;
+    }
+    this.router.navigate(['/transaction-update', groupId, 'repeat']);
   }
 }

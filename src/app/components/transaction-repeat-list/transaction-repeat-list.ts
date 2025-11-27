@@ -10,6 +10,7 @@ import { BankDto } from '../../dto/bank.dto';
 import { BrandDto } from '../../dto/brand.dto';
 import { LocationDto } from '../../dto/location.dto';
 import { forkJoin } from 'rxjs';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-transaction-repeat-list',
@@ -31,7 +32,8 @@ export class TransactionRepeatList implements OnInit {
     private transactionGroupRepeatService: TransactionGroupRepeatService,
     private bankService: BankService,
     private brandService: BrandService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -100,7 +102,11 @@ export class TransactionRepeatList implements OnInit {
   }
 
   repeatGroup(groupId: string) {
-    window.alert(`MOCK Repeat group clicked: ${groupId}`);
+    if (!groupId) {
+      window.alert('Invalid group ID');
+      return;
+    }
+    this.router.navigate(['/transaction-update', groupId, 'repeat']);
   }
 
   removeRepeatTag(groupId: string) {
