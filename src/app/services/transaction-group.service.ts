@@ -30,7 +30,7 @@ export class TransactionGroupService {
    * Update an existing transaction group
    */
   updateTransactionGroup(payload: TransactionGroupDto): Observable<TransactionGroupResponse> {
-    const url = `${this.apiUrl}/${payload.id}`;
+    const url = `${this.apiUrl}`;
     return this.http.put<TransactionGroupResponse>(url, payload);
   }
 
