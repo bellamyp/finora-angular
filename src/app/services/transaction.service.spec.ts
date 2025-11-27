@@ -9,6 +9,8 @@ describe('TransactionService', () => {
   let service: TransactionService;
   let httpMock: HttpTestingController;
 
+  const baseUrl = `${BackendConfig.springApiUrl}/transactions`;
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -44,7 +46,11 @@ describe('TransactionService', () => {
         id: 'tx1',
         groupId: 'group1',
         bankId: 'bank1',
+        bankName: 'Bank A',
         brandId: 'brand1',
+        brandName: 'Brand X',
+        locationId: 'loc1',
+        locationName: 'NY',
         typeId: 'INCOME',
         date: '2025-11-24',
         amount: 100,
@@ -56,16 +62,17 @@ describe('TransactionService', () => {
     service.searchTransactions(payload).subscribe(res => {
       expect(res.length).toBe(1);
       expect(res[0].id).toBe('tx1');
+      expect(res[0].locationId).toBe('loc1');
     });
 
-    const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/transactions/search`);
+    const req = httpMock.expectOne(`${baseUrl}/search`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(payload);
 
     req.flush(mockResponse); // return mock response
   });
 
-  it('should handle HTTP errors', () => {
+  it('should handle HTTP errors on searchTransactions', () => {
     const payload: TransactionSearchDto = {};
 
     service.searchTransactions(payload).subscribe({
@@ -75,7 +82,51 @@ describe('TransactionService', () => {
       }
     });
 
-    const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/transactions/search`);
+    const req = httpMock.expectOne(`${baseUrl}/search`);
     req.flush('Internal Server Error', { status: 500, statusText: 'Server Error' });
+  });
+
+  it('should make GET request on getPendingTransactions', () => {
+    const mockResponse: TransactionResponseDto[] = [
+      {
+        id: 'tx2',
+        groupId: 'group2',
+        bankId: 'bank2',
+        bankName: 'Bank B',
+        brandId: 'brand2',
+        brandName: 'Brand Y',
+        locationId: 'loc2',
+        locationName: 'CA',
+        typeId: 'EXPENSE',
+        date: '2025-11-25',
+        amount: -50,
+        notes: 'Pending test',
+        posted: false
+      }
+    ];
+
+    service.getPendingTransactions().subscribe(res => {
+      expect(res.length).toBe(1);
+      expect(res[0].id).toBe('tx2');
+      expect(res[0].posted).toBeFalse();
+      expect(res[0].locationId).toBe('loc2');
+    });
+
+    const req = httpMock.expectOne(`${baseUrl}/pending`);
+    expect(req.request.method).toBe('GET');
+
+    req.flush(mockResponse);
+  });
+
+  it('should handle HTTP errors on getPendingTransactions', () => {
+    service.getPendingTransactions().subscribe({
+      next: () => fail('should have failed with error'),
+      error: (err) => {
+        expect(err.status).toBe(404);
+      }
+    });
+
+    const req = httpMock.expectOne(`${baseUrl}/pending`);
+    req.flush('Not Found', { status: 404, statusText: 'Not Found' });
   });
 });

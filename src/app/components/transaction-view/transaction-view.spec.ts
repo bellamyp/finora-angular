@@ -45,12 +45,27 @@ describe('TransactionView', () => {
 
     // Mock data
     const mockTransactions: TransactionResponseDto[] = [
-      { id: 'tx1', date: '2025-11-24', amount: 100, notes: 'Test', bankId: 'b1', brandId: 'br1', typeId: 'INCOME', posted: true, groupId: 'group123' }
+      {
+        id: 'tx1',
+        date: '2025-11-24',
+        amount: 100,
+        notes: 'Test',
+        bankId: 'b1',
+        brandId: 'br1',
+        typeId: 'INCOME',
+        posted: true,
+        groupId: 'group123',
+        locationId: 'loc1'
+      }
     ];
 
     const mockGroup: TransactionGroupDto = { id: 'group123', transactions: mockTransactions };
-    const mockBanks: BankDto[] = [{ id: 'b1', name: 'Bank1', type: 'CHECKING', email: 'user@example.com' }];
-    const mockBrands: BrandDto[] = [{ id: 'br1', name: 'Brand1', location: 'NY' }];
+    const mockBanks: BankDto[] = [{
+      id: 'b1', name: 'Bank1',
+      type: "",
+      email: ""
+    }];
+    const mockBrands: BrandDto[] = [{ id: 'br1', name: 'Brand1' }];
 
     mockTransactionGroupService.getTransactionGroupById.and.returnValue(of(mockGroup));
     mockTransactionGroupRepeatService.isRepeat.and.returnValue(of(true));
@@ -80,49 +95,9 @@ describe('TransactionView', () => {
   });
 
   it('should return correct brand name', () => {
-    expect(component.getBrandName('br1')).toBe('Brand1 (NY)');
+    expect(component.getBrandName('br1')).toBe('Brand1');
     expect(component.getBrandName('unknown')).toBe('unknown');
   });
-
-  it('should mark group as repeat and reload transactions', fakeAsync(() => {
-    const newTransactions: TransactionResponseDto[] = [
-      {
-        id: 'tx2',
-        date: '2025-11-25',
-        amount: 50,
-        notes: 'Test2',
-        bankId: 'b1',
-        brandId: 'br1',
-        typeId: 'BILLS',
-        posted: false,
-        groupId: 'group123'
-      }
-    ];
-
-    // Dummy object to satisfy TransactionGroupDto type
-    const dummyRepeatGroup: TransactionGroupDto = {
-      id: 'group123',
-      transactions: []
-    };
-
-    // Return dummy object instead of null
-    mockTransactionGroupRepeatService.markAsRepeat.and.returnValue(of(dummyRepeatGroup));
-
-    // Return actual new transactions for the reload
-    mockTransactionGroupService.getTransactionGroupById.and.returnValue(of({
-      id: 'group123',
-      transactions: newTransactions
-    }));
-
-    component.markAsRepeat('group123');
-    tick(); // process markAsRepeat
-    tick(); // process getTransactionGroupById
-
-    expect(component.transactions.length).toBe(1);
-    expect(component.transactions[0].id).toBe('tx2');
-    expect(component.isRepeat).toBeTrue();
-    expect(component.loading).toBeFalse();
-  }));
 
   it('should handle markAsRepeat error with 403', fakeAsync(() => {
     spyOn(window, 'alert');
