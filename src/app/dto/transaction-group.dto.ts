@@ -3,7 +3,7 @@ export interface TransactionResponseDto {
   id: string;
   groupId?: string;
   date: string;
-  amount: number;
+  amount: number | null;
   notes: string;
   bankId: string;
   bankName?: string;

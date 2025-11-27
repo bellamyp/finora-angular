@@ -115,7 +115,7 @@ export class TransactionUpdate implements OnInit {
     this.transactions.push({
       id: '',
       date: todayStr,
-      amount: 0,
+      amount: null,
       notes: '',
       bankId: '',
       brandId: '',

@@ -3,13 +3,13 @@
 
   <!-- Loading UI -->
   <div *ngIf="loading" class="text-center text-muted fs-5">
-    <i class="bi bi-hourglass-split" style="font-size: 2rem;"></i>
+    <i class="bi bi-hourglass-split fs-2"></i>
     <div>Loading transaction group...</div>
   </div>
 
   <!-- No transactions UI -->
   <div *ngIf="!loading && transactions.length === 0" class="text-center text-muted fs-5">
-    <i class="bi bi-clock-history" style="font-size: 2rem;"></i>
+    <i class="bi bi-clock-history fs-2"></i>
     <div>No transactions found in this group.</div>
   </div>
 
@@ -17,22 +17,20 @@
     <table class="table table-bordered align-middle shadow-sm rounded-4 bg-white edit-transactions-table">
       <thead class="table-light text-center">
       <tr>
-        <th>Date</th>
-        <th>Type</th>
-        <th>Brand</th>
-        <th>Location</th>
-        <th>Amount</th>
-        <th>Notes</th>
-        <th>Bank</th>
-        <th style="width: 120px;">Actions</th>
+        <th style="width:12%;">Date</th>
+        <th style="width:12%;">Type</th>
+        <th style="width:12%;">Brand</th>
+        <th style="width:12%;">Location</th>
+        <th style="width:12%;">Amount</th>
+        <th style="width:30%;">Notes</th>
+        <th style="width:15%;">Bank</th>
+        <th style="width:14%;">Actions</th>
       </tr>
       </thead>
       <tbody>
       <tr *ngFor="let tx of transactions; let i = index" [ngClass]="{'posted': tx.posted}">
-        <!-- Date -->
         <td><input type="date" class="form-control" [(ngModel)]="tx.date" name="date{{i}}" [disabled]="tx.posted"></td>
 
-        <!-- Type -->
         <td>
           <select class="form-select" [(ngModel)]="tx.typeId" name="type{{i}}" [disabled]="tx.posted">
             <option value="">-- Type --</option>
@@ -40,16 +38,13 @@
           </select>
         </td>
 
-        <!-- Brand -->
         <td>
           <select class="form-select" [(ngModel)]="tx.brandId" name="brand{{i}}" [disabled]="tx.posted">
             <option value="">-- Brand --</option>
             <option *ngFor="let b of brands" [value]="b.id">{{ b.name }}</option>
           </select>
-
         </td>
 
-        <!-- Location -->
         <td>
           <select class="form-select" [(ngModel)]="tx.locationId" name="location{{i}}" [disabled]="tx.posted">
             <option value="">-- Location --</option>
@@ -57,13 +52,10 @@
           </select>
         </td>
 
-        <!-- Amount -->
         <td><input type="number" class="form-control" [(ngModel)]="tx.amount" name="amount{{i}}" step="0.01" [disabled]="tx.posted"></td>
 
-        <!-- Notes -->
         <td><input type="text" class="form-control" [(ngModel)]="tx.notes" name="notes{{i}}" [disabled]="tx.posted"></td>
 
-        <!-- Bank -->
         <td>
           <select class="form-select" [(ngModel)]="tx.bankId" name="bank{{i}}" [disabled]="tx.posted">
             <option value="">-- Bank --</option>
@@ -71,9 +63,8 @@
           </select>
         </td>
 
-        <!-- Actions -->
         <td class="text-center">
-          <div class="d-flex justify-content-center gap-1">
+          <div class="d-flex justify-content-center gap-1 flex-wrap">
             <button type="button" class="btn btn-sm btn-primary" (click)="markAsPosted(tx)" [disabled]="tx.posted">Posted</button>
             <button type="button" class="btn btn-sm btn-danger" (click)="deleteTransaction(tx, i)" [disabled]="tx.posted">Delete</button>
           </div>
@@ -84,16 +75,15 @@
   </div>
 
   <!-- Bottom actions -->
-  <div class="bottom-actions d-flex justify-content-between mt-4 p-3 shadow-sm rounded-4 bg-white">
-    <div class="d-flex gap-2">
-      <!-- Add Transaction + other quick actions -->
+  <div class="bottom-actions d-flex flex-wrap justify-content-between mt-4 p-3 shadow-sm rounded-4 bg-white gap-2">
+    <div class="d-flex gap-2 flex-wrap">
       <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
       <button type="button" class="btn btn-outline-warning" (click)="openAddLocation()">Add Location</button>
       <button type="button" class="btn btn-outline-info" (click)="openAddBrand()">Add Brand</button>
       <button type="button" class="btn btn-outline-secondary" (click)="openAddBank()">Add Bank</button>
     </div>
-    <div class="d-flex gap-2">
-      <button type="button" class="btn btn-success" (click)="submitAll()">Submit</button>
+    <div class="d-flex gap-2 flex-wrap">
+      <button type="button" class="btn btn-primary" (click)="submitAll()">Submit</button>
       <button type="button" class="btn btn-secondary" (click)="cancel()">Reset</button>
       <button type="button" class="btn btn-outline-dark" (click)="goBack()">Pending Transactions</button>
     </div>
