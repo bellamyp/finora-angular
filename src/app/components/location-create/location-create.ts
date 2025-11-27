@@ -17,8 +17,8 @@ export class LocationCreate implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private locationService: LocationService,
-    private router: Router
+    private router: Router,
+    private locationService: LocationService
   ) {}
 
   ngOnInit(): void {

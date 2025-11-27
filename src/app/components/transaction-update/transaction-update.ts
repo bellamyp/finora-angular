@@ -11,6 +11,7 @@ import { BankDto } from '../../dto/bank.dto';
 import { TransactionGroupDto, TransactionResponseDto } from '../../dto/transaction-group.dto';
 import { TransactionTypeOption } from '../../dto/transaction-type.dto';
 import { enumToOptions } from '../../utils/enum-utils';
+import {LocationService} from '../../services/location.service';
 
 type Mode = 'create' | 'update' | 'repeat';
 
@@ -39,7 +40,8 @@ export class TransactionUpdate implements OnInit {
     private router: Router,
     private transactionGroupService: TransactionGroupService,
     private bankService: BankService,
-    private brandService: BrandService
+    private brandService: BrandService,
+    private locationService: LocationService
   ) {}
 
   ngOnInit(): void {
@@ -89,6 +91,17 @@ export class TransactionUpdate implements OnInit {
     this.bankService.getBanks().subscribe({ next: data => this.banks = data });
     this.brandService.getBrandsByUser().subscribe({ next: data => this.brands = data });
     this.transactionTypes = enumToOptions(TransactionTypeEnum);
+    // Fetch locations
+    this.locationService.getLocations().subscribe({
+      next: data => {
+        // Map to { id, name } format for the dropdown
+        this.locations = data.map(loc => ({
+          id: loc.id,
+          name: `${loc.city}, ${loc.state}`
+        }));
+      },
+      error: err => console.error('Failed to fetch locations:', err)
+    });
   }
 
   addTransaction() {
