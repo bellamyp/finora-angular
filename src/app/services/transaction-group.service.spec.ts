@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TransactionGroupService, TransactionGroupResponse } from './transaction-group.service';
 import { BackendConfig } from '../config/backend-config';
-import { TransactionGroupDto, TransactionResponseDto } from '../dto/transaction-group.dto';
+import { TransactionGroupDto } from '../dto/transaction-group.dto';
 
 describe('TransactionGroupService', () => {
   let service: TransactionGroupService;

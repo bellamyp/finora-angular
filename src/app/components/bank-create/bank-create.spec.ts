@@ -6,7 +6,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { of, throwError } from 'rxjs';
 import { BankDto } from '../../dto/bank.dto';
-import { BankCreateDto } from '../../dto/bank-create.dto';
 
 describe('BankCreate', () => {
   let component: BankCreate;
