@@ -1,13 +1,15 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {TransactionGroupDto} from '../../dto/transaction-group.dto';
-import {TransactionGroupService} from '../../services/transaction-group.service';
-import {BankService} from '../../services/bank.service';
-import {BrandService} from '../../services/brand.service';
-import {forkJoin} from 'rxjs';
-import {BankDto} from '../../dto/bank.dto';
-import {BrandDto} from '../../dto/brand.dto';
-import {Router} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TransactionGroupDto } from '../../dto/transaction-group.dto';
+import { TransactionGroupService } from '../../services/transaction-group.service';
+import { BankService } from '../../services/bank.service';
+import { BrandService } from '../../services/brand.service';
+import { LocationService } from '../../services/location.service';
+import { BankDto } from '../../dto/bank.dto';
+import { BrandDto } from '../../dto/brand.dto';
+import { LocationDto } from '../../dto/location.dto';
+import { forkJoin } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-transaction-list',
@@ -21,11 +23,13 @@ export class TransactionList implements OnInit {
   transactionGroups: TransactionGroupDto[] = [];
   bankMap: Record<string, string> = {};
   brandMap: Record<string, string> = {};
+  locationMap: Record<string, string> = {};
 
   constructor(
     private transactionGroupService: TransactionGroupService,
     private bankService: BankService,
     private brandService: BrandService,
+    private locationService: LocationService,
     private router: Router
   ) {}
 
@@ -35,10 +39,7 @@ export class TransactionList implements OnInit {
 
   getAmountDisplay(tx: { amount: number | null }): { display: string; classes: any } {
     if (tx.amount === null) {
-      return {
-        display: '—',
-        classes: {}
-      };
+      return { display: '—', classes: {} };
     }
 
     return {
@@ -56,29 +57,35 @@ export class TransactionList implements OnInit {
     forkJoin({
       banks: this.bankService.getBanks(),
       brands: this.brandService.getBrandsByUser(),
+      locations: this.locationService.getLocations(),
       groups: this.transactionGroupService.getTransactionGroups('posted')
     }).subscribe({
-      next: ({ banks, brands, groups }) => {
+      next: ({ banks, brands, locations, groups }) => {
 
-        // Build map: { bankId → bankName }
+        // Build lookup maps
         this.bankMap = banks.reduce((map: Record<string, string>, bank: BankDto) => {
           map[bank.id] = bank.name;
           return map;
         }, {});
 
-        // Build map: { brandId → "name (location)" }
         this.brandMap = brands.reduce((map: Record<string, string>, brand: BrandDto) => {
-          map[brand.id] = `${brand.name}`;
+          map[brand.id] = brand.name;
           return map;
         }, {});
 
-        // Map bankName and brandName into each transaction
+        this.locationMap = locations.reduce((map: Record<string, string>, loc: LocationDto) => {
+          map[loc.id] = `${loc.city}, ${loc.state}`;
+          return map;
+        }, {});
+
+        // Map bankName, brandName, locationName into transactions
         this.transactionGroups = groups.map(group => ({
           ...group,
           transactions: group.transactions.map(tx => ({
             ...tx,
             bankName: this.bankMap[tx.bankId] ?? tx.bankId,
-            brandName: this.brandMap[tx.brandId] ?? tx.brandId
+            brandName: this.brandMap[tx.brandId] ?? tx.brandId,
+            locationName: this.locationMap[tx.locationId] ?? tx.locationName
           }))
         }));
 
