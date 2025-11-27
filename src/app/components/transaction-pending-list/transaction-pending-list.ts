@@ -79,7 +79,8 @@ export class TransactionPendingList implements OnInit {
         this.results = transactions.map(tx => ({
           ...tx,
           bankName: this.bankMap[tx.bankId] ?? tx.bankId,
-          brandName: this.brandMap[tx.brandId] ?? tx.brandId
+          brandName: this.brandMap[tx.brandId] ?? tx.brandId,
+          locationName: 'Mock Location' // <-- MOCK DATA
         }));
 
         this.loading = false;
