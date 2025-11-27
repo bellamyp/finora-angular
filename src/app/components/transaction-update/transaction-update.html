@@ -35,24 +35,25 @@
         <!-- Type -->
         <td>
           <select class="form-select" [(ngModel)]="tx.typeId" name="type{{i}}" [disabled]="tx.posted">
-            <option [ngValue]="undefined">-- Type --</option>
-            <option *ngFor="let t of transactionTypes" [ngValue]="t.id">{{ t.name }}</option>
+            <option value="">-- Type --</option>
+            <option *ngFor="let t of transactionTypes" [value]="t.id">{{ t.name }}</option>
           </select>
         </td>
 
         <!-- Brand -->
         <td>
           <select class="form-select" [(ngModel)]="tx.brandId" name="brand{{i}}" [disabled]="tx.posted">
-            <option [ngValue]="undefined">-- Brand --</option>
-            <option *ngFor="let b of brands" [ngValue]="b.id">{{ b.name }}</option>
+            <option value="">-- Brand --</option>
+            <option *ngFor="let b of brands" [value]="b.id">{{ b.name }}</option>
           </select>
+
         </td>
 
         <!-- Location -->
         <td>
           <select class="form-select" [(ngModel)]="tx.locationId" name="location{{i}}" [disabled]="tx.posted">
-            <option [ngValue]="undefined">-- Location --</option>
-            <option *ngFor="let loc of locations" [ngValue]="loc.id">{{ loc.name }}</option>
+            <option value="">-- Location --</option>
+            <option *ngFor="let loc of locations" [value]="loc.id">{{ loc.name }}</option>
           </select>
         </td>
 
@@ -65,8 +66,8 @@
         <!-- Bank -->
         <td>
           <select class="form-select" [(ngModel)]="tx.bankId" name="bank{{i}}" [disabled]="tx.posted">
-            <option [ngValue]="undefined">-- Bank --</option>
-            <option *ngFor="let b of banks" [ngValue]="b.id">{{ b.name }}</option>
+            <option value="">-- Bank --</option>
+            <option *ngFor="let b of banks" [value]="b.id">{{ b.name }}</option>
           </select>
         </td>
 
