@@ -113,7 +113,7 @@ export class TransactionUpdate implements OnInit {
   }
 
   openAddLocation() {
-    window.alert('Not implemented yet');
+    this.router.navigate(['/location-create']);
   }
 
   openAddBrand() {
