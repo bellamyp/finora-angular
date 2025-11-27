@@ -71,6 +71,7 @@ export class TransactionUpdate implements OnInit {
           }
         });
     } else {
+      this.addTransaction();
       this.loading = false;
     }
   }
