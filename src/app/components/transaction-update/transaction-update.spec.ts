@@ -75,15 +75,16 @@ describe('TransactionUpdate', () => {
   };
 
   beforeEach(async () => {
+    // And update your TestBed providers:
     await TestBed.configureTestingModule({
-      declarations: [TransactionUpdate], // <-- use declarations, not imports
+      imports: [TransactionUpdate],
       providers: [
         { provide: TransactionGroupService, useValue: mockTransactionGroupService },
         { provide: BankService, useValue: mockBankService },
         { provide: BrandService, useValue: mockBrandService },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: LocationService, useValue: mockLocationService }
+        { provide: LocationService, useValue: mockLocationService } // <- mock added
       ]
     }).compileComponents();
 
