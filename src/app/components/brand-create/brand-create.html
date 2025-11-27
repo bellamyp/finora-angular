@@ -18,21 +18,37 @@
       </div>
     </div>
 
-    <!-- Location (optional) -->
+    <!-- URL (optional) -->
     <div class="mb-3">
-      <label for="location" class="form-label">Location (optional)</label>
+      <label for="url" class="form-label">URL (optional)</label>
       <input
-        id="location"
+        id="url"
         type="text"
         class="form-control"
-        formControlName="location"
-        placeholder="Enter brand location"
+        formControlName="url"
+        placeholder="Enter brand URL"
       />
     </div>
 
-    <!-- Submit Button -->
-    <button type="submit" class="btn btn-warning w-100">
-      <i class="bi bi-plus-square me-2"></i> Add Brand
-    </button>
+    <!-- Buttons -->
+    <div class="d-flex gap-2">
+      <!-- Submit button: disabled until form is valid -->
+      <button
+        type="submit"
+        class="btn btn-warning flex-grow-1"
+        [disabled]="brandForm.invalid"
+      >
+        <i class="bi bi-plus-square me-2"></i> Add Brand
+      </button>
+
+      <!-- Add Transactions button -->
+      <button
+        type="button"
+        class="btn btn-primary flex-grow-1"
+        (click)="goToAddTransactions()"
+      >
+        <i class="bi bi-journal-plus me-2"></i> Add Transactions
+      </button>
+    </div>
   </form>
 </div>

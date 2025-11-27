@@ -130,7 +130,7 @@ export class TransactionUpdate implements OnInit {
   }
 
   openAddBrand() {
-    window.alert('Not implemented yet');
+    this.router.navigate(['/brand-create']);
   }
 
   openAddBank() {
