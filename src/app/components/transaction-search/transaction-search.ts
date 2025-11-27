@@ -113,7 +113,7 @@ export class TransactionSearch implements OnInit {
           return {
             ...tx,
             bankName: bank ? bank.name : tx.bankId,
-            brandName: brand ? `${brand.name} (${brand.location})` : tx.brandId,
+            brandName: brand ? `${brand.name}` : tx.brandId,
             typeName: type ? type.name : tx.typeId,
             groupId: tx.groupId
           };

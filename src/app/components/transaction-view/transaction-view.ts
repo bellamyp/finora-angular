@@ -85,7 +85,7 @@ export class TransactionView implements OnInit {
 
   getBrandName(brandId: string) {
     const brand = this.brands.find(b => b.id === brandId);
-    return brand ? `${brand.name} (${brand.location})` : brandId;
+    return brand ? `${brand.name}` : brandId;
   }
 
   markAsRepeat(groupId?: string) {

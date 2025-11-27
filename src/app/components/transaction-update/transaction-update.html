@@ -44,7 +44,7 @@
         <td>
           <select class="form-select" [(ngModel)]="tx.brandId" name="brand{{i}}" [disabled]="tx.posted">
             <option [ngValue]="undefined">-- Brand --</option>
-            <option *ngFor="let b of brands" [ngValue]="b.id">{{ b.name }} ({{ b.location }})</option>
+            <option *ngFor="let b of brands" [ngValue]="b.id">{{ b.name }}</option>
           </select>
         </td>
 

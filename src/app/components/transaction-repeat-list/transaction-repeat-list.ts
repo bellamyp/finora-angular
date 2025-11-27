@@ -52,7 +52,7 @@ export class TransactionRepeatList implements OnInit {
 
         // Build brand map
         this.brandMap = brands.reduce((map: Record<string, string>, brand: BrandDto) => {
-          map[brand.id] = `${brand.name} (${brand.location})`;
+          map[brand.id] = `${brand.name}`;
           return map;
         }, {});
 
