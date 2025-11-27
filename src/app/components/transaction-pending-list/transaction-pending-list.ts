@@ -8,6 +8,8 @@ import { forkJoin } from 'rxjs';
 import { BankDto } from '../../dto/bank.dto';
 import { BrandDto } from '../../dto/brand.dto';
 import { Router } from '@angular/router';
+import {LocationService} from '../../services/location.service';
+import {LocationDto} from '../../dto/location.dto';
 
 @Component({
   selector: 'app-transaction-pending-list',
@@ -21,11 +23,13 @@ export class TransactionPendingList implements OnInit {
   results: TransactionResponseDto[] = [];
   bankMap: Record<string, string> = {};
   brandMap: Record<string, string> = {};
+  locationMap: Record<string, string> = {};
 
   constructor(
     private transactionService: TransactionService,
     private bankService: BankService,
     private brandService: BrandService,
+    private locationService: LocationService,
     private router: Router
   ) {}
 
@@ -60,13 +64,19 @@ export class TransactionPendingList implements OnInit {
     forkJoin({
       banks: this.bankService.getBanks(),
       brands: this.brandService.getBrandsByUser(),
+      locations: this.locationService.getLocations(),
       transactions: this.transactionService.getPendingTransactions()
     }).subscribe({
-      next: ({ banks, brands, transactions }) => {
+      next: ({ banks, brands, locations, transactions }) => {
 
         // Build lookup maps
         this.bankMap = banks.reduce((map: Record<string, string>, bank: BankDto) => {
           map[bank.id] = bank.name;
+          return map;
+        }, {});
+
+        this.locationMap = locations.reduce((map: Record<string, string>, loc: LocationDto) => {
+          map[loc.id] = `${loc.city}, ${loc.state}`; // combine city and state for display
           return map;
         }, {});
 
@@ -80,7 +90,7 @@ export class TransactionPendingList implements OnInit {
           ...tx,
           bankName: this.bankMap[tx.bankId] ?? tx.bankId,
           brandName: this.brandMap[tx.brandId] ?? tx.brandId,
-          locationName: 'Mock Location' // <-- MOCK DATA
+          locationName: this.locationMap[tx.locationId] ?? tx.locationName
         }));
 
         this.loading = false;
