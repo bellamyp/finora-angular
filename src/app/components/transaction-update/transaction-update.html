@@ -65,7 +65,11 @@
 
         <td class="text-center">
           <div class="d-flex justify-content-center gap-1 flex-wrap">
-            <button type="button" class="btn btn-sm btn-primary" (click)="markAsPosted(tx)" [disabled]="tx.posted">Posted</button>
+            <button type="button" class="btn btn-sm btn-primary"
+                    (click)="markAsPosted(tx)"
+                    [disabled]="tx.posted || mode !== 'update'">
+              Posted
+            </button>
             <button type="button" class="btn btn-sm btn-danger" (click)="deleteTransaction(tx, i)" [disabled]="tx.posted">Delete</button>
           </div>
         </td>
