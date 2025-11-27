@@ -84,7 +84,13 @@
 
   <!-- Bottom actions -->
   <div class="bottom-actions d-flex justify-content-between mt-4 p-3 shadow-sm rounded-4 bg-white">
-    <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
+    <div class="d-flex gap-2">
+      <!-- Add Transaction + other quick actions -->
+      <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
+      <button type="button" class="btn btn-outline-warning" (click)="openAddLocation()">Add Location</button>
+      <button type="button" class="btn btn-outline-info" (click)="openAddBrand()">Add Brand</button>
+      <button type="button" class="btn btn-outline-secondary" (click)="openAddBank()">Add Bank</button>
+    </div>
     <div class="d-flex gap-2">
       <button type="button" class="btn btn-success" (click)="submitAll()">Submit</button>
       <button type="button" class="btn btn-secondary" (click)="cancel()">Reset</button>

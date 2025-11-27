@@ -112,6 +112,18 @@ export class TransactionUpdate implements OnInit {
     });
   }
 
+  openAddLocation() {
+    window.alert('Not implemented yet');
+  }
+
+  openAddBrand() {
+    window.alert('Not implemented yet');
+  }
+
+  openAddBank() {
+    window.alert('Not implemented yet');
+  }
+
   deleteTransaction(tx: TransactionResponseDto, index: number) {
     if (window.confirm('Are you sure you want to delete this transaction?')) {
       this.transactions.splice(index, 1);
