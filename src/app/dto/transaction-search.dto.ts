@@ -6,6 +6,7 @@ export interface TransactionSearchDto {
   maxAmount?: number | null;
   bankId?: string | null;
   brandId?: string | null;
+  locationId?: string | null;
   typeId?: string | null;
   keyword?: string | null;
 }
