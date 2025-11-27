@@ -111,7 +111,7 @@ export class TransactionUpdate implements OnInit {
   }
 
   markAsPosted(tx: TransactionResponseDto) {
-    if (!this.validateTransaction(tx)) {
+    if (!this.validateTransactionForPost(tx)) {
       window.alert('Please fill in all required fields (date, type, brand, amount, bank).');
       return;
     }
@@ -120,9 +120,20 @@ export class TransactionUpdate implements OnInit {
 
   /** Submit all transactions */
   submitAll() {
-    if (!this.transactions.length) {
-      window.alert('Add at least one transaction.');
-      return;
+    // CREATE mode: must have at least 1 transaction, and every transaction must have a bank selected
+    if (this.mode === 'create') {
+      // Must have at least 1 transaction
+      if (this.transactions.length === 0) {
+        window.alert('Add at least one transaction.');
+        return;
+      }
+
+      // Every transaction must have a bank selected
+      const invalidTx = this.transactions.find(tx => !tx.bankId);
+      if (invalidTx) {
+        window.alert('All transactions must have a bank selected.');
+        return;
+      }
     }
 
     const payload: TransactionGroupDto = {
@@ -146,8 +157,8 @@ export class TransactionUpdate implements OnInit {
     });
   }
 
-  /** Validation (no brandName or locationName anymore) */
-  validateTransaction(tx: TransactionResponseDto): boolean {
+  /** Validate transaction for posting (all fields required) */
+  validateTransactionForPost(tx: TransactionResponseDto): boolean {
     return !!tx.date &&
       !!tx.typeId &&
       !!tx.brandId &&
