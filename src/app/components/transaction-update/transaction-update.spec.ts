@@ -75,22 +75,23 @@ describe('TransactionUpdate', () => {
   };
 
   beforeEach(async () => {
-    // And update your TestBed providers:
     await TestBed.configureTestingModule({
-      imports: [TransactionUpdate],
+      declarations: [TransactionUpdate], // <-- use declarations, not imports
       providers: [
         { provide: TransactionGroupService, useValue: mockTransactionGroupService },
         { provide: BankService, useValue: mockBankService },
         { provide: BrandService, useValue: mockBrandService },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: LocationService, useValue: mockLocationService } // <- mock added
+        { provide: LocationService, useValue: mockLocationService }
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(TransactionUpdate);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // triggers ngOnInit
+
+    // Wrap detectChanges in fakeAsync if ngOnInit has async calls
+    fixture.detectChanges();
   });
 
   afterEach(() => {
