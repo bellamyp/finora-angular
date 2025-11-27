@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; // <-- import OnInit
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocationService } from '../../services/location.service';
@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './location-create.html',
   styleUrl: './location-create.scss',
 })
-export class LocationCreate {
+export class LocationCreate implements OnInit {
 
   locationForm!: FormGroup;
 
@@ -39,12 +39,16 @@ export class LocationCreate {
     this.locationService.createLocation(payload).subscribe({
       next: () => {
         alert('Location created successfully!');
-        this.router.navigate(['/transaction-create']); // adjust the navigation as needed
+        this.router.navigate(['/transaction-update']);
       },
       error: (err) => {
         console.error(err);
         alert('Failed to create location.');
       }
     });
+  }
+
+  goToAddTransactions() {
+    this.router.navigate(['/transaction-update']);
   }
 }
