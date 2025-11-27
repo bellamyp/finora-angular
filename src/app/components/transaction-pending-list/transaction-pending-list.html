@@ -15,13 +15,14 @@
 
   <!-- Flat transactions table -->
   <div *ngIf="results.length > 0" class="table-responsive">
-    <table class="table table-hover align-middle shadow-sm rounded-4 bg-white pending-transactions-table">
+    <table class="table table-hover align-middle shadow-sm rounded-4 bg-white pending-transactions-table text-center">
       <thead class="table-warning text-center">
       <tr>
         <th>Date</th>
         <th>Type</th>
         <th>Brand</th>
-        <th class="text-end">Amount</th>
+        <th>Location</th>
+        <th>Amount</th>
         <th style="width: 35%;">Notes</th>
         <th>Bank</th>
       </tr>
@@ -31,12 +32,13 @@
           (click)="tx.groupId ? openTransactionGroup(tx.groupId) : null"
           class="clickable-row">
         <td>{{ tx.date }}</td>
-        <td class="text-center">
+        <td>
           <span class="badge bg-info text-dark">{{ tx.typeId }}</span>
         </td>
         <td>{{ tx.brandName }}</td>
-        <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}" class="text-end">
-          ${{ tx.amount }}
+        <td>{{ tx.locationName || '—' }}</td>
+        <td [ngClass]="getAmountDisplay(tx).classes">
+          {{ getAmountDisplay(tx).display }}
         </td>
         <td class="notes-column text-wrap" style="max-width: 400px;">{{ tx.notes }}</td>
         <td>{{ tx.bankName }}</td>

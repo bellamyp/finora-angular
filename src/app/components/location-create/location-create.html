@@ -1,0 +1,57 @@
+<!-- location-create.component.html -->
+<div class="container py-4" style="max-width: 600px;">
+  <h3 class="mb-4 text-center">Add a Location</h3>
+
+  <form [formGroup]="locationForm" (ngSubmit)="submit()">
+    <!-- City -->
+    <div class="mb-3">
+      <label for="city" class="form-label">City</label>
+      <input
+        id="city"
+        type="text"
+        class="form-control"
+        formControlName="city"
+        placeholder="Enter city"
+      />
+      <div *ngIf="locationForm.get('city')?.touched && locationForm.get('city')?.invalid" class="text-danger">
+        City is required.
+      </div>
+    </div>
+
+    <!-- State -->
+    <div class="mb-3">
+      <label for="state" class="form-label">State</label>
+      <input
+        id="state"
+        type="text"
+        class="form-control"
+        formControlName="state"
+        placeholder="Enter state"
+      />
+      <div *ngIf="locationForm.get('state')?.touched && locationForm.get('state')?.invalid" class="text-danger">
+        State is required.
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex gap-2">
+      <!-- Submit button: disabled until form is valid -->
+      <button
+        type="submit"
+        class="btn btn-warning flex-grow-1"
+        [disabled]="locationForm.invalid"
+      >
+        <i class="bi bi-plus-square me-2"></i> Add Location
+      </button>
+
+      <!-- Add Transactions button -->
+      <button
+        type="button"
+        class="btn btn-primary flex-grow-1"
+        (click)="goToAddTransactions()"
+      >
+        <i class="bi bi-journal-plus me-2"></i> Add Transactions
+      </button>
+    </div>
+  </form>
+</div>

@@ -14,38 +14,43 @@
 
   <!-- Transactions table -->
   <div *ngIf="transactionGroups.length > 0" class="table-responsive">
-    <table class="table table-hover align-middle shadow-sm rounded-4 bg-white repeat-transactions-table">
+    <table class="table table-hover align-middle shadow-sm rounded-4 bg-white repeat-transactions-table text-center">
       <thead class="table-primary text-center">
       <tr>
         <th scope="col">Date</th>
         <th scope="col">Type</th>
         <th scope="col">Brand</th>
+        <th scope="col">Location</th>
         <th scope="col">Amount</th>
-        <th scope="col">Notes</th>
+        <th scope="col" style="width: 35%;">Notes</th>
         <th scope="col">Bank</th>
       </tr>
       </thead>
-      <tbody class="text-center">
+      <tbody>
       <ng-container *ngFor="let group of transactionGroups">
 
         <!-- Group header row with buttons -->
         <tr class="table-secondary fw-bold">
-          <td colspan="6" class="p-2">
+          <td colspan="7" class="p-2">
             <div class="d-flex justify-content-between align-items-center w-100">
               <!-- Left: Group info -->
               <div class="group-info">
                 Group: {{ group.id }}
                 <span class="badge bg-light text-primary">
-            {{ group.transactions.length }} transaction(s)
-          </span>
+                      {{ group.transactions.length }} transaction(s)
+                  </span>
               </div>
 
               <!-- Right: Buttons -->
               <div class="group-actions">
-                <button class="btn btn-sm btn-success me-1" (click)="repeatGroup(group.id)">
+                <button class="btn btn-sm btn-success me-1"
+                        [disabled]="!group.id"
+                        (click)="group.id && repeatGroup(group.id)">
                   Repeat
                 </button>
-                <button class="btn btn-sm btn-danger" (click)="removeRepeatTag(group.id)">
+                <button class="btn btn-sm btn-danger"
+                        [disabled]="!group.id"
+                        (click)="group.id && removeRepeatTag(group.id)">
                   Remove Repeat
                 </button>
               </div>
@@ -58,15 +63,17 @@
           <td>{{ tx.date }}</td>
           <td><span class="badge bg-info text-dark">{{ tx.typeId }}</span></td>
           <td>{{ tx.brandName }}</td>
-          <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}">
-            ${{ tx.amount }}
+          <td>{{ tx.locationName }}</td>
+          <td [ngClass]="getAmountDisplay(tx).classes" class="text-center">
+            {{ getAmountDisplay(tx).display }}
           </td>
-          <td class="notes-column">{{ tx.notes }}</td>
+          <td class="notes-column text-wrap text-center" style="max-width: 400px;">
+            {{ tx.notes }}
+          </td>
           <td>{{ tx.bankName }}</td>
         </tr>
 
       </ng-container>
-
       </tbody>
     </table>
   </div>

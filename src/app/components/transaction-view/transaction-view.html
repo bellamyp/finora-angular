@@ -35,8 +35,8 @@
         <td>{{ tx.date }}</td>
         <td class="text-center">{{ tx.typeId }}</td>
         <td>{{ getBrandName(tx.brandId) }}</td>
-        <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}" class="text-end">
-          ${{ tx.amount }}
+        <td [ngClass]="getAmountClass(tx.amount)" class="text-end">
+          ${{ tx.amount ?? '0.00' }}
         </td>
         <td class="notes-column text-wrap" style="max-width: 400px;">{{ tx.notes }}</td>
         <td>{{ getBankName(tx.bankId) }}</td>

@@ -2,12 +2,11 @@ import { Injectable } from '@angular/core';
 import { BackendConfig } from '../config/backend-config';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TransactionGroupCreateDto } from '../dto/transaction-group-create.dto';
 import { TransactionGroupDto } from '../dto/transaction-group.dto';
 
-interface TransactionGroupResponse {
+export interface TransactionGroupResponse {
   success: boolean;
-  groupId: string;
+  groupId?: string; // optional, for update/create response
   message: string;
 }
 
@@ -23,15 +22,16 @@ export class TransactionGroupService {
   /**
    * Create a new transaction group
    */
-  createTransactionGroup(payload: TransactionGroupCreateDto): Observable<TransactionGroupResponse> {
+  createTransactionGroup(payload: TransactionGroupDto): Observable<TransactionGroupResponse> {
     return this.http.post<TransactionGroupResponse>(this.apiUrl, payload);
   }
 
   /**
    * Update an existing transaction group
    */
-  updateTransactionGroup(payload: TransactionGroupDto) {
-    return this.http.put<{ success: boolean; message: string }>(this.apiUrl, payload);
+  updateTransactionGroup(payload: TransactionGroupDto): Observable<TransactionGroupResponse> {
+    const url = `${this.apiUrl}`;
+    return this.http.put<TransactionGroupResponse>(url, payload);
   }
 
   /**

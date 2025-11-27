@@ -14,26 +14,30 @@
 
   <!-- Transactions table -->
   <div *ngIf="transactionGroups.length > 0" class="table-responsive">
-    <table class="table table-hover align-middle shadow-sm rounded-4 bg-white posted-transactions-table">
+    <table class="table table-hover align-middle shadow-sm rounded-4 bg-white posted-transactions-table text-center">
       <thead class="table-primary text-center">
       <tr>
-        <th scope="col">Date</th>
-        <th scope="col">Type</th>
-        <th scope="col">Brand</th>
-        <th scope="col">Amount</th>
-        <th scope="col">Notes</th>
-        <th scope="col">Bank</th>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Brand</th>
+        <th>Location</th>
+        <th>Amount</th>
+        <th style="width: 35%;">Notes</th>
+        <th>Bank</th>
       </tr>
       </thead>
-      <tbody class="text-center">
+      <tbody>
       <ng-container *ngFor="let group of transactionGroups">
+
         <!-- Group header row -->
-        <tr class="table-secondary fw-bold clickable-row" (click)="openTransactionGroup(group.id)">
-          <td colspan="6" class="text-start ps-4">
-            Group: {{ group.id }} &nbsp; (Select to see details)
+        <tr class="table-secondary fw-bold clickable-row"
+            [class.disabled]="!group.id"
+            (click)="group.id && openTransactionGroup(group.id)">
+          <td colspan="7" class="text-start ps-4">
+            Group: {{ group.id || 'N/A' }} &nbsp; (Select to see details)
             <span class="badge bg-light text-primary">
-              {{ group.transactions.length }} transaction(s)
-            </span>
+                {{ group.transactions.length }} transaction(s)
+              </span>
           </td>
         </tr>
 
@@ -49,17 +53,21 @@
           <!-- Brand column -->
           <td>{{ tx.brandName }}</td>
 
+          <!-- Location column -->
+          <td>{{ tx.locationName }}</td>
+
           <!-- Amount column -->
-          <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}">
-            ${{ tx.amount }}
+          <td [ngClass]="getAmountDisplay(tx).classes">
+            {{ getAmountDisplay(tx).display }}
           </td>
 
           <!-- Notes column (wraps) -->
-          <td class="notes-column">{{ tx.notes }}</td>
+          <td class="notes-column text-wrap text-center" style="max-width: 400px;">{{ tx.notes }}</td>
 
           <!-- Bank column -->
           <td>{{ tx.bankName }}</td>
         </tr>
+
       </ng-container>
       </tbody>
     </table>

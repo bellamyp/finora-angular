@@ -1,16 +1,16 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { BankCreate } from './bank-create';
 import { BankService } from '../../services/bank.service';
+import { Router } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { of, throwError } from 'rxjs';
 import { BankDto } from '../../dto/bank.dto';
-import { BankCreateDto } from '../../dto/bank-create.dto';
-import { Router } from '@angular/router';
 
 describe('BankCreate', () => {
-
   let component: BankCreate;
   let fixture: ComponentFixture<BankCreate>;
+
   let mockBankService: jasmine.SpyObj<BankService>;
   let mockRouter: jasmine.SpyObj<Router>;
 
@@ -19,10 +19,14 @@ describe('BankCreate', () => {
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      imports: [BankCreate, ReactiveFormsModule],
+      imports: [
+        BankCreate,        // standalone component
+        ReactiveFormsModule,
+        CommonModule
+      ],
       providers: [
         { provide: BankService, useValue: mockBankService },
-        { provide: Router, useValue: mockRouter } // <-- mock Router here
+        { provide: Router, useValue: mockRouter }
       ]
     }).compileComponents();
 
@@ -31,71 +35,85 @@ describe('BankCreate', () => {
     fixture.detectChanges();
   });
 
+  // --------------------------
+  // CREATE TEST
+  // --------------------------
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should mark form invalid if required fields are empty', () => {
-    component.bankForm.get('name')?.setValue('');
-    component.bankForm.get('openingDate')?.setValue('');
-    component.bankForm.get('type')?.setValue('');
-    expect(component.bankForm.valid).toBeFalse();
+  // --------------------------
+  // INVALID FORM TEST
+  // --------------------------
+  it('should NOT submit invalid form', () => {
+    component.bankForm.setValue({
+      name: '',
+      openingDate: '',
+      closingDate: '',
+      type: ''
+    });
+
+    component.submit();
+
+    expect(mockBankService.createBank).not.toHaveBeenCalled();
+    expect(mockRouter.navigate).not.toHaveBeenCalled();
   });
 
-  it('should call createBank on submit when form is valid', fakeAsync(() => {
-    const formValue: BankCreateDto = {
-      name: 'Test Bank',
-      openingDate: '2025-11-02',
-      closingDate: null,
+  // --------------------------
+  // VALID FORM TEST
+  // --------------------------
+  it('should submit valid form', () => {
+    component.bankForm.setValue({
+      name: 'My Bank',
+      openingDate: '2025-01-01',
+      closingDate: '',
       type: 'CHECKING'
-    };
+    });
 
     const mockResponse: BankDto = {
-      id: '550e8400-e29b-41d4-a716-446655440005',
-      name: formValue.name,
-      type: formValue.type,
-      email: 'user@example.com'
+      id: '100',
+      name: 'My Bank',
+      type: 'CHECKING',
+      email: 'test@example.com',
+      balance: 1000
     };
 
     mockBankService.createBank.and.returnValue(of(mockResponse));
 
-    // set form values
-    component.bankForm.get('name')?.setValue(formValue.name);
-    component.bankForm.get('openingDate')?.setValue(formValue.openingDate);
-    component.bankForm.get('closingDate')?.setValue(formValue.closingDate);
-    component.bankForm.get('type')?.setValue(formValue.type);
-
     spyOn(window, 'alert');
 
     component.submit();
-    tick();
 
-    expect(mockBankService.createBank).toHaveBeenCalledWith(formValue);
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/bank-list']); // <-- verify navigation
-    expect(window.alert).toHaveBeenCalledWith('Bank created successfully!');
-  }));
-
-  it('should alert error on submit failure', fakeAsync(() => {
-    spyOn(window, 'alert');
-    const formValue: BankCreateDto = {
-      name: 'Test Bank',
-      openingDate: '2025-11-02',
+    expect(mockBankService.createBank).toHaveBeenCalledWith({
+      name: 'My Bank',
+      openingDate: '2025-01-01',
       closingDate: null,
       type: 'CHECKING'
-    };
+    });
 
-    mockBankService.createBank.and.returnValue(throwError(() => new Error('Backend error')));
+    expect(window.alert).toHaveBeenCalledWith('Bank created successfully!');
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/bank-list']);
+  });
 
-    // set form values
-    component.bankForm.get('name')?.setValue(formValue.name);
-    component.bankForm.get('openingDate')?.setValue(formValue.openingDate);
-    component.bankForm.get('closingDate')?.setValue(formValue.closingDate);
-    component.bankForm.get('type')?.setValue(formValue.type);
+  // --------------------------
+  // ERROR HANDLING TEST
+  // --------------------------
+  it('should show error alert when API fails', () => {
+    spyOn(window, 'alert');
+
+    component.bankForm.setValue({
+      name: 'Bad Bank',
+      openingDate: '2025-01-01',
+      closingDate: '',
+      type: 'SAVINGS'
+    });
+
+    mockBankService.createBank.and.returnValue(
+      throwError(() => new Error('Network down'))
+    );
 
     component.submit();
-    tick();
 
-    expect(window.alert).toHaveBeenCalledWith('Error creating bank: Backend error');
-    expect(mockRouter.navigate).not.toHaveBeenCalled(); // navigation should not happen
-  }));
+    expect(window.alert).toHaveBeenCalledWith('Error creating bank: Network down');
+  });
 });

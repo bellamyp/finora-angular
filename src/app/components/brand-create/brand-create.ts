@@ -1,19 +1,17 @@
-import { Component } from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
-import {BrandService} from '../../services/brand.service';
-import {BrandCreateDto} from '../../dto/brand-create.dto';
-import {CommonModule} from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { BrandService } from '../../services/brand.service';
+import { BrandCreateDto } from '../../dto/brand-create.dto';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-brand-create',
-  imports: [
-    ReactiveFormsModule, CommonModule
-  ],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './brand-create.html',
   styleUrl: './brand-create.scss',
 })
-export class BrandCreate {
+export class BrandCreate implements OnInit {
 
   brandForm!: FormGroup;
 
@@ -26,7 +24,7 @@ export class BrandCreate {
   ngOnInit(): void {
     this.brandForm = this.fb.group({
       name: ['', Validators.required],
-      location: ['']
+      url: ['']
     });
   }
 
@@ -41,9 +39,13 @@ export class BrandCreate {
     this.brandService.createBrand(payload).subscribe({
       next: () => {
         alert('Brand created successfully!');
-        this.router.navigate(['/transaction-create']);
+        this.router.navigate(['/transaction-update']);
       },
       error: () => alert('Failed to create brand.')
     });
+  }
+
+  goToAddTransactions() {
+    this.router.navigate(['/transaction-update']);
   }
 }

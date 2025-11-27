@@ -1,15 +1,15 @@
 <div class="container py-5">
-  <h2 class="text-center mb-4 fw-bold text-primary">Edit Transaction Group: {{ groupId }}</h2>
+  <h2 class="text-center mb-4 fw-bold text-primary">{{ pageTitle }}</h2>
 
   <!-- Loading UI -->
   <div *ngIf="loading" class="text-center text-muted fs-5">
-    <i class="bi bi-hourglass-split" style="font-size: 2rem;"></i>
+    <i class="bi bi-hourglass-split fs-2"></i>
     <div>Loading transaction group...</div>
   </div>
 
   <!-- No transactions UI -->
   <div *ngIf="!loading && transactions.length === 0" class="text-center text-muted fs-5">
-    <i class="bi bi-clock-history" style="font-size: 2rem;"></i>
+    <i class="bi bi-clock-history fs-2"></i>
     <div>No transactions found in this group.</div>
   </div>
 
@@ -17,13 +17,14 @@
     <table class="table table-bordered align-middle shadow-sm rounded-4 bg-white edit-transactions-table">
       <thead class="table-light text-center">
       <tr>
-        <th>Date</th>
-        <th>Type</th>
-        <th>Brand</th>
-        <th>Amount</th>
-        <th>Notes</th>
-        <th>Bank</th>
-        <th style="width: 120px;">Actions</th>
+        <th style="width:12%;">Date</th>
+        <th style="width:12%;">Type</th>
+        <th style="width:12%;">Brand</th>
+        <th style="width:12%;">Location</th>
+        <th style="width:12%;">Amount</th>
+        <th style="width:30%;">Notes</th>
+        <th style="width:15%;">Bank</th>
+        <th style="width:14%;">Actions</th>
       </tr>
       </thead>
       <tbody>
@@ -32,15 +33,22 @@
 
         <td>
           <select class="form-select" [(ngModel)]="tx.typeId" name="type{{i}}" [disabled]="tx.posted">
-            <option [ngValue]="undefined">-- Type --</option>
-            <option *ngFor="let t of transactionTypes" [ngValue]="t.id">{{ t.name }}</option>
+            <option value="">-- Type --</option>
+            <option *ngFor="let t of transactionTypes" [value]="t.id">{{ t.name }}</option>
           </select>
         </td>
 
         <td>
           <select class="form-select" [(ngModel)]="tx.brandId" name="brand{{i}}" [disabled]="tx.posted">
-            <option [ngValue]="undefined">-- Brand --</option>
-            <option *ngFor="let b of brands" [ngValue]="b.id">{{ b.name }} ({{ b.location }})</option>
+            <option value="">-- Brand --</option>
+            <option *ngFor="let b of brands" [value]="b.id">{{ b.name }}</option>
+          </select>
+        </td>
+
+        <td>
+          <select class="form-select" [(ngModel)]="tx.locationId" name="location{{i}}" [disabled]="tx.posted">
+            <option value="">-- Location --</option>
+            <option *ngFor="let loc of locations" [value]="loc.id">{{ loc.name }}</option>
           </select>
         </td>
 
@@ -50,19 +58,19 @@
 
         <td>
           <select class="form-select" [(ngModel)]="tx.bankId" name="bank{{i}}" [disabled]="tx.posted">
-            <option [ngValue]="undefined">-- Bank --</option>
-            <option *ngFor="let b of banks" [ngValue]="b.id">{{ b.name }}</option>
+            <option value="">-- Bank --</option>
+            <option *ngFor="let b of banks" [value]="b.id">{{ b.name }}</option>
           </select>
         </td>
 
         <td class="text-center">
-          <div class="d-flex justify-content-center gap-1">
-            <button type="button" class="btn btn-sm btn-primary" (click)="markAsPosted(tx)" [disabled]="tx.posted">
+          <div class="d-flex justify-content-center gap-1 flex-wrap">
+            <button type="button" class="btn btn-sm btn-primary"
+                    (click)="markAsPosted(tx)"
+                    [disabled]="tx.posted || mode !== 'update'">
               Posted
             </button>
-            <button type="button" class="btn btn-sm btn-danger" (click)="deleteTransaction(tx, i)" [disabled]="tx.posted">
-              Delete
-            </button>
+            <button type="button" class="btn btn-sm btn-danger" (click)="deleteTransaction(tx, i)" [disabled]="tx.posted">Delete</button>
           </div>
         </td>
       </tr>
@@ -70,12 +78,16 @@
     </table>
   </div>
 
-  <!-- BOTTOM ACTIONS -->
-  <div class="bottom-actions d-flex justify-content-between mt-4 p-3 shadow-sm rounded-4 bg-white">
-    <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
-
-    <div class="d-flex gap-2">
-      <button type="button" class="btn btn-success" (click)="submitAll()">Submit</button>
+  <!-- Bottom actions -->
+  <div class="bottom-actions d-flex flex-wrap justify-content-between mt-4 p-3 shadow-sm rounded-4 bg-white gap-2">
+    <div class="d-flex gap-2 flex-wrap">
+      <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
+      <button type="button" class="btn btn-outline-warning" (click)="openAddLocation()">Add Location</button>
+      <button type="button" class="btn btn-outline-info" (click)="openAddBrand()">Add Brand</button>
+      <button type="button" class="btn btn-outline-secondary" (click)="openAddBank()">Add Bank</button>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <button type="button" class="btn btn-primary" (click)="submitAll()">Submit</button>
       <button type="button" class="btn btn-secondary" (click)="cancel()">Reset</button>
       <button type="button" class="btn btn-outline-dark" (click)="goBack()">Pending Transactions</button>
     </div>

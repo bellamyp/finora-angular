@@ -8,6 +8,8 @@ import { forkJoin } from 'rxjs';
 import { BankDto } from '../../dto/bank.dto';
 import { BrandDto } from '../../dto/brand.dto';
 import { Router } from '@angular/router';
+import {LocationService} from '../../services/location.service';
+import {LocationDto} from '../../dto/location.dto';
 
 @Component({
   selector: 'app-transaction-pending-list',
@@ -21,16 +23,35 @@ export class TransactionPendingList implements OnInit {
   results: TransactionResponseDto[] = [];
   bankMap: Record<string, string> = {};
   brandMap: Record<string, string> = {};
+  locationMap: Record<string, string> = {};
 
   constructor(
     private transactionService: TransactionService,
     private bankService: BankService,
     private brandService: BrandService,
+    private locationService: LocationService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.fetchPendingTransactions();
+  }
+
+  getAmountDisplay(tx: { amount: number | null }): { display: string; classes: any } {
+    if (tx.amount === null) {
+      return {
+        display: '—',
+        classes: {}
+      };
+    }
+
+    return {
+      display: `$${tx.amount.toFixed(2)}`,
+      classes: {
+        'text-success': tx.amount > 0,
+        'text-danger': tx.amount < 0
+      }
+    };
   }
 
   openTransactionGroup(groupId: string) {
@@ -43,9 +64,10 @@ export class TransactionPendingList implements OnInit {
     forkJoin({
       banks: this.bankService.getBanks(),
       brands: this.brandService.getBrandsByUser(),
+      locations: this.locationService.getLocations(),
       transactions: this.transactionService.getPendingTransactions()
     }).subscribe({
-      next: ({ banks, brands, transactions }) => {
+      next: ({ banks, brands, locations, transactions }) => {
 
         // Build lookup maps
         this.bankMap = banks.reduce((map: Record<string, string>, bank: BankDto) => {
@@ -53,8 +75,13 @@ export class TransactionPendingList implements OnInit {
           return map;
         }, {});
 
+        this.locationMap = locations.reduce((map: Record<string, string>, loc: LocationDto) => {
+          map[loc.id] = `${loc.city}, ${loc.state}`; // combine city and state for display
+          return map;
+        }, {});
+
         this.brandMap = brands.reduce((map: Record<string, string>, brand: BrandDto) => {
-          map[brand.id] = `${brand.name} (${brand.location})`;
+          map[brand.id] = `${brand.name}`;
           return map;
         }, {});
 
@@ -62,7 +89,8 @@ export class TransactionPendingList implements OnInit {
         this.results = transactions.map(tx => ({
           ...tx,
           bankName: this.bankMap[tx.bankId] ?? tx.bankId,
-          brandName: this.brandMap[tx.brandId] ?? tx.brandId
+          brandName: this.brandMap[tx.brandId] ?? tx.brandId,
+          locationName: this.locationMap[tx.locationId] ?? tx.locationName
         }));
 
         this.loading = false;

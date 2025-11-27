@@ -1,21 +1,21 @@
 // transaction-group.dto.ts
 export interface TransactionResponseDto {
   id: string;
+  groupId?: string;
   date: string;
-  amount: number;
+  amount: number | null;
   notes: string;
   bankId: string;
-  brandId: string;
-  typeId: string;
-
-  // OPTIONAL fields
-  groupId?: string;
   bankName?: string;
+  brandId: string;
   brandName?: string;
+  locationId: string;
+  locationName?: string;
+  typeId: string;
   posted: boolean;
 }
 
 export interface TransactionGroupDto {
-  id: string;
+  id?: string;
   transactions: TransactionResponseDto[];
 }

@@ -1,16 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
-import {TransactionGroupService} from '../../services/transaction-group.service';
-import {BrandService} from '../../services/brand.service';
-import {BankService} from '../../services/bank.service';
-import {BrandDto} from '../../dto/brand.dto';
-import {TransactionTypeEnum} from '../../dto/transaction-type.enum';
-import {BankDto} from '../../dto/bank.dto';
-import {TransactionGroupDto, TransactionResponseDto} from '../../dto/transaction-group.dto';
-import {TransactionTypeOption} from '../../dto/transaction-type.dto';
-import {enumToOptions} from '../../utils/enum-utils';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TransactionGroupService } from '../../services/transaction-group.service';
+import { BrandService } from '../../services/brand.service';
+import { BankService } from '../../services/bank.service';
+import { BrandDto } from '../../dto/brand.dto';
+import { TransactionTypeEnum } from '../../dto/transaction-type.enum';
+import { BankDto } from '../../dto/bank.dto';
+import { TransactionGroupDto, TransactionResponseDto } from '../../dto/transaction-group.dto';
+import { TransactionTypeOption } from '../../dto/transaction-type.dto';
+import { enumToOptions } from '../../utils/enum-utils';
+import {LocationService} from '../../services/location.service';
+
+type Mode = 'create' | 'update' | 'repeat';
 
 @Component({
   selector: 'app-transaction-update',
@@ -23,78 +26,115 @@ export class TransactionUpdate implements OnInit {
 
   loading: boolean = true;
   groupId?: string;
+  mode: Mode = 'create';
   transactions: TransactionResponseDto[] = [];
 
-  // ---------- LOOKUP DROPDOWNS ----------
+  // Lookup dropdowns
   banks: BankDto[] = [];
   transactionTypes: TransactionTypeOption[] = [];
   brands: BrandDto[] = [];
+  locations: { id: string, name: string }[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private transactionGroupService: TransactionGroupService,
     private bankService: BankService,
-    private brandService: BrandService
+    private brandService: BrandService,
+    private locationService: LocationService
   ) {}
 
   ngOnInit(): void {
-    this.groupId = this.route.snapshot.paramMap.get('groupId') || '';
-    console.log('Transaction Update initialized with groupId:', this.groupId);
+    // Determine mode
+    this.groupId = this.route.snapshot.paramMap.get('groupId') || undefined;
+    const isRepeat = this.route.snapshot.url.some(seg => seg.path === 'repeat');
 
-    if (this.groupId) {
-      this.transactionGroupService.getTransactionGroupById(this.groupId)
+    if (this.groupId && isRepeat) this.mode = 'repeat';
+    else if (this.groupId) this.mode = 'update';
+    else this.mode = 'create';
+
+    // Load lookup data
+    this.loadLookups();
+
+    // Load the existing group if update or repeat
+    if (this.mode === 'update' || this.mode === 'repeat') {
+      this.transactionGroupService.getTransactionGroupById(this.groupId!)
         .subscribe({
-          next: (group) => {
-            console.log('Fetched transaction group from BE:', group);
-
+          next: group => {
             this.transactions = group.transactions.map(tx => ({
               ...tx,
-              posted: tx.posted ?? false
+              posted: this.mode === 'repeat' ? false : tx.posted ?? false
             }));
-
-            this.loading = false;   // <-- STOP LOADING
+            this.loading = false;
           },
-          error: (err) => {
+          error: err => {
             console.error('Failed to fetch transaction group:', err);
-            this.loading = false;   // <-- ENSURE STOP LOADING ON ERROR
+            this.loading = false;
           }
         });
     } else {
-      console.warn('No groupId provided in route!');
+      this.addTransaction();
       this.loading = false;
     }
-
-    // Load banks
-    this.bankService.getBanks().subscribe({
-      next: (data) => this.banks = data,
-      error: (err) => console.error('[Bank] Load Error:', err),
-    });
-
-    // Load brands
-    this.brandService.getBrandsByUser().subscribe({
-      next: (data) => this.brands = data,
-      error: (err) => console.error('[Brand] Load Error:', err)
-    });
-
-    // Load types
-    this.transactionTypes = enumToOptions(TransactionTypeEnum);
   }
 
-  // -------------------------------
-  // Row-level actions
-  // -------------------------------
+  get pageTitle(): string {
+    switch (this.mode) {
+      case 'create': return 'Create New Group';
+      case 'update': return `Update This Group: ${this.groupId}`;
+      case 'repeat': return `Repeat This Group: ${this.groupId}`;
+      default: return '';
+    }
+  }
+
+  loadLookups() {
+    this.bankService.getBanks().subscribe({ next: data => this.banks = data });
+    this.brandService.getBrandsByUser().subscribe({ next: data => this.brands = data });
+    this.transactionTypes = enumToOptions(TransactionTypeEnum);
+    // Fetch locations
+    this.locationService.getLocations().subscribe({
+      next: data => {
+        // Map to { id, name } format for the dropdown
+        this.locations = data.map(loc => ({
+          id: loc.id,
+          name: `${loc.city}, ${loc.state}`
+        }));
+      },
+      error: err => console.error('Failed to fetch locations:', err)
+    });
+  }
+
   addTransaction() {
+    // Default to today
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+
     this.transactions.push({
       id: '',
-      date: '',
-      amount: 0,
+      date: todayStr,
+      amount: null,
       notes: '',
       bankId: '',
       brandId: '',
+      locationId: '',
       typeId: '',
       posted: false
     });
+  }
+
+  openAddLocation() {
+    this.router.navigate(['/location-create']);
+  }
+
+  openAddBrand() {
+    this.router.navigate(['/brand-create']);
+  }
+
+  openAddBank() {
+    this.router.navigate(['/bank-create']);
   }
 
   deleteTransaction(tx: TransactionResponseDto, index: number) {
@@ -104,61 +144,62 @@ export class TransactionUpdate implements OnInit {
   }
 
   markAsPosted(tx: TransactionResponseDto) {
-    if (!this.validateTransaction(tx)) {
-      window.alert('Please fill in all required fields (date, type, brand, amount, bank) before marking as posted.');
+    if (!this.validateTransactionForPost(tx)) {
+      window.alert('Please fill in all required fields (date, type, brand, amount, bank).');
       return;
     }
-
     tx.posted = true;
   }
 
-  // -------------------------------
-  // Bottom-level actions
-  // -------------------------------
+  /** Submit all transactions */
   submitAll() {
-    if (!this.groupId) {
-      window.alert('Group ID not found, cannot submit.');
-      return;
+    // CREATE mode: must have at least 1 transaction, and every transaction must have a bank selected
+    if (this.mode === 'create') {
+      // Must have at least 1 transaction
+      if (this.transactions.length === 0) {
+        window.alert('Add at least one transaction.');
+        return;
+      }
+
+      // Every transaction must have a bank selected
+      const invalidTx = this.transactions.find(tx => !tx.bankId);
+      if (invalidTx) {
+        window.alert('All transactions must have a bank selected.');
+        return;
+      }
     }
 
     const payload: TransactionGroupDto = {
-      id: this.groupId!,  // already included
+      id: this.mode === 'update' ? this.groupId! : undefined,
       transactions: this.transactions
     };
 
-    this.transactionGroupService.updateTransactionGroup(payload)
-      .subscribe({
-        next: (res) => {
-          if (res.success) {
-            this.router.navigate(['/transaction-view', this.groupId]);
-          } else {
-            window.alert('Failed to update transaction group: ' + res.message);
-          }
-        },
-        error: (err) => {
-          console.error('Error updating transaction group:', err);
-          window.alert('An error occurred while submitting the transaction group.');
+    const request$ = this.mode === 'update'
+      ? this.transactionGroupService.updateTransactionGroup(payload)
+      : this.transactionGroupService.createTransactionGroup(payload);
+
+    request$.subscribe({
+      next: res => {
+        if (res.success) {
+          this.router.navigate(['/transaction-view', res.groupId || this.groupId]);
+        } else {
+          window.alert(res.message);
         }
-      });
+      },
+      error: err => console.error('Error submitting transaction group:', err)
+    });
   }
 
-  cancel() {
-    this.reloadPage();
-  }
-
-  reloadPage() {
-    window.location.reload();
-  }
-
-  goBack() {
-    this.router.navigate(['/transaction-pending-list']);
-  }
-
-  validateTransaction(tx: TransactionResponseDto): boolean {
+  /** Validate transaction for posting (all fields required) */
+  validateTransactionForPost(tx: TransactionResponseDto): boolean {
     return !!tx.date &&
       !!tx.typeId &&
       !!tx.brandId &&
+      !!tx.locationId &&
       tx.amount !== null && tx.amount !== undefined &&
       !!tx.bankId;
   }
+
+  cancel() { window.location.reload(); }
+  goBack() { this.router.navigate(['/transaction-pending-list']); }
 }
