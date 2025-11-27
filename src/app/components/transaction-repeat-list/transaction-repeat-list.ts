@@ -34,6 +34,23 @@ export class TransactionRepeatList implements OnInit {
     this.fetchRepeatTransactionGroups();
   }
 
+  getAmountDisplay(tx: { amount: number | null }): { display: string; classes: any } {
+    if (tx.amount === null) {
+      return {
+        display: '—',
+        classes: {}
+      };
+    }
+
+    return {
+      display: `$${tx.amount.toFixed(2)}`,
+      classes: {
+        'text-success': tx.amount > 0,
+        'text-danger': tx.amount < 0
+      }
+    };
+  }
+
   fetchRepeatTransactionGroups(): void {
     this.loading = true;
 

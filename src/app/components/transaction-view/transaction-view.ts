@@ -88,6 +88,14 @@ export class TransactionView implements OnInit {
     return brand ? `${brand.name}` : brandId;
   }
 
+  getAmountClass(amount: number | null): any {
+    if (amount == null) return '';
+    return {
+      'text-success': amount > 0,
+      'text-danger': amount < 0
+    };
+  }
+
   markAsRepeat(groupId?: string) {
     if (!groupId) {
       window.alert('Invalid group ID');

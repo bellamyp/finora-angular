@@ -33,6 +33,23 @@ export class TransactionPendingList implements OnInit {
     this.fetchPendingTransactions();
   }
 
+  getAmountDisplay(tx: { amount: number | null }): { display: string; classes: any } {
+    if (tx.amount === null) {
+      return {
+        display: '—',
+        classes: {}
+      };
+    }
+
+    return {
+      display: `$${tx.amount.toFixed(2)}`,
+      classes: {
+        'text-success': tx.amount > 0,
+        'text-danger': tx.amount < 0
+      }
+    };
+  }
+
   openTransactionGroup(groupId: string) {
     this.router.navigate(['/transaction-update', groupId]);
   }

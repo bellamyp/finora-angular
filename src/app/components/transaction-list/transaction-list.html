@@ -53,8 +53,8 @@
           <td>{{ tx.brandName }}</td>
 
           <!-- Amount column -->
-          <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}">
-            ${{ tx.amount }}
+          <td [ngClass]="getAmountDisplay(tx).classes" class="text-end">
+            {{ getAmountDisplay(tx).display }}
           </td>
 
           <!-- Notes column (wraps) -->

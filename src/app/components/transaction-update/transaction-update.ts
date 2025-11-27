@@ -134,7 +134,7 @@ export class TransactionUpdate implements OnInit {
   }
 
   openAddBank() {
-    window.alert('Not implemented yet');
+    this.router.navigate(['/bank-create']);
   }
 
   deleteTransaction(tx: TransactionResponseDto, index: number) {

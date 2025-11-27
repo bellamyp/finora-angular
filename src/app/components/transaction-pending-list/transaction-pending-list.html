@@ -35,8 +35,8 @@
           <span class="badge bg-info text-dark">{{ tx.typeId }}</span>
         </td>
         <td>{{ tx.brandName }}</td>
-        <td [ngClass]="{'text-success': tx.amount > 0, 'text-danger': tx.amount < 0}" class="text-end">
-          ${{ tx.amount }}
+        <td [ngClass]="getAmountDisplay(tx).classes" class="text-end">
+          {{ getAmountDisplay(tx).display }}
         </td>
         <td class="notes-column text-wrap" style="max-width: 400px;">{{ tx.notes }}</td>
         <td>{{ tx.bankName }}</td>
