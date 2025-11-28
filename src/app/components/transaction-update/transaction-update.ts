@@ -144,10 +144,13 @@ export class TransactionUpdate implements OnInit {
   }
 
   markAsPosted(tx: TransactionResponseDto) {
-    if (!this.validateTransactionForPost(tx)) {
-      window.alert('Please fill in all required fields (date, type, brand, amount, bank).');
+    const missing = this.getMissingFieldsForPost(tx);
+
+    if (missing.length > 0) {
+      window.alert("Please fill in the following fields:\n- " + missing.join("\n- "));
       return;
     }
+
     tx.posted = true;
   }
 
@@ -197,13 +200,18 @@ export class TransactionUpdate implements OnInit {
   }
 
   /** Validate transaction for posting (all fields required) */
-  validateTransactionForPost(tx: TransactionResponseDto): boolean {
-    return !!tx.date &&
-      !!tx.typeId &&
-      !!tx.brandId &&
-      !!tx.locationId &&
-      tx.amount !== null && tx.amount !== undefined &&
-      !!tx.bankId;
+  /** Return a list of missing fields required for posting */
+  getMissingFieldsForPost(tx: TransactionResponseDto): string[] {
+    const missing: string[] = [];
+
+    if (!tx.date) missing.push("Date");
+    if (!tx.typeId) missing.push("Type");
+    if (!tx.brandId) missing.push("Brand");
+    if (!tx.locationId) missing.push("Location");
+    if (tx.amount === null || tx.amount === undefined) missing.push("Amount");
+    if (!tx.bankId) missing.push("Bank");
+
+    return missing;
   }
 
   cancel() { window.location.reload(); }
