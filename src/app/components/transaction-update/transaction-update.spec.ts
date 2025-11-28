@@ -146,11 +146,34 @@ describe('TransactionUpdate', () => {
   });
 
   it('should alert when marking an invalid transaction as posted', () => {
-    const tx: TransactionResponseDto = { id: '', date: '', amount: null, notes: '', bankId: '', brandId: '', locationId: '', typeId: '', posted: false };
+    const tx: TransactionResponseDto = {
+      id: '',
+      date: '',
+      amount: null,
+      notes: '',
+      bankId: '',
+      brandId: '',
+      locationId: '',
+      typeId: '',
+      posted: false
+    };
+
     spyOn(window, 'alert');
+
     component.markAsPosted(tx);
+
     expect(tx.posted).toBeFalse();
-    expect(window.alert).toHaveBeenCalledWith('Please fill in all required fields (date, type, brand, amount, bank).');
+
+    const expectedMessage =
+      "Please fill in the following fields:\n" +
+      "- Date\n" +
+      "- Type\n" +
+      "- Brand\n" +
+      "- Location\n" +
+      "- Amount\n" +
+      "- Bank";
+
+    expect(window.alert).toHaveBeenCalledWith(expectedMessage);
   });
 
   it('should submitAll in update mode and navigate', fakeAsync(() => {
