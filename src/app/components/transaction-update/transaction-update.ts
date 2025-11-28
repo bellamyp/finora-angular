@@ -167,6 +167,12 @@ export class TransactionUpdate implements OnInit {
         window.alert('All transactions must have a bank selected.');
         return;
       }
+    } else {
+      // All other transactions must have a bank selected
+      const invalidTx = this.transactions.find(tx => !tx.bankId);
+      if (invalidTx) {
+        window.alert('All transactions must have a bank selected.');
+      }
     }
 
     const payload: TransactionGroupDto = {
