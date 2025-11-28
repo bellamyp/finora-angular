@@ -43,6 +43,6 @@ export const routes: Routes = [
   { path: 'brand-create', component: BrandCreate, canActivate: [authGuard] },
   { path: 'location-create', component: LocationCreate, canActivate: [authGuard] },
 
-  // Wildcard: redirect unmatched routes to login
+  // Wildcard: redirect unmatched routes to login page
   { path: '**', redirectTo: '/login', pathMatch: 'full' }
 ];
