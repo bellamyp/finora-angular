@@ -1,5 +1,5 @@
 // bank-group.dto.ts
 export interface BankGroupDto {
-  id: number;
+  id: string;
   name: string;
 }
