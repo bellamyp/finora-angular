@@ -17,6 +17,7 @@ import { TransactionView } from './components/transaction-view/transaction-view'
 import { BankView } from './components/bank-view/bank-view';
 import { TransactionRepeatList } from './components/transaction-repeat-list/transaction-repeat-list';
 import {LocationCreate} from './components/location-create/location-create';
+import {BankGroupCreate} from './components/bank-group-create/bank-group-create';
 
 export const routes: Routes = [
 
@@ -40,9 +41,10 @@ export const routes: Routes = [
   { path: 'bank-list', component: BankList, canActivate: [authGuard] },
   { path: 'bank-view/:bankId', component: BankView, canActivate: [authGuard] },
   { path: 'bank-create', component: BankCreate, canActivate: [authGuard] },
+  { path: 'bank-group-create', component: BankGroupCreate, canActivate: [authGuard] },
   { path: 'brand-create', component: BrandCreate, canActivate: [authGuard] },
   { path: 'location-create', component: LocationCreate, canActivate: [authGuard] },
 
-  // Wildcard: redirect unmatched routes to login page
+  // Wildcard: redirect unmatched routes to the login page
   { path: '**', redirectTo: '/login', pathMatch: 'full' }
 ];
