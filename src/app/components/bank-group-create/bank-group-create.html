@@ -1,0 +1,46 @@
+<div class="container py-4" style="max-width: 500px;">
+  <h3 class="mb-4 text-center">Create Bank Group</h3>
+
+  <form [formGroup]="groupForm" (ngSubmit)="submit()">
+
+    <!-- Group Name -->
+    <div class="mb-3">
+      <label class="form-label">Enter Bank Group Name</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="name"
+        placeholder="e.g., Chase Group"
+      />
+      <div
+        *ngIf="groupForm.get('name')?.touched && groupForm.get('name')?.invalid"
+        class="text-danger"
+      >
+        Group name is required.
+      </div>
+    </div>
+
+    <!-- Eligibility Message (auto-checked) -->
+    <div *ngIf="eligibilityStatus" class="alert alert-info">
+      {{ eligibilityStatus }}
+    </div>
+
+    <!-- Submit -->
+    <button
+      type="submit"
+      class="btn btn-warning w-100 mt-3"
+      [disabled]="groupForm.invalid || isNameTaken || isSubmitting"
+    >
+      Create Group
+    </button>
+  </form>
+
+  <!-- Create Bank Button -->
+  <button
+    class="btn btn-secondary w-100 mt-4"
+    type="button"
+    (click)="goToBankCreate()"
+  >
+    Create a New Bank
+  </button>
+</div>

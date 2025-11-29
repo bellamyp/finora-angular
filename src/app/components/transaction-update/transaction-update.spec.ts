@@ -178,17 +178,40 @@ describe('TransactionUpdate', () => {
 
   it('should submitAll in update mode and navigate', fakeAsync(() => {
     spyOn(window, 'alert');
+
     component.mode = 'update';
+    // Make sure transactions are valid
+    component.transactions = [
+      {
+        id: 'tx1',
+        date: '2025-11-23',
+        amount: 100,
+        bankId: 'bank1',
+        brandId: 'brand1',
+        locationId: 'loc1',
+        typeId: 'GROCERY',
+        posted: false,
+        notes: 'Test'
+      }
+    ];
+
+    mockTransactionGroupService.updateTransactionGroup.and.returnValue(
+      of({ success: true, groupId: 'group1', message: 'ok' })
+    );
+
     component.submitAll();
-    tick();
+    tick();  // process observable
+
     expect(mockTransactionGroupService.updateTransactionGroup).toHaveBeenCalled();
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/transaction-view', 'group1']);
   }));
 
+
   it('should submitAll in create mode with valid transaction and navigate', fakeAsync(() => {
     spyOn(window, 'alert');
     component.mode = 'create';
-    component.transactions[0].bankId = 'bank1'; // required
+    component.transactions[0].bankId = 'bank1';
+    component.groupId = 'group1';  // <--- set groupId
     component.submitAll();
     tick();
     expect(mockTransactionGroupService.createTransactionGroup).toHaveBeenCalled();

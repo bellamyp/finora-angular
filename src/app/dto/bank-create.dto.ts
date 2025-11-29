@@ -4,4 +4,5 @@ export interface BankCreateDto {
   openingDate: string;  // YYYY-MM-DD
   closingDate?: string | null;
   type: 'CHECKING' | 'SAVINGS' | 'CREDIT' | 'REWARDS';
+  groupId: string;
 }
