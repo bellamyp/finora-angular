@@ -49,8 +49,6 @@ describe('BankGroupService', () => {
   });
 
   it('should handle error when fetching bank groups', () => {
-    const errorMessage = 'Network error';
-
     service.getBankGroups().subscribe({
       next: () => fail('should have failed'),
       error: (error) => {
