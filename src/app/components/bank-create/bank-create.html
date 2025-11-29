@@ -3,6 +3,23 @@
   <h3 class="mb-4 text-center">Add a Bank</h3>
 
   <form [formGroup]="bankForm" (ngSubmit)="submit()">
+    <!-- Bank Group -->
+    <div class="mb-3 d-flex align-items-end">
+      <div class="flex-grow-1 me-2">
+        <label for="bankGroup" class="form-label">Bank Group</label>
+        <select id="bankGroup" class="form-select" formControlName="groupId">
+          <option value="" disabled>Select a bank group</option>
+          <option *ngFor="let group of bankGroups" [value]="group.id">{{ group.name }}</option>
+        </select>
+        <div *ngIf="bankForm.get('groupId')?.touched && bankForm.get('groupId')?.invalid" class="text-danger">
+          Bank group is required.
+        </div>
+      </div>
+      <button type="button" class="btn btn-outline-primary" (click)="addBankGroup()">
+        <i class="bi bi-plus-square"></i> Add Group
+      </button>
+    </div>
+
     <!-- Bank Name -->
     <div class="mb-3">
       <label for="name" class="form-label">Bank Name</label>
