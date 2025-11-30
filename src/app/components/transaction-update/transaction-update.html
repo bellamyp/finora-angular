@@ -79,10 +79,10 @@
   </div>
 
   <!-- Bottom actions -->
-  <div class="bottom-actions d-flex flex-wrap justify-content-between mt-4 p-3 shadow-sm rounded-4 bg-white gap-2">
+  <div class="bottom-actions d-flex flex-column mt-4 p-3 shadow-sm rounded-4 bg-white gap-2">
 
-    <!-- First line: Add / Cashback / Location / Brand / Bank -->
-    <div class="d-flex gap-2 flex-wrap align-items-center w-100 mb-2">
+    <!-- First line: Add Transaction / Cashback / Split buttons -->
+    <div class="d-flex gap-2 flex-wrap align-items-center w-100">
       <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
 
       <!-- Dynamic Cashback Button & Input -->
@@ -97,12 +97,39 @@
         </div>
       </div>
 
+      <!-- Split First Button & Input -->
+      <div class="d-flex gap-1 align-items-center">
+        <button type="button" class="btn btn-outline-warning" (click)="showSplitFirstInput = true">Split First</button>
+
+        <div *ngIf="showSplitFirstInput" class="d-flex gap-1 align-items-center">
+          <input type="number" class="form-control form-control-sm" [(ngModel)]="splitFirstCount"
+                 placeholder="Enter #" step="1" min="2" style="width: 60px;">
+          <button type="button" class="btn btn-warning btn-sm" (click)="splitFirst(splitFirstCount)">Split</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="showSplitFirstInput = false">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Split All Button & Input -->
+      <div class="d-flex gap-1 align-items-center">
+        <button type="button" class="btn btn-outline-dark" (click)="showSplitAllInput = true">Split All</button>
+
+        <div *ngIf="showSplitAllInput" class="d-flex gap-1 align-items-center">
+          <input type="number" class="form-control form-control-sm" [(ngModel)]="splitAllCount"
+                 placeholder="Enter #" step="1" min="2" style="width: 60px;">
+          <button type="button" class="btn btn-dark btn-sm" (click)="splitAll(splitAllCount)">Split</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="showSplitAllInput = false">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second line: Add Brand / Add Bank / Add Location -->
+    <div class="d-flex gap-2 flex-wrap align-items-center w-100">
       <button type="button" class="btn btn-outline-warning" (click)="openAddLocation()">Add Location</button>
       <button type="button" class="btn btn-outline-info" (click)="openAddBrand()">Add Brand</button>
       <button type="button" class="btn btn-outline-secondary" (click)="openAddBank()">Add Bank</button>
     </div>
 
-    <!-- Second line: Submit / Reset / Pending Transactions -->
+    <!-- Third line: Submit / Reset / Pending Transactions -->
     <div class="d-flex gap-2 flex-wrap w-100">
       <button type="button" class="btn btn-primary" (click)="submitAll()">Submit</button>
       <button type="button" class="btn btn-secondary" (click)="cancel()">Reset</button>
@@ -110,5 +137,6 @@
     </div>
 
   </div>
+
 
 </div>
