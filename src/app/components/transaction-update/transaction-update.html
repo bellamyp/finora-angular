@@ -82,10 +82,13 @@
   <div class="bottom-actions d-flex flex-wrap justify-content-between mt-4 p-3 shadow-sm rounded-4 bg-white gap-2">
     <div class="d-flex gap-2 flex-wrap">
       <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
+      <button type="button" class="btn btn-outline-success" (click)="addCashbackTransaction(3)">3% Cashback</button>
+      <button type="button" class="btn btn-outline-success" (click)="addCashbackTransaction(5)">5% Cashback</button>
       <button type="button" class="btn btn-outline-warning" (click)="openAddLocation()">Add Location</button>
       <button type="button" class="btn btn-outline-info" (click)="openAddBrand()">Add Brand</button>
       <button type="button" class="btn btn-outline-secondary" (click)="openAddBank()">Add Bank</button>
     </div>
+
     <div class="d-flex gap-2 flex-wrap">
       <button type="button" class="btn btn-primary" (click)="submitAll()">Submit</button>
       <button type="button" class="btn btn-secondary" (click)="cancel()">Reset</button>
