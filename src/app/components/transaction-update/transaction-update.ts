@@ -29,6 +29,8 @@ export class TransactionUpdate implements OnInit {
   mode: Mode = 'create';
   transactions: TransactionResponseDto[] = [];
 
+  errorMessage: string | null = null;
+
   // Lookup dropdowns
   banks: BankDto[] = [];
   transactionTypes: TransactionTypeOption[] = [];
@@ -319,10 +321,13 @@ export class TransactionUpdate implements OnInit {
         if (res.success) {
           this.router.navigate(['/transaction-view', res.groupId || this.groupId]);
         } else {
-          window.alert(res.message);
+          this.errorMessage = res.message;  // show backend message inline
         }
       },
-      error: err => console.error('Error submitting transaction group:', err)
+      error: err => {
+        console.error('Error submitting transaction group:', err);
+        this.errorMessage = "An unexpected error occurred. Please try again.";
+      }
     });
   }
 

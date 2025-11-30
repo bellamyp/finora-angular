@@ -13,6 +13,10 @@
     <div>No transactions found in this group.</div>
   </div>
 
+  <div *ngIf="errorMessage" class="alert alert-danger text-center">
+    {{ errorMessage }}
+  </div>
+
   <div class="table-responsive">
     <table class="table table-bordered align-middle shadow-sm rounded-4 bg-white edit-transactions-table">
       <thead class="table-light text-center">
