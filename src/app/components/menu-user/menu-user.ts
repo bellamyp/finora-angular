@@ -40,10 +40,6 @@ export class MenuUser {
     this.router.navigate(['/bank-create']);
   }
 
-  editBank() {
-    alert('Edit Bank is not implemented yet.');
-  }
-
   // --- Reports ---
   newReport() {
     alert('New Report is not implemented yet.');
