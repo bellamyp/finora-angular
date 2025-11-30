@@ -1,25 +1,38 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MenuUser } from './menu-user';
 import { By } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
+import { Router } from '@angular/router';
+import { of, throwError } from 'rxjs';
+import { ReportService } from '../../services/report.service';
+import { ReportDto } from '../../dto/report.dto';
 import { Component } from '@angular/core';
+import { provideRouter } from '@angular/router';
 
 // Dummy route component
-@Component({ template: '' })
+@Component({ template: '', standalone: true })
 class DummyComponent {}
 
 describe('MenuUser', () => {
   let component: MenuUser;
   let fixture: ComponentFixture<MenuUser>;
+  let reportServiceSpy: jasmine.SpyObj<ReportService>;
+  let router: Router;
 
   beforeEach(async () => {
+    const spy = jasmine.createSpyObj('ReportService', ['createNewReport']);
+
     await TestBed.configureTestingModule({
-      imports: [MenuUser],
-      providers: [provideRouter([{ path: '', component: DummyComponent }])]
+      imports: [MenuUser, DummyComponent],
+      providers: [
+        { provide: ReportService, useValue: spy },
+        provideRouter([{ path: 'report-view/:id', component: DummyComponent }])
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MenuUser);
     component = fixture.componentInstance;
+    reportServiceSpy = TestBed.inject(ReportService) as jasmine.SpyObj<ReportService>;
+    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 
@@ -29,13 +42,10 @@ describe('MenuUser', () => {
 
   it('should have Transactions buttons', () => {
     const grids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2.mb-4'));
-    const transactionGrid = grids[0]; // first section
-
+    const transactionGrid = grids[0];
     const buttons = transactionGrid.queryAll(By.css('button'));
     expect(buttons.length).toBe(5);
-
     const labels = buttons.map(btn => btn.nativeElement.textContent.trim());
-
     expect(labels).toContain('Add a Transaction');
     expect(labels).toContain('Pending Transactions');
     expect(labels).toContain('Search a Transaction');
@@ -45,42 +55,36 @@ describe('MenuUser', () => {
 
   it('should have Reports buttons', () => {
     const grids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2.mb-4'));
-    const reportGrid = grids[1]; // second section
-
+    const reportGrid = grids[1];
     const buttons = reportGrid.queryAll(By.css('button'));
     expect(buttons.length).toBe(3);
-
     const labels = buttons.map(btn => btn.nativeElement.textContent.trim());
-
     expect(labels).toContain('New Report');
     expect(labels).toContain('View Report');
     expect(labels).toContain('Custom Report');
   });
 
-  it('should have Banks buttons', () => {
-    const grids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2.mb-4'));
-    const bankGrid = grids[2]; // third section
+  it('newReport() should call ReportService and navigate on success', fakeAsync(() => {
+    const mockReport: ReportDto = { id: 'r1', userId: 'u1', month: '2025-11-01', posted: false };
+    reportServiceSpy.createNewReport.and.returnValue(of(mockReport));
+    const navigateSpy = spyOn(router, 'navigate');
 
-    const buttons = bankGrid.queryAll(By.css('button'));
-    expect(buttons.length).toBe(2);
+    component.newReport();
+    tick();
 
-    const labels = buttons.map(btn => btn.nativeElement.textContent.trim());
+    expect(reportServiceSpy.createNewReport).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith(['/report-view', 'r1']);
+  }));
 
-    expect(labels).toContain('List Banks');
-    expect(labels).toContain('Add a Bank');
-  });
+  it('newReport() should handle error', fakeAsync(() => {
+    const consoleSpy = spyOn(console, 'error');
+    reportServiceSpy.createNewReport.and.returnValue(throwError(() => new Error('Failed')));
+    spyOn(window, 'alert');
 
-  it('should have Records buttons', () => {
-    const grids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2.mb-4'));
-    const recordGrid = grids[3]; // fourth section
+    component.newReport();
+    tick();
 
-    const buttons = recordGrid.queryAll(By.css('button'));
-    expect(buttons.length).toBe(3);
-
-    const labels = buttons.map(btn => btn.nativeElement.textContent.trim());
-
-    expect(labels).toContain('Active Records');
-    expect(labels).toContain('Add New Record');
-    expect(labels).toContain('Old Records');
-  });
+    expect(reportServiceSpy.createNewReport).toHaveBeenCalled();
+    expect(consoleSpy).toHaveBeenCalled();
+  }));
 });

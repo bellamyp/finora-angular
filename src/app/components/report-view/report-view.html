@@ -1,0 +1,55 @@
+<div class="container py-5">
+  <h2 class="text-center mb-4 fw-bold text-primary">Report Transactions</h2>
+
+  <div *ngIf="loading" class="text-center text-muted fs-5">
+    <i class="bi bi-hourglass-split" style="font-size: 2rem;"></i>
+    <div>Loading report transactions...</div>
+  </div>
+
+  <div *ngIf="!loading && transactionGroups.length === 0" class="text-center text-muted fs-5">
+    <i class="bi bi-wallet2" style="font-size: 2rem;"></i>
+    <div>No transactions found for this report.</div>
+  </div>
+
+  <div *ngIf="transactionGroups.length > 0" class="table-responsive">
+    <table class="table table-hover align-middle shadow-sm rounded-4 bg-white text-center">
+      <thead class="table-primary text-center">
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Brand</th>
+        <th>Location</th>
+        <th>Amount</th>
+        <th style="width: 35%;">Notes</th>
+        <th>Bank</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngFor="let group of transactionGroups">
+
+        <!-- Group header -->
+        <tr class="table-secondary fw-bold">
+          <td colspan="7" class="text-start ps-4">
+            Group: {{ group.id || 'N/A' }}
+            <span class="badge bg-light text-primary">
+                {{ group.transactions.length }} transaction(s)
+              </span>
+          </td>
+        </tr>
+
+        <!-- Transactions -->
+        <tr *ngFor="let tx of group.transactions">
+          <td>{{ tx.date }}</td>
+          <td><span class="badge bg-info text-dark">{{ tx.typeId }}</span></td>
+          <td>{{ tx.brandName }}</td>
+          <td>{{ tx.locationName }}</td>
+          <td [ngClass]="getAmountDisplay(tx).classes">{{ getAmountDisplay(tx).display }}</td>
+          <td class="notes-column text-wrap text-center" style="max-width: 400px;">{{ tx.notes }}</td>
+          <td>{{ tx.bankName }}</td>
+        </tr>
+
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
