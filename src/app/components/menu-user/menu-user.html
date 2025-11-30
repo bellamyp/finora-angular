@@ -36,5 +36,33 @@
         <i class="bi bi-pencil-square me-2"></i> Edit a Bank
       </button>
     </div>
+
+    <!-- Reports Section -->
+    <h5 class="mb-3 mt-4">Reports</h5>
+    <div class="d-grid gap-2 mb-4">
+      <button class="btn btn-secondary btn-lg" (click)="newReport()">
+        <i class="bi bi-file-earmark-plus me-2"></i> New Report
+      </button>
+      <button class="btn btn-secondary btn-lg" (click)="viewReport()">
+        <i class="bi bi-file-earmark-text me-2"></i> View Report
+      </button>
+      <button class="btn btn-secondary btn-lg" (click)="customReport()">
+        <i class="bi bi-sliders me-2"></i> Custom Report
+      </button>
+    </div>
+
+    <!-- Records Section -->
+    <h5 class="mb-3">Records</h5>
+    <div class="d-grid gap-2 mb-4">
+      <button class="btn btn-secondary btn-lg" (click)="activeRecords()">
+        <i class="bi bi-check-circle me-2"></i> Active Records
+      </button>
+      <button class="btn btn-secondary btn-lg" (click)="addRecord()">
+        <i class="bi bi-plus-circle me-2"></i> Add New Record
+      </button>
+      <button class="btn btn-secondary btn-lg" (click)="oldRecords()">
+        <i class="bi bi-archive me-2"></i> Old Records
+      </button>
+    </div>
   </div>
 </div>
