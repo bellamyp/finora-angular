@@ -16,7 +16,7 @@
     <table class="table table-hover align-middle shadow-sm rounded-4 bg-white">
       <thead class="table-primary text-center">
       <tr>
-        <th scope="col">Bank ID</th>
+        <th scope="col">Bank Group</th>
         <th scope="col">Bank Name</th>
         <th scope="col">Bank Type</th>
         <th scope="col">Balance</th>
@@ -25,7 +25,7 @@
       </thead>
       <tbody class="text-center">
       <tr *ngFor="let bank of banks">
-        <td>{{ bank.id }}</td>
+        <td>{{ bank.groupId }}</td>
         <td>{{ bank.name }}</td>
         <td>
           <span class="badge bg-info text-dark">{{ bank.type }}</span>

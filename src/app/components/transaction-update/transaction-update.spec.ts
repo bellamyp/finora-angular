@@ -9,7 +9,7 @@ import { BankDto } from '../../dto/bank.dto';
 import { BrandDto } from '../../dto/brand.dto';
 import { TransactionGroupDto, TransactionResponseDto } from '../../dto/transaction-group.dto';
 import { TransactionTypeEnum } from '../../dto/transaction-type.enum';
-import {LocationService} from '../../services/location.service';
+import { LocationService } from '../../services/location.service';
 
 // Dummy data
 const mockGroup: TransactionGroupDto = {
@@ -30,7 +30,7 @@ const mockGroup: TransactionGroupDto = {
 };
 
 const mockBanks: BankDto[] = [
-  { id: 'bank1', name: 'Chase', type: 'checking', email: 'test@bank.com' }
+  { id: 'bank1', groupId: 'G1', name: 'Chase', type: 'checking', email: 'test@bank.com', balance: 500 }
 ];
 
 const mockBrands: BrandDto[] = [
@@ -75,7 +75,6 @@ describe('TransactionUpdate', () => {
   };
 
   beforeEach(async () => {
-    // And update your TestBed providers:
     await TestBed.configureTestingModule({
       imports: [TransactionUpdate],
       providers: [
@@ -84,14 +83,12 @@ describe('TransactionUpdate', () => {
         { provide: BrandService, useValue: mockBrandService },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: LocationService, useValue: mockLocationService } // <- mock added
+        { provide: LocationService, useValue: mockLocationService }
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(TransactionUpdate);
     component = fixture.componentInstance;
-
-    // Wrap detectChanges in fakeAsync if ngOnInit has async calls
     fixture.detectChanges();
   });
 
@@ -112,6 +109,7 @@ describe('TransactionUpdate', () => {
   it('should load transaction group, banks, brands, and types on init', () => {
     expect(component.transactions.length).toBe(1);
     expect(component.banks).toEqual(mockBanks);
+    expect(component.banks[0].groupId).toBe('G1'); // verify groupId
     expect(component.brands).toEqual(mockBrands);
     expect(component.transactionTypes.length).toBeGreaterThan(0);
     expect(component.loading).toBeFalse();
@@ -180,7 +178,6 @@ describe('TransactionUpdate', () => {
     spyOn(window, 'alert');
 
     component.mode = 'update';
-    // Make sure transactions are valid
     component.transactions = [
       {
         id: 'tx1',
@@ -200,18 +197,17 @@ describe('TransactionUpdate', () => {
     );
 
     component.submitAll();
-    tick();  // process observable
+    tick();
 
     expect(mockTransactionGroupService.updateTransactionGroup).toHaveBeenCalled();
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/transaction-view', 'group1']);
   }));
 
-
   it('should submitAll in create mode with valid transaction and navigate', fakeAsync(() => {
     spyOn(window, 'alert');
     component.mode = 'create';
     component.transactions[0].bankId = 'bank1';
-    component.groupId = 'group1';  // <--- set groupId
+    component.groupId = 'group1';
     component.submitAll();
     tick();
     expect(mockTransactionGroupService.createTransactionGroup).toHaveBeenCalled();

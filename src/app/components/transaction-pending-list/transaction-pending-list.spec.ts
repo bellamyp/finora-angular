@@ -7,7 +7,7 @@ import { LocationService } from '../../services/location.service';
 import { of, throwError } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import {BankDto} from '../../dto/bank.dto';
+import { BankDto } from '../../dto/bank.dto';
 
 describe('TransactionPendingList', () => {
   let component: TransactionPendingList;
@@ -47,8 +47,8 @@ describe('TransactionPendingList', () => {
   ];
 
   const mockBanks: BankDto[] = [
-    { id: 'bank1', name: 'Bank A', type: 'CHECKING', email: 'a@bank.com' },
-    { id: 'bank2', name: 'Bank B', type: 'SAVINGS', email: 'b@bank.com' }
+    { id: 'bank1', groupId: 'G1', name: 'Bank A', type: 'CHECKING', email: 'a@bank.com', balance: 500 },
+    { id: 'bank2', groupId: 'G2', name: 'Bank B', type: 'SAVINGS', email: 'b@bank.com', balance: 1200 }
   ];
 
   const mockBrands = [

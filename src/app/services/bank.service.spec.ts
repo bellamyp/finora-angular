@@ -11,7 +11,7 @@ describe('BankService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule], // <-- fix: provide HttpClient
+      imports: [HttpClientTestingModule],
       providers: [BankService]
     });
 
@@ -30,12 +30,21 @@ describe('BankService', () => {
   // GET all banks
   it('should fetch all banks', () => {
     const mockResponse: BankDto[] = [
-      { id: '550e8400-e29b-41d4-a716-446655440000', name: 'Capital One Savings', type: 'SAVINGS', email: 'user@example.com' }
+      {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        groupId: 'G1',
+        name: 'Capital One Savings',
+        type: 'SAVINGS',
+        email: 'user@example.com',
+        balance: 1500.75
+      }
     ];
 
     service.getBanks().subscribe(banks => {
       expect(banks.length).toBe(1);
       expect(banks[0].name).toBe('Capital One Savings');
+      expect(banks[0].groupId).toBe('G1');
+      expect(banks[0].balance).toBe(1500.75);
     });
 
     const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/banks`);
@@ -47,9 +56,11 @@ describe('BankService', () => {
   it('should fetch a single bank by ID', () => {
     const mockBank: BankDto = {
       id: '550e8400-e29b-41d4-a716-446655440002',
+      groupId: 'G2',
       name: 'Chase Checking',
       type: 'CHECKING',
-      email: 'user@example.com'
+      email: 'user@example.com',
+      balance: 1200.50
     };
 
     service.getBankById(mockBank.id).subscribe(bank => {
@@ -73,13 +84,17 @@ describe('BankService', () => {
 
     const mockResponse: BankDto = {
       id: '550e8400-e29b-41d4-a716-446655440001',
+      groupId: 'G100',
       name: formValue.name,
       type: formValue.type,
-      email: 'user@example.com'
+      email: 'user@example.com',
+      balance: 0
     };
 
     service.createBank(formValue).subscribe(res => {
       expect(res).toEqual(mockResponse);
+      expect(res.groupId).toBe('G100');
+      expect(res.balance).toBe(0);
     });
 
     const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/banks`);

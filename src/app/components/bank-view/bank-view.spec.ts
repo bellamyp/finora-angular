@@ -14,6 +14,7 @@ describe('BankView', () => {
 
   const mockBank: BankDto = {
     id: '123',
+    groupId: 'group1',          // <-- added groupId
     name: 'Checking Bank',
     type: 'CHECKING',
     email: 'user@example.com',
@@ -53,6 +54,7 @@ describe('BankView', () => {
 
   it('should load bank on init', () => {
     expect(component.bank).toEqual(mockBank);
+    expect(component.bank?.groupId).toBe('group1'); // <-- check groupId
     expect(component.loading).toBeFalse();
     expect(component.error).toBeUndefined();
   });
@@ -77,7 +79,6 @@ describe('BankView', () => {
     const comp = new BankView(mockActivatedRoute, mockRouter, mockBankService);
     comp.ngOnInit();
 
-    // The error is set asynchronously in the subscription
     comp.ngOnInit();
     mockBankService.getBankById('123').subscribe({
       error: () => {

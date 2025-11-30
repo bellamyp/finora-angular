@@ -3,6 +3,8 @@ import { BankDto } from '../../dto/bank.dto';
 import { BankService } from '../../services/bank.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import {BankGroupService} from '../../services/bank-group.service';
+import {BankGroupDto} from '../../dto/bank-group.dto';
 
 @Component({
   selector: 'app-bank-list',
@@ -16,20 +18,41 @@ export class BankList implements OnInit {
   loading = true;  // <-- track loading state
   error?: string;
 
+  private groupMap: Map<string, string> = new Map(); // groupId -> groupName
+
   constructor(
     private bankService: BankService,
+    private bankGroupService: BankGroupService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.bankService.getBanks().subscribe({
-      next: (data) => {
-        this.banks = data;
-        this.loading = false;
+    // Step 1: Fetch all bank groups first
+    this.bankGroupService.getBankGroups().subscribe({
+      next: (groups: BankGroupDto[]) => {
+        // Build a map of groupId -> groupName
+        this.groupMap = new Map(groups.map(g => [g.id, g.name]));
+
+        // Step 2: Fetch banks
+        this.bankService.getBanks().subscribe({
+          next: (banks: BankDto[]) => {
+            // Step 3: Replace groupId with group name for display
+            this.banks = banks.map(b => ({
+              ...b,
+              groupId: this.groupMap.get(b.groupId) ?? b.groupId
+            }));
+            this.loading = false;
+          },
+          error: (err) => {
+            console.error('Failed to fetch banks:', err);
+            this.error = 'Failed to load banks.';
+            this.loading = false;
+          },
+        });
       },
       error: (err) => {
-        console.error('Failed to fetch banks:', err);
-        this.error = 'Failed to load banks.';
+        console.error('Failed to fetch bank groups:', err);
+        this.error = 'Failed to load bank groups.';
         this.loading = false;
       },
     });

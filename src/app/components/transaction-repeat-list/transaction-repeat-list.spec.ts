@@ -23,7 +23,9 @@ describe('TransactionRepeatList', () => {
   let mockTransactionGroupRepeatService: jasmine.SpyObj<TransactionGroupRepeatService>;
   let mockRouter: jasmine.SpyObj<Router>;
 
-  const mockBanks: BankDto[] = [{ id: 'b1', name: 'Bank1', type: 'CHECKING', email: 'a@b.com' }];
+  const mockBanks: BankDto[] = [
+    { id: 'b1', groupId: 'G1', name: 'Bank1', type: 'CHECKING', email: 'a@b.com', balance: 1000 }
+  ];
   const mockBrands: BrandDto[] = [{ id: 'br1', name: 'Brand1' }];
   const mockLocations: LocationDto[] = [{ id: 'loc1', city: 'New York', state: 'NY' }];
   const mockTransactions: TransactionResponseDto[] = [
@@ -87,11 +89,9 @@ describe('TransactionRepeatList', () => {
   it('should handle service errors gracefully', fakeAsync(() => {
     spyOn(console, 'error');
 
-    // Reset component state before triggering error
     component.transactionGroups = [];
     component.loading = true;
 
-    // Make the service fail
     mockTransactionGroupService.getTransactionGroups.and.returnValue(
       throwError(() => new Error('Service failed'))
     );
@@ -106,7 +106,6 @@ describe('TransactionRepeatList', () => {
       jasmine.any(Error)
     );
   }));
-
 
   it('should remove repeat tag and reload groups', fakeAsync(() => {
     mockTransactionGroupRepeatService.removeRepeat.and.returnValue(of('Success'));
