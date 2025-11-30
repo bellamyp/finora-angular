@@ -52,8 +52,10 @@
 
   <!-- Group-specific actions -->
   <div class="btn-toolbar mb-3 flex-wrap justify-content-center">
-    <button class="nav-btn me-2 mb-2" [routerLink]="['/transaction-update', groupId]">
-      Edit this group
+    <button class="nav-btn me-2 mb-2"
+            [routerLink]="canEditGroup ? ['/transaction-update', groupId] : null"
+            [disabled]="!canEditGroup">
+      {{ editButtonLabel }}
     </button>
     <button class="nav-btn search-btn me-2 mb-2"
             (click)="markAsRepeat(groupId)"

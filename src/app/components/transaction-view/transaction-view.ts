@@ -21,6 +21,7 @@ export class TransactionView implements OnInit {
   loading = true;
   isRepeat = false;
   groupId?: string;
+  groupReportId?: string;
   transactions: TransactionResponseDto[] = [];
 
   banks: BankDto[] = [];
@@ -46,6 +47,7 @@ export class TransactionView implements OnInit {
               ...tx,
               posted: tx.posted ?? false
             }));
+            this.groupReportId = group.reportId; // store reportId
             this.loading = false;
           },
           error: (err) => {
@@ -95,6 +97,14 @@ export class TransactionView implements OnInit {
       'text-success': amount > 0,
       'text-danger': amount < 0
     };
+  }
+
+  get canEditGroup(): boolean {
+    return !this.groupReportId; // true if reportId is null/undefined
+  }
+
+  get editButtonLabel(): string {
+    return this.canEditGroup ? 'Edit this group' : 'Cannot Edit (Reported)';
   }
 
   markAsRepeat(groupId?: string) {

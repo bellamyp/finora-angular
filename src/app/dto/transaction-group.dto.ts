@@ -17,5 +17,6 @@ export interface TransactionResponseDto {
 
 export interface TransactionGroupDto {
   id?: string;
+  reportId?: string;
   transactions: TransactionResponseDto[];
 }
