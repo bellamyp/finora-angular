@@ -6,33 +6,41 @@
     <!-- Transactions Section -->
     <h5 class="mb-3">Transactions</h5>
     <div class="d-grid gap-2 mb-4">
-      <a class="btn btn-warning btn-lg" [routerLink]="['/transaction-update']">
+
+      <button class="btn btn-warning btn-lg" (click)="goToTransactionUpdate()">
         <i class="bi bi-plus-circle me-2"></i> Add a Transaction
-      </a>
-      <a class="btn btn-secondary btn-lg" [routerLink]="['/transaction-pending-list']">
+      </button>
+
+      <button class="btn btn-secondary btn-lg" (click)="goToTransactionPendingList()">
         <i class="bi bi-hourglass-split me-2"></i> Pending Transactions
-      </a>
-      <button class="btn btn-secondary btn-lg" [routerLink]="['/transaction-search']">
+      </button>
+
+      <button class="btn btn-secondary btn-lg" (click)="goToTransactionSearch()">
         <i class="bi bi-search me-2"></i> Search a Transaction
       </button>
-      <a class="btn btn-secondary btn-lg" [routerLink]="['/transaction-list']">
+
+      <button class="btn btn-secondary btn-lg" (click)="goToTransactionList()">
         <i class="bi bi-clock-history me-2"></i> Posted Transactions
-      </a>
-      <a class="btn btn-secondary btn-lg" [routerLink]="['/transaction-repeat-list']">
+      </button>
+
+      <button class="btn btn-secondary btn-lg" (click)="goToTransactionRepeatList()">
         <i class="bi bi-repeat me-2"></i> Repeat Transactions
-      </a>
+      </button>
     </div>
 
     <!-- Banks Section -->
     <h5 class="mb-3">Banks</h5>
     <div class="d-grid gap-2">
-      <a class="btn btn-secondary btn-lg" [routerLink]="['/bank-list']">
+
+      <button class="btn btn-secondary btn-lg" (click)="goToBankList()">
         <i class="bi bi-list-ul me-2"></i> List Banks
-      </a>
-      <a class="btn btn-warning btn-lg" [routerLink]="['/bank-create']">
+      </button>
+
+      <button class="btn btn-warning btn-lg" (click)="goToBankCreate()">
         <i class="bi bi-plus-square me-2"></i> Add a Bank
-      </a>
-      <button class="btn btn-secondary btn-lg">
+      </button>
+
+      <button class="btn btn-secondary btn-lg" (click)="editBank()">
         <i class="bi bi-pencil-square me-2"></i> Edit a Bank
       </button>
     </div>
@@ -43,9 +51,11 @@
       <button class="btn btn-secondary btn-lg" (click)="newReport()">
         <i class="bi bi-file-earmark-plus me-2"></i> New Report
       </button>
+
       <button class="btn btn-secondary btn-lg" (click)="viewReport()">
         <i class="bi bi-file-earmark-text me-2"></i> View Report
       </button>
+
       <button class="btn btn-secondary btn-lg" (click)="customReport()">
         <i class="bi bi-sliders me-2"></i> Custom Report
       </button>
@@ -57,12 +67,15 @@
       <button class="btn btn-secondary btn-lg" (click)="activeRecords()">
         <i class="bi bi-check-circle me-2"></i> Active Records
       </button>
+
       <button class="btn btn-secondary btn-lg" (click)="addRecord()">
         <i class="bi bi-plus-circle me-2"></i> Add New Record
       </button>
+
       <button class="btn btn-secondary btn-lg" (click)="oldRecords()">
         <i class="bi bi-archive me-2"></i> Old Records
       </button>
     </div>
+
   </div>
 </div>
