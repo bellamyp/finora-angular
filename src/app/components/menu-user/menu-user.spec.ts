@@ -28,29 +28,59 @@ describe('MenuUser', () => {
   });
 
   it('should have Transactions buttons', () => {
-    const transactionGrid = fixture.debugElement.query(By.css('.d-grid.gap-2.mb-4'));
-    const transactionElements = transactionGrid.queryAll(By.css('button, a'));
+    const grids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2.mb-4'));
+    const transactionGrid = grids[0]; // first section
 
-    expect(transactionElements.length).toBe(5);
+    const buttons = transactionGrid.queryAll(By.css('button'));
+    expect(buttons.length).toBe(5);
 
-    const labels = transactionElements.map(el => el.nativeElement.textContent.trim());
+    const labels = buttons.map(btn => btn.nativeElement.textContent.trim());
+
     expect(labels).toContain('Add a Transaction');
-    expect(labels).toContain('Posted Transactions');
     expect(labels).toContain('Pending Transactions');
-    expect(labels).toContain('Repeat Transactions');
     expect(labels).toContain('Search a Transaction');
+    expect(labels).toContain('Posted Transactions');
+    expect(labels).toContain('Repeat Transactions');
+  });
+
+  it('should have Reports buttons', () => {
+    const grids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2.mb-4'));
+    const reportGrid = grids[1]; // second section
+
+    const buttons = reportGrid.queryAll(By.css('button'));
+    expect(buttons.length).toBe(3);
+
+    const labels = buttons.map(btn => btn.nativeElement.textContent.trim());
+
+    expect(labels).toContain('New Report');
+    expect(labels).toContain('View Report');
+    expect(labels).toContain('Custom Report');
   });
 
   it('should have Banks buttons', () => {
-    const allGrids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2'));
-    const bankGrid = allGrids[1]; // second grid for Banks section
-    const bankElements = bankGrid.queryAll(By.css('button, a'));
+    const grids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2.mb-4'));
+    const bankGrid = grids[2]; // third section
 
-    expect(bankElements.length).toBe(3);
+    const buttons = bankGrid.queryAll(By.css('button'));
+    expect(buttons.length).toBe(2);
 
-    const labels = bankElements.map(el => el.nativeElement.textContent.trim());
+    const labels = buttons.map(btn => btn.nativeElement.textContent.trim());
+
     expect(labels).toContain('List Banks');
     expect(labels).toContain('Add a Bank');
-    expect(labels).toContain('Edit a Bank');
+  });
+
+  it('should have Records buttons', () => {
+    const grids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2.mb-4'));
+    const recordGrid = grids[3]; // fourth section
+
+    const buttons = recordGrid.queryAll(By.css('button'));
+    expect(buttons.length).toBe(3);
+
+    const labels = buttons.map(btn => btn.nativeElement.textContent.trim());
+
+    expect(labels).toContain('Active Records');
+    expect(labels).toContain('Add New Record');
+    expect(labels).toContain('Old Records');
   });
 });
