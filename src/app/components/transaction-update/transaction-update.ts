@@ -35,6 +35,9 @@ export class TransactionUpdate implements OnInit {
   brands: BrandDto[] = [];
   locations: { id: string, name: string }[] = [];
 
+  showCashbackInput: boolean = false;
+  cashbackPercent: number | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -125,7 +128,12 @@ export class TransactionUpdate implements OnInit {
     });
   }
 
-  addCashbackTransaction(percent: number) {
+  addCashbackTransaction(percent: number | null) {
+    if (!percent || percent <= 0) {
+      window.alert('Enter a valid cashback percentage.');
+      return;
+    }
+
     if (this.transactions.length === 0) {
       window.alert('Please add a main transaction first.');
       return;
@@ -146,12 +154,16 @@ export class TransactionUpdate implements OnInit {
       date: date,
       amount: cashbackAmount,
       notes: `${percent}% cashback`,
-      bankId: '',           // user will fill this
+      bankId: '',
       brandId: lastTx.brandId,
       locationId: lastTx.locationId,
       typeId: lastTx.typeId,
       posted: false
     });
+
+    // Reset input
+    this.showCashbackInput = false;
+    this.cashbackPercent = null;
   }
 
   openAddLocation() {
