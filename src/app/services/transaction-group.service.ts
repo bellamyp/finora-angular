@@ -50,4 +50,12 @@ export class TransactionGroupService {
     const url = `${this.apiUrl}/${groupId}`;
     return this.http.get<TransactionGroupDto>(url);
   }
+
+  /**
+   * Get all transaction groups for a specific report
+   */
+  getTransactionGroupsByReport(reportId: string): Observable<TransactionGroupDto[]> {
+    const url = `${this.apiUrl}/report/${reportId}`;
+    return this.http.get<TransactionGroupDto[]>(url);
+  }
 }
