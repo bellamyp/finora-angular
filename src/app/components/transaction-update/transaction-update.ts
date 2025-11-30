@@ -38,6 +38,12 @@ export class TransactionUpdate implements OnInit {
   showCashbackInput: boolean = false;
   cashbackPercent: number | null = null;
 
+  showSplitFirstInput: boolean = false;
+  splitFirstCount: number | null = null;
+
+  showSplitAllInput: boolean = false;
+  splitAllCount: number | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -164,6 +170,92 @@ export class TransactionUpdate implements OnInit {
     // Reset input
     this.showCashbackInput = false;
     this.cashbackPercent = null;
+  }
+
+  /** Split the first transaction by the given count */
+  splitFirst(count: number | null) {
+    if (!count || count < 2) {
+      window.alert('Enter a valid split count (2 or more).');
+      return;
+    }
+
+    if (this.transactions.length === 0) {
+      window.alert('No transactions to split.');
+      return;
+    }
+
+    const firstTx = this.transactions[0];
+    if (!firstTx.amount) {
+      window.alert('First transaction has no amount.');
+      return;
+    }
+
+    const splitAmount = +(Math.abs(firstTx.amount) / count).toFixed(2); // Always positive
+
+    const newTxs: TransactionResponseDto[] = [];
+
+    // Create (count) split transactions with opposite sign
+    for (let i = 0; i < count; i++) {
+      newTxs.push({
+        ...firstTx,
+        id: '',
+        amount: splitAmount,       // Positive amount for reimbursements
+        notes: firstTx.notes ? `${firstTx.notes} (split)` : 'Split transaction',
+        posted: false
+      });
+    }
+
+    // Append after the first transaction
+    this.transactions.splice(1, 0, ...newTxs);
+
+    // Reset input
+    this.showSplitFirstInput = false;
+    this.splitFirstCount = null;
+  }
+
+  /** Split all transactions by the given count */
+  splitAll(count: number | null) {
+    if (!count || count < 2) {
+      window.alert('Enter a valid split count (2 or more).');
+      return;
+    }
+
+    if (this.transactions.length === 0) {
+      window.alert('No transactions to split.');
+      return;
+    }
+
+    // Calculate total net amount (sum of all transactions' amounts)
+    const totalAmount = this.transactions.reduce(
+      (sum, tx) => sum + (tx.amount || 0), 0);
+
+    if (totalAmount === 0) {
+      window.alert('Total transaction amount is zero, cannot split.');
+      return;
+    }
+
+    const splitAmount = +(Math.abs(totalAmount) / count).toFixed(2); // Always positive
+    const newTxs: TransactionResponseDto[] = [];
+
+    // Take the first transaction as a template for details
+    const templateTx = this.transactions[0];
+
+    for (let i = 0; i < count; i++) {
+      newTxs.push({
+        ...templateTx,
+        id: '',
+        amount: splitAmount, // positive, opposite sign of total
+        notes: 'Split all transactions',
+        posted: false
+      });
+    }
+
+    // Append the split transactions after existing transactions
+    this.transactions.push(...newTxs);
+
+    // Reset input
+    this.showSplitAllInput = false;
+    this.splitAllCount = null;
   }
 
   openAddLocation() {

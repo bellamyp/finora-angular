@@ -81,7 +81,7 @@
   <!-- Bottom actions -->
   <div class="bottom-actions d-flex flex-column mt-4 p-3 shadow-sm rounded-4 bg-white gap-2">
 
-    <!-- First line: Add Transaction / Cashback -->
+    <!-- First line: Add Transaction / Cashback / Split buttons -->
     <div class="d-flex gap-2 flex-wrap align-items-center w-100">
       <button type="button" class="btn btn-outline-primary" (click)="addTransaction()">+ Add Transaction</button>
 
@@ -94,6 +94,30 @@
                  placeholder="Enter %" step="0.1" min="0.1" max="100" style="width: 80px;">
           <button type="button" class="btn btn-success btn-sm" (click)="addCashbackTransaction(cashbackPercent)">Add</button>
           <button type="button" class="btn btn-outline-secondary btn-sm" (click)="showCashbackInput = false">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Split First Button & Input -->
+      <div class="d-flex gap-1 align-items-center">
+        <button type="button" class="btn btn-outline-warning" (click)="showSplitFirstInput = true">Split First</button>
+
+        <div *ngIf="showSplitFirstInput" class="d-flex gap-1 align-items-center">
+          <input type="number" class="form-control form-control-sm" [(ngModel)]="splitFirstCount"
+                 placeholder="Enter #" step="1" min="2" style="width: 60px;">
+          <button type="button" class="btn btn-warning btn-sm" (click)="splitFirst(splitFirstCount)">Split</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="showSplitFirstInput = false">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Split All Button & Input -->
+      <div class="d-flex gap-1 align-items-center">
+        <button type="button" class="btn btn-outline-dark" (click)="showSplitAllInput = true">Split All</button>
+
+        <div *ngIf="showSplitAllInput" class="d-flex gap-1 align-items-center">
+          <input type="number" class="form-control form-control-sm" [(ngModel)]="splitAllCount"
+                 placeholder="Enter #" step="1" min="2" style="width: 60px;">
+          <button type="button" class="btn btn-dark btn-sm" (click)="splitAll(splitAllCount)">Split</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="showSplitAllInput = false">Cancel</button>
         </div>
       </div>
     </div>
