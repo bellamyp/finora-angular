@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import {ReportService} from '../../services/report.service';
+import {ReportDto} from '../../dto/report.dto';
 
 @Component({
   selector: 'app-menu-user',
@@ -8,7 +10,10 @@ import { Router } from '@angular/router';
 })
 export class MenuUser {
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private reportService: ReportService
+  ) {}
 
   // --- Navigation Methods (Transactions) ---
   goToTransactionUpdate() {
@@ -42,7 +47,17 @@ export class MenuUser {
 
   // --- Reports ---
   newReport() {
-    this.router.navigate(['/report-view']);
+    this.reportService.createNewReport().subscribe({
+      next: (report: ReportDto) => {
+        console.log('New report created:', report);
+        // Navigate to the report view page, optionally passing the report ID
+        this.router.navigate(['/report-view', report.id]);
+      },
+      error: (err) => {
+        console.error('Failed to create new report', err);
+        alert('Failed to create new report. See console for details.');
+      }
+    });
   }
 
   viewReport() {

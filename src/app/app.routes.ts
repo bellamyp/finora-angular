@@ -45,7 +45,7 @@ export const routes: Routes = [
   { path: 'bank-group-create', component: BankGroupCreate, canActivate: [authGuard] },
   { path: 'brand-create', component: BrandCreate, canActivate: [authGuard] },
   { path: 'location-create', component: LocationCreate, canActivate: [authGuard] },
-  { path: 'report-view', component: ReportView, canActivate: [authGuard] },
+  { path: 'report-view/:id', component: ReportView, canActivate: [authGuard] },
 
   // Wildcard: redirect unmatched routes to the login page
   { path: '**', redirectTo: '/login', pathMatch: 'full' }
