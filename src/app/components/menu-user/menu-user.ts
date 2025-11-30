@@ -42,7 +42,7 @@ export class MenuUser {
 
   // --- Reports ---
   newReport() {
-    alert('New Report is not implemented yet.');
+    this.router.navigate(['/report-view']);
   }
 
   viewReport() {
