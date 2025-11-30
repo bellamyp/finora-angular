@@ -2,14 +2,14 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { MenuUser } from './menu-user';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 import { ReportService } from '../../services/report.service';
 import { ReportDto } from '../../dto/report.dto';
 import { Component } from '@angular/core';
+import { provideRouter } from '@angular/router';
 
 // Dummy route component
-@Component({ template: '' })
+@Component({ template: '', standalone: true })
 class DummyComponent {}
 
 describe('MenuUser', () => {
@@ -22,12 +22,11 @@ describe('MenuUser', () => {
     const spy = jasmine.createSpyObj('ReportService', ['createNewReport']);
 
     await TestBed.configureTestingModule({
-      imports: [
-        MenuUser, // standalone
-        DummyComponent, // standalone
-        RouterTestingModule.withRoutes([{ path: 'report-view/:id', component: DummyComponent }])
-      ],
-      providers: [{ provide: ReportService, useValue: spy }]
+      imports: [MenuUser, DummyComponent],
+      providers: [
+        { provide: ReportService, useValue: spy },
+        provideRouter([{ path: 'report-view/:id', component: DummyComponent }])
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MenuUser);
