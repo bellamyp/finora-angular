@@ -152,7 +152,8 @@ export class TransactionUpdate implements OnInit {
       return;
     }
 
-    const cashbackAmount = +(Math.abs(lastTx.amount) * percent / 100).toFixed(2);
+    // Opposite sign of the main transaction
+    const cashbackAmount = +((Math.abs(lastTx.amount) * percent / 100) * -Math.sign(lastTx.amount)).toFixed(2);
     const date = lastTx.date || new Date().toISOString().slice(0, 10);
 
     this.transactions.push({
@@ -190,25 +191,22 @@ export class TransactionUpdate implements OnInit {
       return;
     }
 
-    const splitAmount = +(Math.abs(firstTx.amount) / count).toFixed(2); // Always positive
+    // Opposite sign of the first transaction
+    const splitAmount = +((Math.abs(firstTx.amount) / count) * -Math.sign(firstTx.amount)).toFixed(2);
 
     const newTxs: TransactionResponseDto[] = [];
-
-    // Create (count) split transactions with opposite sign
     for (let i = 0; i < count; i++) {
       newTxs.push({
         ...firstTx,
         id: '',
-        amount: splitAmount,       // Positive amount for reimbursements
+        amount: splitAmount,
         notes: firstTx.notes ? `${firstTx.notes} (split)` : 'Split transaction',
         posted: false
       });
     }
 
-    // Append after the first transaction
     this.transactions.splice(1, 0, ...newTxs);
 
-    // Reset input
     this.showSplitFirstInput = false;
     this.splitFirstCount = null;
   }
@@ -225,35 +223,31 @@ export class TransactionUpdate implements OnInit {
       return;
     }
 
-    // Calculate total net amount (sum of all transactions' amounts)
-    const totalAmount = this.transactions.reduce(
-      (sum, tx) => sum + (tx.amount || 0), 0);
-
+    // Total net amount of all transactions
+    const totalAmount = this.transactions.reduce((sum, tx) => sum + (tx.amount || 0), 0);
     if (totalAmount === 0) {
       window.alert('Total transaction amount is zero, cannot split.');
       return;
     }
 
-    const splitAmount = +(Math.abs(totalAmount) / count).toFixed(2); // Always positive
-    const newTxs: TransactionResponseDto[] = [];
+    // Opposite sign of total amount
+    const splitAmount = +((Math.abs(totalAmount) / count) * -Math.sign(totalAmount)).toFixed(2);
 
-    // Take the first transaction as a template for details
+    // Use first transaction as template
     const templateTx = this.transactions[0];
-
+    const newTxs: TransactionResponseDto[] = [];
     for (let i = 0; i < count; i++) {
       newTxs.push({
         ...templateTx,
         id: '',
-        amount: splitAmount, // positive, opposite sign of total
+        amount: splitAmount,
         notes: 'Split all transactions',
         posted: false
       });
     }
 
-    // Append the split transactions after existing transactions
     this.transactions.push(...newTxs);
 
-    // Reset input
     this.showSplitAllInput = false;
     this.splitAllCount = null;
   }
