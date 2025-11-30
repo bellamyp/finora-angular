@@ -5,7 +5,7 @@ import { TransactionGroupService } from '../../services/transaction-group.servic
 import { BankService } from '../../services/bank.service';
 import { BrandService } from '../../services/brand.service';
 import { LocationService } from '../../services/location.service';
-import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { provideRouter } from '@angular/router';
 import { Component } from '@angular/core';
 import {BankDto} from '../../dto/bank.dto';
