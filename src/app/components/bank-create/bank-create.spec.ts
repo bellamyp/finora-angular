@@ -6,8 +6,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { of, throwError } from 'rxjs';
 import { BankDto } from '../../dto/bank.dto';
-import {BankGroupService} from '../../services/bank-group.service';
-import {provideHttpClientTesting} from '@angular/common/http/testing';
+import { BankGroupService } from '../../services/bank-group.service';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('BankCreate', () => {
   let component: BankCreate;
@@ -21,7 +21,7 @@ describe('BankCreate', () => {
     mockBankService = jasmine.createSpyObj('BankService', ['createBank']);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     mockBankGroupService = jasmine.createSpyObj('BankGroupService', ['getBankGroups']);
-    mockBankGroupService.getBankGroups.and.returnValue(of([])); // mock call if component calls it
+    mockBankGroupService.getBankGroups.and.returnValue(of([]));
 
     await TestBed.configureTestingModule({
       imports: [
@@ -33,7 +33,7 @@ describe('BankCreate', () => {
         { provide: BankService, useValue: mockBankService },
         { provide: Router, useValue: mockRouter },
         { provide: BankGroupService, useValue: mockBankGroupService },
-        provideHttpClientTesting()  // << provide HttpClient to satisfy DI
+        provideHttpClientTesting()
       ]
     }).compileComponents();
 
@@ -51,7 +51,7 @@ describe('BankCreate', () => {
   // --------------------------
   it('should NOT submit invalid form', () => {
     component.bankForm.setValue({
-      groupId: '',   // missing group
+      groupId: '',   // missing groupId
       name: '',
       openingDate: '',
       closingDate: '',
@@ -69,7 +69,7 @@ describe('BankCreate', () => {
   // --------------------------
   it('should submit valid form', () => {
     component.bankForm.setValue({
-      groupId: 'G100', // <-- required
+      groupId: 'G100', // required
       name: 'My Bank',
       openingDate: '2025-01-01',
       closingDate: '',
@@ -78,6 +78,7 @@ describe('BankCreate', () => {
 
     const mockResponse: BankDto = {
       id: '100',
+      groupId: 'G100', // <-- included
       name: 'My Bank',
       type: 'CHECKING',
       email: 'test@example.com',
@@ -91,10 +92,10 @@ describe('BankCreate', () => {
     component.submit();
 
     expect(mockBankService.createBank).toHaveBeenCalledWith({
-      groupId: 'G100', // <-- included
+      groupId: 'G100',
       name: 'My Bank',
       openingDate: '2025-01-01',
-      closingDate: null,
+      closingDate: null, // component converts empty string to null
       type: 'CHECKING'
     });
 
@@ -109,7 +110,7 @@ describe('BankCreate', () => {
     spyOn(window, 'alert');
 
     component.bankForm.setValue({
-      groupId: 'G200',  // <-- required
+      groupId: 'G200',
       name: 'Bad Bank',
       openingDate: '2025-01-01',
       closingDate: '',
