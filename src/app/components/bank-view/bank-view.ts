@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BankService } from '../../services/bank.service';
 import { BankDto } from '../../dto/bank.dto';
 import { CommonModule } from '@angular/common';
+import {BankDailyBalanceDto} from '../../dto/bank-daily-balance.dto';
 
 @Component({
   selector: 'app-bank-view',
@@ -13,6 +14,7 @@ import { CommonModule } from '@angular/common';
 export class BankView implements OnInit {
 
   bank?: BankDto;
+  dailyBalances: BankDailyBalanceDto[] = [];
   loading = true;
   error?: string;
 
@@ -28,6 +30,17 @@ export class BankView implements OnInit {
       this.bankService.getBankById(bankId).subscribe({
         next: (data) => {
           this.bank = data;
+
+          // Fetch daily balances
+          this.bankService.getDailyBalance(bankId).subscribe({
+            next: (balances) => {
+              this.dailyBalances = balances;
+            },
+            error: (err) => {
+              console.error('Failed to load daily balances:', err);
+            }
+          });
+
           this.loading = false;
         },
         error: (err) => {

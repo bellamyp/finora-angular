@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {BackendConfig} from '../config/backend-config';
 import {BankDto} from '../dto/bank.dto';
 import {BankCreateDto} from '../dto/bank-create.dto';
+import {BankDailyBalanceDto} from '../dto/bank-daily-balance.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,10 @@ export class BankService {
   // GET a single bank by ID
   getBankById(bankId: string): Observable<BankDto> {
     return this.http.get<BankDto>(`${this.apiUrl}/${bankId}`);
+  }
+
+  getDailyBalance(bankId: string): Observable<BankDailyBalanceDto[]> {
+    return this.http.get<BankDailyBalanceDto[]>(`${this.apiUrl}/${bankId}/daily-balance`);
   }
 
   createBank(payload: BankCreateDto): Observable<BankDto> {
