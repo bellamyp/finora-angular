@@ -36,15 +36,18 @@ describe('BankService', () => {
         name: 'Capital One Savings',
         type: 'SAVINGS',
         email: 'user@example.com',
-        balance: 1500.75
+        pendingBalance: 1500.75,
+        postedBalance: 2000.25
       }
     ];
 
     service.getBanks().subscribe(banks => {
       expect(banks.length).toBe(1);
-      expect(banks[0].name).toBe('Capital One Savings');
-      expect(banks[0].groupId).toBe('G1');
-      expect(banks[0].balance).toBe(1500.75);
+      const bank = banks[0];
+      expect(bank.name).toBe('Capital One Savings');
+      expect(bank.groupId).toBe('G1');
+      expect(bank.pendingBalance).toBe(1500.75);
+      expect(bank.postedBalance).toBe(2000.25);
     });
 
     const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/banks`);
@@ -60,11 +63,14 @@ describe('BankService', () => {
       name: 'Chase Checking',
       type: 'CHECKING',
       email: 'user@example.com',
-      balance: 1200.50
+      pendingBalance: 1200.50,
+      postedBalance: 2500.00
     };
 
     service.getBankById(mockBank.id).subscribe(bank => {
       expect(bank).toEqual(mockBank);
+      expect(bank.pendingBalance).toBe(1200.50);
+      expect(bank.postedBalance).toBe(2500.00);
     });
 
     const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/banks/${mockBank.id}`);
@@ -88,13 +94,15 @@ describe('BankService', () => {
       name: formValue.name,
       type: formValue.type,
       email: 'user@example.com',
-      balance: 0
+      pendingBalance: 0,
+      postedBalance: 0
     };
 
     service.createBank(formValue).subscribe(res => {
       expect(res).toEqual(mockResponse);
       expect(res.groupId).toBe('G100');
-      expect(res.balance).toBe(0);
+      expect(res.pendingBalance).toBe(0);
+      expect(res.postedBalance).toBe(0);
     });
 
     const req = httpMock.expectOne(`${BackendConfig.springApiUrl}/banks`);

@@ -47,8 +47,8 @@ describe('TransactionPendingList', () => {
   ];
 
   const mockBanks: BankDto[] = [
-    { id: 'bank1', groupId: 'G1', name: 'Bank A', type: 'CHECKING', email: 'a@bank.com', balance: 500 },
-    { id: 'bank2', groupId: 'G2', name: 'Bank B', type: 'SAVINGS', email: 'b@bank.com', balance: 1200 }
+    { id: 'bank1', groupId: 'G1', name: 'Bank A', type: 'CHECKING', email: 'a@bank.com', pendingBalance: 500 },
+    { id: 'bank2', groupId: 'G2', name: 'Bank B', type: 'SAVINGS', email: 'b@bank.com', pendingBalance: 1200 }
   ];
 
   const mockBrands = [

@@ -18,7 +18,7 @@ describe('BankView', () => {
     name: 'Checking Bank',
     type: 'CHECKING',
     email: 'user@example.com',
-    balance: 1500.25
+    pendingBalance: 1500.25
   };
 
   beforeEach(async () => {
