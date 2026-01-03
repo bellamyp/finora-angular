@@ -18,7 +18,7 @@
           <!-- Pending balance (includes all transactions) -->
           <p class="detail-line">
             <strong>Pending Balance: </strong>
-            <span class="text-muted fs-6">
+            <span style="color:#d97706; font-weight:600;">
               ${{ bank!.pendingBalance ?? 0 | number:'1.2-2' }}
             </span>
           </p>
@@ -26,7 +26,7 @@
           <!-- Posted balance (real balance) -->
           <p class="detail-line">
             <strong>Posted Balance: </strong>
-            <span class="text-success fw-bold fs-5">
+            <span class="text-success fw-bold">
               ${{ bank!.postedBalance ?? 0 | number:'1.2-2' }}
             </span>
           </p>
