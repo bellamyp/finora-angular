@@ -14,16 +14,22 @@ describe('BankView', () => {
 
   const mockBank: BankDto = {
     id: '123',
-    groupId: 'group1',          // <-- added groupId
+    groupId: 'group1',
     name: 'Checking Bank',
     type: 'CHECKING',
     email: 'user@example.com',
-    pendingBalance: 1500.25
+    pendingBalance: 1500.25,
+    postedBalance: 1400.00
   };
 
   beforeEach(async () => {
-    mockBankService = jasmine.createSpyObj('BankService', ['getBankById']);
+    mockBankService = jasmine.createSpyObj('BankService', [
+      'getBankById',
+      'getDailyBalance'
+    ]);
+
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+
     mockActivatedRoute = {
       snapshot: {
         paramMap: {
@@ -33,6 +39,7 @@ describe('BankView', () => {
     };
 
     mockBankService.getBankById.and.returnValue(of(mockBank));
+    mockBankService.getDailyBalance.and.returnValue(of([]));
 
     await TestBed.configureTestingModule({
       imports: [BankView],
@@ -45,7 +52,7 @@ describe('BankView', () => {
 
     fixture = TestBed.createComponent(BankView);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // triggers ngOnInit
+    fixture.detectChanges();
   });
 
   it('should create', () => {

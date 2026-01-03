@@ -4,6 +4,8 @@
     <h2 class="text-center mb-5 fw-bold text-primary">Bank Details</h2>
 
     <div class="card rounded-5 shadow p-4 mb-4 bank-card">
+
+      <!-- Bank Info -->
       <div class="row g-4">
         <div class="col-md-6">
           <p class="detail-line"><strong>ID: </strong> <span class="text-muted">{{ bank!.id }}</span></p>
@@ -15,18 +17,16 @@
         <div class="col-md-6">
           <p class="detail-line"><strong>Email: </strong> <span class="text-muted">{{ bank!.email }}</span></p>
 
-          <!-- Pending balance (includes all transactions) -->
           <p class="detail-line">
             <strong>Pending Balance: </strong>
-            <span style="color:#d97706; font-weight:600;">
+            <span class="pending-balance">
               ${{ bank!.pendingBalance ?? 0 | number:'1.2-2' }}
             </span>
           </p>
 
-          <!-- Posted balance (real balance) -->
           <p class="detail-line">
             <strong>Posted Balance: </strong>
-            <span class="text-success fw-bold">
+            <span class="posted-balance">
               ${{ bank!.postedBalance ?? 0 | number:'1.2-2' }}
             </span>
           </p>
@@ -35,7 +35,8 @@
 
       <hr class="my-4">
 
-      <div class="d-flex flex-wrap justify-content-center gap-3">
+      <!-- Action Buttons -->
+      <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
         <button class="btn btn-secondary btn-lg btn-hover" (click)="goToMainMenu()">
           <i class="bi bi-house-door-fill me-2"></i>Main Menu
         </button>
@@ -46,8 +47,34 @@
           <i class="bi bi-pencil-fill me-2"></i>Edit This Bank
         </button>
       </div>
-    </div>
 
+      <!-- Daily Balances Table (inside same card) -->
+      <h3 class="text-center mb-3 text-primary">Daily Balance (Last 30 Days)</h3>
+
+      <div *ngIf="dailyBalances.length > 0; else noBalancesTpl" class="daily-balance-table">
+        <table class="table table-striped table-bordered align-middle text-center">
+          <thead class="table-light">
+          <tr>
+            <th>Date</th>
+            <th>Balance ($)</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of dailyBalances" class="balance-row">
+            <td>{{ item.date }}</td>
+            <td>${{ item.balance | number:'1.2-2' }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #noBalancesTpl>
+        <div class="alert alert-info text-center">
+          No daily balance data available.
+        </div>
+      </ng-template>
+
+    </div>
   </ng-container>
 </div>
 
