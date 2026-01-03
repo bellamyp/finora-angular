@@ -1,6 +1,7 @@
 .bank-card {
   background: linear-gradient(145deg, #f0f4ff, #ffffff);
   transition: transform 0.2s, box-shadow 0.2s;
+  padding: 2rem;
 
   &:hover {
     transform: translateY(-4px);
@@ -10,6 +11,34 @@
   .detail-line {
     margin-bottom: 1rem;
     font-size: 1.05rem;
+  }
+
+  .pending-balance {
+    color: #b45309; // darker orange
+    font-weight: 600;
+  }
+
+  .posted-balance {
+    color: #15803d; // darker green
+    font-weight: 700;
+  }
+
+  .daily-balance-table {
+    margin-top: 1.5rem;
+
+    table {
+      border-radius: 12px;
+      overflow: hidden;
+
+      th, td {
+        padding: 0.8rem 1rem;
+      }
+
+      .balance-row:hover {
+        background-color: #f3f4f6;
+        transition: background-color 0.2s;
+      }
+    }
   }
 }
 
@@ -22,6 +51,6 @@
   }
 }
 
-h2 {
+h2, h3 {
   letter-spacing: 0.5px;
 }
