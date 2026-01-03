@@ -19,7 +19,8 @@
         <th scope="col">Bank Group</th>
         <th scope="col">Bank Name</th>
         <th scope="col">Bank Type</th>
-        <th scope="col">Balance</th>
+        <th scope="col">Pending Balance</th>
+        <th scope="col">Posted Balance</th>
         <th scope="col">Actions</th>
       </tr>
       </thead>
@@ -30,7 +31,8 @@
         <td>
           <span class="badge bg-info text-dark">{{ bank.type }}</span>
         </td>
-        <td>${{ bank.balance ?? '0.00' }}</td>
+        <td>${{ bank.pendingBalance ?? '0.00' }}</td>
+        <td>${{ bank.postedBalance ?? '0.00' }}</td>
         <td>
           <button class="btn btn-sm btn-primary me-2" (click)="editBank(bank)">Edit</button>
           <button class="btn btn-sm btn-outline-secondary" (click)="viewBank(bank)">View</button>
