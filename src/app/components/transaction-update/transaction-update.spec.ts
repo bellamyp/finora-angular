@@ -29,8 +29,17 @@ const mockGroup: TransactionGroupDto = {
   ]
 };
 
+// Updated BankDto with pendingBalance & postedBalance
 const mockBanks: BankDto[] = [
-  { id: 'bank1', groupId: 'G1', name: 'Chase', type: 'checking', email: 'test@bank.com', balance: 500 }
+  {
+    id: 'bank1',
+    groupId: 'G1',
+    name: 'Chase',
+    type: 'checking',
+    email: 'test@bank.com',
+    pendingBalance: 500,
+    postedBalance: 450
+  }
 ];
 
 const mockBrands: BrandDto[] = [
@@ -55,9 +64,7 @@ describe('TransactionUpdate', () => {
     getBrandsByUser: jasmine.createSpy('getBrandsByUser').and.returnValue(of(mockBrands))
   };
 
-  const mockRouter = {
-    navigate: jasmine.createSpy('navigate'),
-  };
+  const mockRouter = { navigate: jasmine.createSpy('navigate') };
 
   const mockLocationService = {
     getLocations: jasmine.createSpy('getLocations').and.returnValue(of([
@@ -66,12 +73,7 @@ describe('TransactionUpdate', () => {
   };
 
   const mockActivatedRoute = {
-    snapshot: {
-      paramMap: {
-        get: jasmine.createSpy('get').and.returnValue('group1')
-      },
-      url: []
-    }
+    snapshot: { paramMap: { get: jasmine.createSpy('get').and.returnValue('group1') }, url: [] }
   };
 
   beforeEach(async () => {
@@ -110,6 +112,8 @@ describe('TransactionUpdate', () => {
     expect(component.transactions.length).toBe(1);
     expect(component.banks).toEqual(mockBanks);
     expect(component.banks[0].groupId).toBe('G1'); // verify groupId
+    expect(component.banks[0].pendingBalance).toBe(500);
+    expect(component.banks[0].postedBalance).toBe(450);
     expect(component.brands).toEqual(mockBrands);
     expect(component.transactionTypes.length).toBeGreaterThan(0);
     expect(component.loading).toBeFalse();

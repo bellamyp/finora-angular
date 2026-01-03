@@ -47,7 +47,7 @@ describe('BankList', () => {
         name: 'Capital One Savings',
         type: 'SAVINGS',
         email: 'user@example.com',
-        balance: 1200
+        pendingBalance: 1200
       }
     ];
 
@@ -67,7 +67,7 @@ describe('BankList', () => {
     expect(bank.name).toBe('Capital One Savings');
     expect(bank.type).toBe('SAVINGS');
     expect(bank.email).toBe('user@example.com');
-    expect(bank.balance).toBe(1200);
+    expect(bank.pendingBalance).toBe(1200);
     expect(bank.groupId).toBe('Primary Account'); // <- replaced group name
   });
 

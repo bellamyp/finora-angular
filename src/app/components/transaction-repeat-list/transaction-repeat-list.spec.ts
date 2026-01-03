@@ -23,8 +23,17 @@ describe('TransactionRepeatList', () => {
   let mockTransactionGroupRepeatService: jasmine.SpyObj<TransactionGroupRepeatService>;
   let mockRouter: jasmine.SpyObj<Router>;
 
+  // Updated BankDto with pendingBalance & postedBalance
   const mockBanks: BankDto[] = [
-    { id: 'b1', groupId: 'G1', name: 'Bank1', type: 'CHECKING', email: 'a@b.com', balance: 1000 }
+    {
+      id: 'b1',
+      groupId: 'G1',
+      name: 'Bank1',
+      type: 'CHECKING',
+      email: 'a@b.com',
+      pendingBalance: 1000,
+      postedBalance: 900
+    }
   ];
   const mockBrands: BrandDto[] = [{ id: 'br1', name: 'Brand1' }];
   const mockLocations: LocationDto[] = [{ id: 'loc1', city: 'New York', state: 'NY' }];
@@ -69,7 +78,7 @@ describe('TransactionRepeatList', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load repeat transaction groups with mapped bankName, brandName, and locationName', () => {
+  it('should load repeat transaction groups with mapped bankName, brandName, locationName, and balances', () => {
     expect(component.transactionGroups.length).toBe(1);
     const tx = component.transactionGroups[0].transactions[0];
     expect(tx.bankName).toBe('Bank1');

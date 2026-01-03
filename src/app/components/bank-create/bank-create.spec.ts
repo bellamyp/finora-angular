@@ -82,7 +82,7 @@ describe('BankCreate', () => {
       name: 'My Bank',
       type: 'CHECKING',
       email: 'test@example.com',
-      balance: 1000
+      pendingBalance: 1000
     };
 
     mockBankService.createBank.and.returnValue(of(mockResponse));

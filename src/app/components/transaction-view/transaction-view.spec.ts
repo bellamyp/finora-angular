@@ -61,14 +61,15 @@ describe('TransactionView', () => {
 
     const mockGroup: TransactionGroupDto = { id: 'group123', transactions: mockTransactions };
 
-    // Add groupId to bank DTOs
+    // Updated BankDto with pendingBalance & postedBalance
     const mockBanks: BankDto[] = [{
       id: 'b1',
       groupId: 'G1',
       name: 'Bank1',
       type: '',
       email: '',
-      balance: 100
+      pendingBalance: 100,
+      postedBalance: 200
     }];
 
     const mockBrands: BrandDto[] = [{ id: 'br1', name: 'Brand1' }];
@@ -90,6 +91,8 @@ describe('TransactionView', () => {
     expect(component.transactions[0].id).toBe('tx1');
     expect(component.banks.length).toBe(1);
     expect(component.banks[0].groupId).toBe('G1'); // verify groupId
+    expect(component.banks[0].pendingBalance).toBe(100);
+    expect(component.banks[0].postedBalance).toBe(200);
     expect(component.brands.length).toBe(1);
     expect(component.groupId).toBe('group123');
     expect(component.isRepeat).toBeTrue();
