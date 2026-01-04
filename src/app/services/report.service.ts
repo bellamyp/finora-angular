@@ -23,6 +23,13 @@ export class ReportService {
   }
 
   /**
+   * Add all fully posted transaction groups to a report
+   */
+  addTransactionGroups(reportId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${reportId}/add-groups`, {});
+  }
+
+  /**
    * Get all reports for the current user
    * GET /api/reports
    */

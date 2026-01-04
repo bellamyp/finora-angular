@@ -67,8 +67,21 @@ export class ReportView implements OnInit {
     return 'No fully posted transactions to add';
   }
 
-  loadAllTransactions(): void {
-    alert('Load all available transactions is not implemented yet!');
+  addTransactionGroupsToReport(): void {
+    if (!this.reportId) return;
+
+    this.reportService.addTransactionGroups(this.reportId).subscribe({
+      next: () => {
+        alert('All fully posted transaction groups have been added to this report.');
+        // Reload the report groups to show the newly added transactions
+        this.loadReportGroups();
+        this.checkCanAddTransactionGroups();
+      },
+      error: (err) => {
+        console.error('Failed to add transaction groups', err);
+        alert('Failed to add transaction groups. See console for details.');
+      }
+    });
   }
 
   postReport(): void {
