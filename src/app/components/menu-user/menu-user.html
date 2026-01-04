@@ -38,8 +38,11 @@
         <h5 class="mb-3">Reports</h5>
         <div class="d-grid gap-2 mb-4">
 
-          <button class="menu-btn menu-btn-accent" (click)="newReport()">
-            <i class="bi bi-file-earmark-plus me-2"></i> New Report
+          <button class="menu-btn menu-btn-accent"
+                  (click)="newReport()"
+                  [disabled]="!canGenerateReport || loadingReportCheck">
+            <i class="bi bi-file-earmark-plus me-2"></i>
+            {{ getNewReportButtonText() }}
           </button>
 
           <button class="menu-btn" (click)="viewReport()">

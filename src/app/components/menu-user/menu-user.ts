@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import {ReportService} from '../../services/report.service';
 import {ReportDto} from '../../dto/report.dto';
 
@@ -8,12 +8,19 @@ import {ReportDto} from '../../dto/report.dto';
   templateUrl: './menu-user.html',
   styleUrl: './menu-user.scss',
 })
-export class MenuUser {
+export class MenuUser implements OnInit {
+
+  canGenerateReport = false;
+  loadingReportCheck = true;
 
   constructor(
     private router: Router,
     private reportService: ReportService
   ) {}
+
+  ngOnInit(): void {
+    this.checkReportAvailability();
+  }
 
   // --- Navigation Methods (Transactions) ---
   goToTransactionUpdate() {
@@ -60,6 +67,18 @@ export class MenuUser {
     });
   }
 
+  getNewReportButtonText(): string {
+    if (this.loadingReportCheck) {
+      return 'Checking Report Availability...';
+    }
+
+    if (!this.canGenerateReport) {
+      return 'Cannot create new report (Pending)';
+    }
+
+    return 'Add a New Report';
+  }
+
   viewReport() {
     this.router.navigate(['/report-list']);
   }
@@ -79,5 +98,20 @@ export class MenuUser {
 
   oldRecords() {
     alert('Old Records is not implemented yet.');
+  }
+
+  private checkReportAvailability(): void {
+    this.loadingReportCheck = true;
+    this.reportService.canGenerateNewReport().subscribe({
+      next: (canGenerate) => {
+        this.canGenerateReport = canGenerate;
+        this.loadingReportCheck = false;
+      },
+      error: (err) => {
+        console.error('Failed to check report availability', err);
+        this.canGenerateReport = false;
+        this.loadingReportCheck = false;
+      }
+    });
   }
 }

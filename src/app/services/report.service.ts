@@ -28,4 +28,9 @@ export class ReportService {
   getAllReports(): Observable<ReportDto[]> {
     return this.http.get<ReportDto[]>(this.apiUrl);
   }
+
+  // New method to check if the user can create a report
+  canGenerateNewReport(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/can-generate`);
+  }
 }
