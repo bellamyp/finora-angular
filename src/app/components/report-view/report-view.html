@@ -40,16 +40,37 @@
         <!-- Transactions -->
         <tr *ngFor="let tx of group.transactions">
           <td>{{ tx.date }}</td>
-          <td><span class="badge bg-info text-dark">{{ tx.typeId }}</span></td>
+          <td>
+            <span class="badge bg-info text-dark">{{ tx.typeId }}</span>
+          </td>
           <td>{{ tx.brandName }}</td>
           <td>{{ tx.locationName }}</td>
-          <td [ngClass]="getAmountDisplay(tx).classes">{{ getAmountDisplay(tx).display }}</td>
-          <td class="notes-column text-wrap text-center" style="max-width: 400px;">{{ tx.notes }}</td>
+          <td [ngClass]="getAmountDisplay(tx).classes">
+            {{ getAmountDisplay(tx).display }}
+          </td>
+          <td class="notes-column text-wrap text-center" style="max-width: 400px;">
+            {{ tx.notes }}
+          </td>
           <td>{{ tx.bankName }}</td>
         </tr>
 
       </ng-container>
       </tbody>
     </table>
+
+    <!-- 🔽 Action buttons -->
+    <div class="d-flex justify-content-between mt-4">
+      <button class="btn btn-outline-primary"
+              (click)="loadAllTransactions()">
+        <i class="bi bi-arrow-down-circle me-2"></i>
+        Load all available transactions
+      </button>
+
+      <button class="btn btn-success"
+              (click)="postReport()">
+        <i class="bi bi-check-circle me-2"></i>
+        Post this Report
+      </button>
+    </div>
   </div>
 </div>

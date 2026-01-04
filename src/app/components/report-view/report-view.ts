@@ -55,6 +55,14 @@ export class ReportView implements OnInit {
     };
   }
 
+  loadAllTransactions(): void {
+    alert('Load all available transactions is not implemented yet!');
+  }
+
+  postReport(): void {
+    alert('Post this report is not implemented yet!');
+  }
+
   loadReportGroups(): void {
     this.loading = true;
 
