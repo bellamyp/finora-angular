@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ReportService } from '../../services/report.service';
 import { ReportDto } from '../../dto/report.dto';
-import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-report-list',
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
   templateUrl: './report-list.html',
-  styleUrl: './report-list.scss',
+  styleUrls: ['./report-list.scss'],
 })
 export class ReportList implements OnInit {
 
@@ -17,7 +16,10 @@ export class ReportList implements OnInit {
   loading = true;
   error?: string;
 
-  constructor(private reportService: ReportService) {}
+  constructor(
+    private reportService: ReportService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadReports();
@@ -36,5 +38,10 @@ export class ReportList implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  // Navigate to the report view page
+  viewReport(report: ReportDto): void {
+    this.router.navigate(['/report-view', report.id]);
   }
 }
