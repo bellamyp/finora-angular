@@ -26,6 +26,8 @@ export class ReportView implements OnInit {
   reportPosted = false;
   reportTypeBalances: ReportTypeBalanceDto[] = [];
   reportBankBalances: ReportBankBalanceDto[] = [];
+  currentReportMonth: string = '';
+
   loading = true;
   transactionGroups: TransactionGroupDto[] = [];
   canAddTransactionGroups = false;
@@ -178,8 +180,20 @@ export class ReportView implements OnInit {
   // -----------------------
   private loadReportStatus(): void {
     this.reportService.getReportById(this.reportId).subscribe({
-      next: (report) => this.reportPosted = report.posted,
-      error: () => this.reportPosted = false
+      next: (report) => {
+        this.reportPosted = report.posted;
+
+        if (report.month) {
+          const date = new Date(report.month); // report.month is ISO string, e.g., "2025-01-01"
+          const year = date.getFullYear();
+          const monthName = date.toLocaleString('default', { month: 'long' }); // e.g., "January"
+          this.currentReportMonth = `${year} / ${monthName}`;
+        }
+      },
+      error: () => {
+        this.reportPosted = false;
+        this.currentReportMonth = '';
+      }
     });
   }
 

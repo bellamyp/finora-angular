@@ -55,6 +55,14 @@ export class ReportService {
   }
 
   /**
+   * Get the next pending report for the current user
+   * GET /api/reports/next-pending
+   */
+  getNextPendingReport(): Observable<ReportDto | null> {
+    return this.http.get<ReportDto>(`${this.apiUrl}/next-pending`);
+  }
+
+  /**
    * Check if the user can generate a new report
    * GET /api/reports/can-generate
    */

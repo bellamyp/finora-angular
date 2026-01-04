@@ -90,7 +90,21 @@ export class MenuUser implements OnInit {
   }
 
   pendingReport() {
-    alert('Current Report is not implemented yet.');
+    this.reportService.getNextPendingReport().subscribe({
+      next: (report) => {
+        if (report) {
+          console.log('Navigating to next pending report:', report);
+          // Navigate to report view with report ID
+          this.router.navigate(['/report-view', report.id]);
+        } else {
+          alert('No pending reports available.');
+        }
+      },
+      error: (err) => {
+        console.error('Failed to fetch next pending report', err);
+        alert('Failed to fetch next pending report. See console for details.');
+      }
+    });
   }
 
   viewReport() {
