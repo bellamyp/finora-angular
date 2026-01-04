@@ -59,9 +59,21 @@
             </thead>
 
             <tbody>
-            <tr>
+            <!-- Check if there are any bank balances -->
+            <tr *ngIf="reportBankBalances.length === 0">
               <td colspan="2" class="text-muted py-4">
                 No bank balance data yet
+              </td>
+            </tr>
+
+            <!-- Loop through bank balances -->
+            <tr *ngFor="let bank of reportBankBalances">
+              <td>{{ bankMap[bank.bankId] || bank.bankId }}</td>
+              <td [ngClass]="{
+              'text-success': bank.totalAmount > 0,
+              'text-danger': bank.totalAmount < 0
+            }">
+                ${{ bank.totalAmount.toFixed(2) }}
               </td>
             </tr>
             </tbody>
