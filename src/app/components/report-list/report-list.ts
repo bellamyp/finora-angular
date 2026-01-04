@@ -1,10 +1,13 @@
-import {Component, OnInit} from '@angular/core';
-import {ReportService} from '../../services/report.service';
-import {ReportDto} from '../../dto/report.dto';
+import { Component, OnInit } from '@angular/core';
+import { ReportService } from '../../services/report.service';
+import { ReportDto } from '../../dto/report.dto';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-report-list',
-  imports: [],
+  imports: [
+    CommonModule
+  ],
   templateUrl: './report-list.html',
   styleUrl: './report-list.scss',
 })
@@ -14,11 +17,14 @@ export class ReportList implements OnInit {
   loading = true;
   error?: string;
 
-  constructor(
-    private reportService: ReportService
-  ) {}
+  constructor(private reportService: ReportService) {}
 
   ngOnInit(): void {
+    this.loadReports();
+  }
+
+  private loadReports(): void {
+    this.loading = true;
     this.reportService.getAllReports().subscribe({
       next: (reports) => {
         this.reports = reports;
@@ -31,5 +37,4 @@ export class ReportList implements OnInit {
       }
     });
   }
-
 }
