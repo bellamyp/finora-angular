@@ -45,8 +45,10 @@
             {{ getNewReportButtonText() }}
           </button>
 
-          <button class="menu-btn" (click)="pendingReport()">
-            <i class="bi bi-file-earmark-text me-2"></i> Current Report
+          <button class="menu-btn"
+                  (click)="pendingReport()"
+                  [disabled]="!hasPendingReport || loadingReportCheck">
+            <i class="bi bi-file-earmark-text me-2"></i> {{ getPendingReportButtonText() }}
           </button>
 
           <button class="menu-btn" (click)="viewReport()">

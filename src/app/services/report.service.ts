@@ -63,6 +63,14 @@ export class ReportService {
   }
 
   /**
+   * Check if the user has any pending reports
+   * GET /api/reports/has-pending
+   */
+  hasPendingReport(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/has-pending`);
+  }
+
+  /**
    * Check if the user can add transaction groups to a report
    * GET /api/reports/can-add-groups
    */
