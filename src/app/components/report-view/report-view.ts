@@ -61,6 +61,10 @@ export class ReportView implements OnInit {
     };
   }
 
+  getPostButtonText(): string {
+    return this.reportPosted ? 'Report Posted' : 'Post this Report';
+  }
+
   getLoadTransactionsText(): string {
     return this.canAddTransactionGroups ? 'Load all available transactions' : 'No fully posted transactions to add';
   }
@@ -103,7 +107,22 @@ export class ReportView implements OnInit {
   }
 
   postReport(): void {
-    alert('Post this report is not implemented yet!');
+    if (!this.reportId) return;
+
+    const confirmed = confirm('Are you sure you want to post this report? Once posted, it cannot be modified.');
+    if (!confirmed) return;
+
+    this.reportService.postReport(this.reportId).subscribe({
+      next: (postedReport) => {
+        alert('Report has been successfully posted!');
+        this.reportPosted = postedReport.posted; // mark as posted
+        this.loadReportData(); // refresh balances and groups
+      },
+      error: (err) => {
+        console.error('Failed to post report', err);
+        alert('Failed to post report. See console for details.');
+      }
+    });
   }
 
   // -----------------------

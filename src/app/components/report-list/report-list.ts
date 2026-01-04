@@ -44,4 +44,8 @@ export class ReportList implements OnInit {
   viewReport(report: ReportDto): void {
     this.router.navigate(['/report-view', report.id]);
   }
+
+  downloadReport(report: ReportDto): void {
+    alert('This feature is not implemented yet');
+  }
 }

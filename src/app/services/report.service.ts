@@ -25,6 +25,14 @@ export class ReportService {
   }
 
   /**
+   * Post a report — marks it as posted and saves snapshots
+   * POST /api/reports/{reportId}/post
+   */
+  postReport(reportId: string): Observable<ReportDto> {
+    return this.http.post<ReportDto>(`${this.apiUrl}/${reportId}/post`, {});
+  }
+
+  /**
    * Add all fully posted transaction groups to a report
    */
   addTransactionGroups(reportId: string): Observable<void> {
