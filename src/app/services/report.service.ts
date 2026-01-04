@@ -16,6 +16,7 @@ export class ReportService {
 
   /**
    * Create a new report for the current user
+   * POST /api/reports/new
    */
   createNewReport(): Observable<ReportDto> {
     return this.http.post<ReportDto>(`${this.apiUrl}/new`, {});
@@ -29,8 +30,19 @@ export class ReportService {
     return this.http.get<ReportDto[]>(this.apiUrl);
   }
 
-  // New method to check if the user can create a report
+  /**
+   * Check if the user can generate a new report
+   * GET /api/reports/can-generate
+   */
   canGenerateNewReport(): Observable<boolean> {
     return this.http.get<boolean>(`${this.apiUrl}/can-generate`);
+  }
+
+  /**
+   * Check if the user can add transaction groups to a report
+   * GET /api/reports/can-add-groups
+   */
+  canAddTransactionGroups(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/can-add-groups`);
   }
 }

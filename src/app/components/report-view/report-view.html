@@ -123,9 +123,10 @@
     <!-- 🔽 Action buttons -->
     <div class="d-flex justify-content-between mt-4">
       <button class="btn btn-outline-primary"
+              [disabled]="!canAddTransactionGroups"
               (click)="loadAllTransactions()">
         <i class="bi bi-arrow-down-circle me-2"></i>
-        Load all available transactions
+        {{ getLoadTransactionsText() }}
       </button>
 
       <button class="btn btn-success"

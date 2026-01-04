@@ -10,6 +10,7 @@ import { BrandDto } from '../../dto/brand.dto';
 import { LocationDto } from '../../dto/location.dto';
 import { forkJoin } from 'rxjs';
 import {CommonModule, NgClass} from '@angular/common';
+import {ReportService} from '../../services/report.service';
 
 @Component({
   selector: 'app-report-view',
@@ -24,6 +25,7 @@ export class ReportView implements OnInit {
   reportId!: string;
   loading = true;
   transactionGroups: TransactionGroupDto[] = [];
+  canAddTransactionGroups = false;
   bankMap: Record<string, string> = {};
   brandMap: Record<string, string> = {};
   locationMap: Record<string, string> = {};
@@ -33,12 +35,14 @@ export class ReportView implements OnInit {
     private transactionGroupService: TransactionGroupService,
     private bankService: BankService,
     private brandService: BrandService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private reportService: ReportService
   ) {}
 
   ngOnInit(): void {
     this.reportId = this.route.snapshot.paramMap.get('id')!;
     this.loadReportGroups();
+    this.checkCanAddTransactionGroups();
   }
 
   getAmountDisplay(tx: { amount: number | null }): { display: string; classes: any } {
@@ -53,6 +57,14 @@ export class ReportView implements OnInit {
         'text-danger': tx.amount < 0
       }
     };
+  }
+
+  getLoadTransactionsText(): string {
+    if (this.canAddTransactionGroups) {
+      return 'Load all available transactions';
+    }
+
+    return 'No fully posted transactions to add';
   }
 
   loadAllTransactions(): void {
@@ -106,6 +118,13 @@ export class ReportView implements OnInit {
         console.error('Failed to fetch report groups:', err);
         this.loading = false;
       }
+    });
+  }
+
+  private checkCanAddTransactionGroups(): void {
+    this.reportService.canAddTransactionGroups().subscribe({
+      next: (canAdd) => this.canAddTransactionGroups = canAdd,
+      error: () => this.canAddTransactionGroups = false
     });
   }
 
