@@ -98,7 +98,12 @@
             <span class="badge bg-light text-primary">
               {{ group.transactions.length }} transaction(s)
             </span>
-            <span *ngIf="reportPosted" class="text-muted ms-2">(Report posted, cannot remove)</span>
+            <span *ngIf="!reportPosted" class="text-muted ms-2 fst-italic small">
+              (click here to remove)
+            </span>
+            <span *ngIf="reportPosted" class="text-muted ms-2">
+              (Report posted, cannot remove)
+            </span>
           </td>
         </tr>
 
