@@ -1,0 +1,78 @@
+<div class="container py-5">
+  <h2 class="text-center mb-4 fw-bold text-primary">Reports List</h2>
+
+  <!-- Search box (UI only) -->
+  <div class="card shadow-sm rounded-4 p-4 mb-5">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Search by Year</label>
+        <input
+          type="number"
+          class="form-control"
+          placeholder="e.g. 2024"
+          disabled
+        />
+      </div>
+
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100" disabled>
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <p>Loading reports...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!loading && error" class="alert alert-danger text-center">
+    {{ error }}
+  </div>
+
+  <!-- Reports table -->
+  <div *ngIf="!loading && !error && reports.length > 0" class="table-responsive">
+    <table class="table table-hover align-middle shadow-sm rounded-4 bg-white">
+      <thead class="table-primary text-center">
+      <tr>
+        <th>Month</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+
+      <tbody class="text-center">
+      <tr *ngFor="let report of reports">
+        <td>{{ report.month | date: 'MMMM yyyy' }}</td>
+        <td>
+            <span
+              class="badge"
+              [ngClass]="report.posted ? 'bg-success' : 'bg-warning text-dark'"
+            >
+              {{ report.posted ? 'Posted' : 'Pending' }}
+            </span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary me-2" (click)="viewReport(report)">
+            View
+          </button>
+          <button class="btn btn-sm btn-outline-secondary">
+            Download
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && !error && reports.length === 0" class="text-center text-muted fs-5">
+    <i class="bi bi-file-earmark-text" style="font-size: 2.5rem;"></i>
+    <div class="mt-3 fw-semibold">No reports available</div>
+    <div class="small mt-1">
+      Reports will appear here once they are generated.
+    </div>
+  </div>
+</div>

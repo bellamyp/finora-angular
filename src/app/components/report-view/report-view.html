@@ -1,4 +1,66 @@
 <div class="container py-5">
+
+  <!-- 🔹 Summary tables -->
+  <div class="row g-4 mb-5">
+
+    <!-- Bank Balances -->
+    <div class="col-md-6">
+      <div class="card shadow-sm rounded-4">
+        <div class="card-header bg-primary text-white fw-semibold">
+          Bank Balances
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 text-center">
+            <thead class="table-light">
+            <tr>
+              <th>Bank</th>
+              <th>Balance</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+              <td colspan="2" class="text-muted py-4">
+                No bank balance data yet
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Type Balances -->
+    <div class="col-md-6">
+      <div class="card shadow-sm rounded-4">
+        <div class="card-header bg-primary text-white fw-semibold">
+          Type Balances
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 text-center">
+            <thead class="table-light">
+            <tr>
+              <th>Type</th>
+              <th>Total</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+              <td colspan="2" class="text-muted py-4">
+                No type balance data yet
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
   <h2 class="text-center mb-4 fw-bold text-primary">Report Transactions</h2>
 
   <div *ngIf="loading" class="text-center text-muted fs-5">
@@ -28,28 +90,58 @@
       <ng-container *ngFor="let group of transactionGroups">
 
         <!-- Group header -->
-        <tr class="table-secondary fw-bold">
+        <tr class="table-secondary fw-bold clickable-row"
+            [class.disabled]="!group.id || reportPosted"
+            (click)="group.id && removeGroupFromReport(group)">
           <td colspan="7" class="text-start ps-4">
             Group: {{ group.id || 'N/A' }}
             <span class="badge bg-light text-primary">
-                {{ group.transactions.length }} transaction(s)
-              </span>
+              {{ group.transactions.length }} transaction(s)
+            </span>
+            <span *ngIf="!reportPosted" class="text-muted ms-2 fst-italic small">
+              (click here to remove)
+            </span>
+            <span *ngIf="reportPosted" class="text-muted ms-2">
+              (Report posted, cannot remove)
+            </span>
           </td>
         </tr>
 
         <!-- Transactions -->
         <tr *ngFor="let tx of group.transactions">
           <td>{{ tx.date }}</td>
-          <td><span class="badge bg-info text-dark">{{ tx.typeId }}</span></td>
+          <td>
+            <span class="badge bg-info text-dark">{{ tx.typeId }}</span>
+          </td>
           <td>{{ tx.brandName }}</td>
           <td>{{ tx.locationName }}</td>
-          <td [ngClass]="getAmountDisplay(tx).classes">{{ getAmountDisplay(tx).display }}</td>
-          <td class="notes-column text-wrap text-center" style="max-width: 400px;">{{ tx.notes }}</td>
+          <td [ngClass]="getAmountDisplay(tx).classes">
+            {{ getAmountDisplay(tx).display }}
+          </td>
+          <td class="notes-column text-wrap text-center" style="max-width: 400px;">
+            {{ tx.notes }}
+          </td>
           <td>{{ tx.bankName }}</td>
         </tr>
 
       </ng-container>
       </tbody>
     </table>
+
+    <!-- 🔽 Action buttons -->
+    <div class="d-flex justify-content-between mt-4">
+      <button class="btn btn-outline-primary"
+              [disabled]="!canAddTransactionGroups"
+              (click)="addTransactionGroupsToReport()">
+        <i class="bi bi-arrow-down-circle me-2"></i>
+        {{ getLoadTransactionsText() }}
+      </button>
+
+      <button class="btn btn-success"
+              (click)="postReport()">
+        <i class="bi bi-check-circle me-2"></i>
+        Post this Report
+      </button>
+    </div>
   </div>
 </div>

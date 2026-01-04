@@ -19,6 +19,7 @@ import { TransactionRepeatList } from './components/transaction-repeat-list/tran
 import {LocationCreate} from './components/location-create/location-create';
 import {BankGroupCreate} from './components/bank-group-create/bank-group-create';
 import {ReportView} from './components/report-view/report-view';
+import {ReportList} from './components/report-list/report-list';
 
 export const routes: Routes = [
 
@@ -46,6 +47,7 @@ export const routes: Routes = [
   { path: 'brand-create', component: BrandCreate, canActivate: [authGuard] },
   { path: 'location-create', component: LocationCreate, canActivate: [authGuard] },
   { path: 'report-view/:id', component: ReportView, canActivate: [authGuard] },
+  { path: 'report-list', component: ReportList, canActivate: [authGuard] },
 
   // Wildcard: redirect unmatched routes to the login page
   { path: '**', redirectTo: '/login', pathMatch: 'full' }

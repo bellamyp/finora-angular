@@ -9,21 +9,22 @@ import { BankDto } from '../../dto/bank.dto';
 import { BrandDto } from '../../dto/brand.dto';
 import { LocationDto } from '../../dto/location.dto';
 import { forkJoin } from 'rxjs';
-import {CommonModule, NgClass} from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
+import { ReportService } from '../../services/report.service';
 
 @Component({
   selector: 'app-report-view',
   templateUrl: './report-view.html',
   styleUrl: './report-view.scss',
-  imports: [
-    NgClass, CommonModule
-  ]
+  imports: [NgClass, CommonModule]
 })
 export class ReportView implements OnInit {
 
   reportId!: string;
+  reportPosted = false;
   loading = true;
   transactionGroups: TransactionGroupDto[] = [];
+  canAddTransactionGroups = false;
   bankMap: Record<string, string> = {};
   brandMap: Record<string, string> = {};
   locationMap: Record<string, string> = {};
@@ -33,18 +34,17 @@ export class ReportView implements OnInit {
     private transactionGroupService: TransactionGroupService,
     private bankService: BankService,
     private brandService: BrandService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private reportService: ReportService
   ) {}
 
   ngOnInit(): void {
     this.reportId = this.route.snapshot.paramMap.get('id')!;
-    this.loadReportGroups();
+    this.loadReportData();
   }
 
   getAmountDisplay(tx: { amount: number | null }): { display: string; classes: any } {
-    if (tx.amount === null) {
-      return { display: '—', classes: {} };
-    }
+    if (tx.amount === null) return { display: '—', classes: {} };
 
     return {
       display: `$${tx.amount.toFixed(2)}`,
@@ -55,7 +55,64 @@ export class ReportView implements OnInit {
     };
   }
 
-  loadReportGroups(): void {
+  getLoadTransactionsText(): string {
+    return this.canAddTransactionGroups ? 'Load all available transactions' : 'No fully posted transactions to add';
+  }
+
+  addTransactionGroupsToReport(): void {
+    if (!this.reportId) return;
+
+    this.reportService.addTransactionGroups(this.reportId).subscribe({
+      next: () => {
+        alert('All fully posted transaction groups have been added to this report.');
+        this.loadReportData();
+      },
+      error: (err) => {
+        console.error('Failed to add transaction groups', err);
+        alert('Failed to add transaction groups. See console for details.');
+      }
+    });
+  }
+
+  removeGroupFromReport(group: TransactionGroupDto): void {
+    if (!group.id) return;
+
+    if (this.reportPosted) {
+      alert('Cannot remove a group from a posted report.');
+      return;
+    }
+
+    const confirmed = confirm(`Are you sure you want to remove group ${group.id} from this report?`);
+    if (!confirmed) return;
+
+    this.reportService.removeReportFromGroup(group.id).subscribe({
+      next: () => {
+        this.loadReportData();
+      },
+      error: (err) => {
+        console.error('Failed to remove group from report:', err);
+        alert('Failed to remove group from report. See console for details.');
+      }
+    });
+  }
+
+  postReport(): void {
+    alert('Post this report is not implemented yet!');
+  }
+
+  // -----------------------
+  // Reload everything from BE
+  // -----------------------
+  private loadReportData(): void {
+    this.loadReportGroups();
+    this.checkCanAddTransactionGroups();
+    this.loadReportStatus();
+  }
+
+  // -----------------------
+  // Load report transaction groups
+  // -----------------------
+  private loadReportGroups(): void {
     this.loading = true;
 
     forkJoin({
@@ -65,7 +122,6 @@ export class ReportView implements OnInit {
       groups: this.transactionGroupService.getTransactionGroupsByReport(this.reportId)
     }).subscribe({
       next: ({ banks, brands, locations, groups }) => {
-
         this.bankMap = banks.reduce((map: Record<string, string>, bank: BankDto) => {
           map[bank.id] = bank.name;
           return map;
@@ -101,4 +157,23 @@ export class ReportView implements OnInit {
     });
   }
 
+  // -----------------------
+  // Check if user can add groups
+  // -----------------------
+  private checkCanAddTransactionGroups(): void {
+    this.reportService.canAddTransactionGroups().subscribe({
+      next: (canAdd) => this.canAddTransactionGroups = canAdd,
+      error: () => this.canAddTransactionGroups = false
+    });
+  }
+
+  // -----------------------
+  // Load report posted status
+  // -----------------------
+  private loadReportStatus(): void {
+    this.reportService.getReportById(this.reportId).subscribe({
+      next: (report) => this.reportPosted = report.posted,
+      error: () => this.reportPosted = false
+    });
+  }
 }

@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MenuUser } from './menu-user';
-import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ReportService } from '../../services/report.service';
@@ -19,7 +18,7 @@ describe('MenuUser', () => {
   let router: Router;
 
   beforeEach(async () => {
-    const spy = jasmine.createSpyObj('ReportService', ['createNewReport']);
+    const spy = jasmine.createSpyObj('ReportService', ['createNewReport', 'canGenerateNewReport']);
 
     await TestBed.configureTestingModule({
       imports: [MenuUser, DummyComponent],
@@ -33,36 +32,46 @@ describe('MenuUser', () => {
     component = fixture.componentInstance;
     reportServiceSpy = TestBed.inject(ReportService) as jasmine.SpyObj<ReportService>;
     router = TestBed.inject(Router);
-    fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have Transactions buttons', () => {
-    const grids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2.mb-4'));
-    const transactionGrid = grids[0];
-    const buttons = transactionGrid.queryAll(By.css('button'));
-    expect(buttons.length).toBe(5);
-    const labels = buttons.map(btn => btn.nativeElement.textContent.trim());
-    expect(labels).toContain('Add a Transaction');
-    expect(labels).toContain('Pending Transactions');
-    expect(labels).toContain('Search a Transaction');
-    expect(labels).toContain('Posted Transactions');
-    expect(labels).toContain('Repeat Transactions');
-  });
+  it('should call checkReportAvailability() on init', fakeAsync(() => {
+    reportServiceSpy.canGenerateNewReport.and.returnValue(of(true));
+    fixture.detectChanges(); // triggers ngOnInit
+    tick();
+    expect(component.canGenerateReport).toBeTrue();
+    expect(component.loadingReportCheck).toBeFalse();
+  }));
 
-  it('should have Reports buttons', () => {
-    const grids = fixture.debugElement.queryAll(By.css('.d-grid.gap-2.mb-4'));
-    const reportGrid = grids[1];
-    const buttons = reportGrid.queryAll(By.css('button'));
-    expect(buttons.length).toBe(3);
-    const labels = buttons.map(btn => btn.nativeElement.textContent.trim());
-    expect(labels).toContain('New Report');
-    expect(labels).toContain('View Report');
-    expect(labels).toContain('Custom Report');
-  });
+  it('should handle checkReportAvailability() error', fakeAsync(() => {
+    reportServiceSpy.canGenerateNewReport.and.returnValue(throwError(() => new Error('Fail')));
+    const consoleSpy = spyOn(console, 'error');
+    fixture.detectChanges(); // triggers ngOnInit
+    tick();
+    expect(component.canGenerateReport).toBeFalse();
+    expect(component.loadingReportCheck).toBeFalse();
+    expect(consoleSpy).toHaveBeenCalled();
+  }));
+
+  it('getNewReportButtonText() should return proper text', fakeAsync(() => {
+    reportServiceSpy.canGenerateNewReport.and.returnValue(of(true));
+
+    // Loading state
+    component.loadingReportCheck = true;
+    expect(component.getNewReportButtonText()).toBe('Checking Report Availability...');
+
+    // Cannot generate
+    component.loadingReportCheck = false;
+    component.canGenerateReport = false;
+    expect(component.getNewReportButtonText()).toBe('Cannot create new report (Pending)');
+
+    // Can generate
+    component.canGenerateReport = true;
+    expect(component.getNewReportButtonText()).toBe('Add a New Report');
+  }));
 
   it('newReport() should call ReportService and navigate on success', fakeAsync(() => {
     const mockReport: ReportDto = { id: 'r1', userId: 'u1', month: '2025-11-01', posted: false };
@@ -78,13 +87,14 @@ describe('MenuUser', () => {
 
   it('newReport() should handle error', fakeAsync(() => {
     const consoleSpy = spyOn(console, 'error');
+    const alertSpy = spyOn(window, 'alert');
     reportServiceSpy.createNewReport.and.returnValue(throwError(() => new Error('Failed')));
-    spyOn(window, 'alert');
 
     component.newReport();
     tick();
 
     expect(reportServiceSpy.createNewReport).toHaveBeenCalled();
     expect(consoleSpy).toHaveBeenCalled();
+    expect(alertSpy).toHaveBeenCalledWith('Failed to create new report. See console for details.');
   }));
 });
