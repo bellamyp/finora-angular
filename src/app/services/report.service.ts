@@ -20,4 +20,12 @@ export class ReportService {
   createNewReport(): Observable<ReportDto> {
     return this.http.post<ReportDto>(`${this.apiUrl}/new`, {});
   }
+
+  /**
+   * Get all reports for the current user
+   * GET /api/reports
+   */
+  getAllReports(): Observable<ReportDto[]> {
+    return this.http.get<ReportDto[]>(this.apiUrl);
+  }
 }

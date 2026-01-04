@@ -61,7 +61,7 @@ export class MenuUser {
   }
 
   viewReport() {
-    alert('View Report is not implemented yet.');
+    this.router.navigate(['/report-list']);
   }
 
   customReport() {
