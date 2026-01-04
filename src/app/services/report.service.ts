@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { BackendConfig } from '../config/backend-config';
 import { ReportDto } from '../dto/report.dto';
 import {ReportTypeBalanceDto} from '../dto/report-type-balance.dto';
+import {ReportBankBalanceDto} from '../dto/report-bank-balance.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -75,5 +76,13 @@ export class ReportService {
    */
   getReportTypeBalances(reportId: string): Observable<ReportTypeBalanceDto[]> {
     return this.http.get<ReportTypeBalanceDto[]>(`${this.apiUrl}/${reportId}/type-balances`);
+  }
+
+  /**
+   * Get bank balances for a report
+   * GET /api/reports/{reportId}/bank-balances
+   */
+  getReportBankBalances(reportId: string): Observable<ReportBankBalanceDto[]> {
+    return this.http.get<ReportBankBalanceDto[]>(`${this.apiUrl}/${reportId}/bank-balances`);
   }
 }

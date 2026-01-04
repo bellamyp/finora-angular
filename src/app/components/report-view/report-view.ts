@@ -12,6 +12,7 @@ import { forkJoin } from 'rxjs';
 import { CommonModule, NgClass } from '@angular/common';
 import { ReportService } from '../../services/report.service';
 import {ReportTypeBalanceDto} from '../../dto/report-type-balance.dto';
+import {ReportBankBalanceDto} from '../../dto/report-bank-balance.dto';
 
 @Component({
   selector: 'app-report-view',
@@ -24,6 +25,7 @@ export class ReportView implements OnInit {
   reportId!: string;
   reportPosted = false;
   reportTypeBalances: ReportTypeBalanceDto[] = [];
+  reportBankBalances: ReportBankBalanceDto[] = [];
   loading = true;
   transactionGroups: TransactionGroupDto[] = [];
   canAddTransactionGroups = false;
@@ -110,6 +112,7 @@ export class ReportView implements OnInit {
     this.checkCanAddTransactionGroups();
     this.loadReportStatus();
     this.loadReportTypeBalances();
+    this.loadReportBankBalances();
   }
 
   // -----------------------
@@ -193,6 +196,21 @@ export class ReportView implements OnInit {
       error: (err) => {
         console.error('Failed to load report type balances:', err);
         this.reportTypeBalances = [];
+      }
+    });
+  }
+
+  private loadReportBankBalances(): void {
+    if (!this.reportId) return;
+
+    this.reportService.getReportBankBalances(this.reportId).subscribe({
+      next: (balances) => {
+        // Optional: sort by bankId if needed
+        this.reportBankBalances = balances;
+      },
+      error: (err) => {
+        console.error('Failed to load report bank balances:', err);
+        this.reportBankBalances = [];
       }
     });
   }
