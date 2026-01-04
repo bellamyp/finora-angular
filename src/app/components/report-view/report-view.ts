@@ -9,16 +9,14 @@ import { BankDto } from '../../dto/bank.dto';
 import { BrandDto } from '../../dto/brand.dto';
 import { LocationDto } from '../../dto/location.dto';
 import { forkJoin } from 'rxjs';
-import {CommonModule, NgClass} from '@angular/common';
-import {ReportService} from '../../services/report.service';
+import { CommonModule, NgClass } from '@angular/common';
+import { ReportService } from '../../services/report.service';
 
 @Component({
   selector: 'app-report-view',
   templateUrl: './report-view.html',
   styleUrl: './report-view.scss',
-  imports: [
-    NgClass, CommonModule
-  ]
+  imports: [NgClass, CommonModule]
 })
 export class ReportView implements OnInit {
 
@@ -42,15 +40,11 @@ export class ReportView implements OnInit {
 
   ngOnInit(): void {
     this.reportId = this.route.snapshot.paramMap.get('id')!;
-    this.loadReportGroups();
-    this.checkCanAddTransactionGroups();
-    this.loadReportStatus();
+    this.loadReportData();
   }
 
   getAmountDisplay(tx: { amount: number | null }): { display: string; classes: any } {
-    if (tx.amount === null) {
-      return { display: '—', classes: {} };
-    }
+    if (tx.amount === null) return { display: '—', classes: {} };
 
     return {
       display: `$${tx.amount.toFixed(2)}`,
@@ -62,11 +56,7 @@ export class ReportView implements OnInit {
   }
 
   getLoadTransactionsText(): string {
-    if (this.canAddTransactionGroups) {
-      return 'Load all available transactions';
-    }
-
-    return 'No fully posted transactions to add';
+    return this.canAddTransactionGroups ? 'Load all available transactions' : 'No fully posted transactions to add';
   }
 
   addTransactionGroupsToReport(): void {
@@ -75,9 +65,7 @@ export class ReportView implements OnInit {
     this.reportService.addTransactionGroups(this.reportId).subscribe({
       next: () => {
         alert('All fully posted transaction groups have been added to this report.');
-        // Reload the report groups to show the newly added transactions
-        this.loadReportGroups();
-        this.checkCanAddTransactionGroups();
+        this.loadReportData();
       },
       error: (err) => {
         console.error('Failed to add transaction groups', err);
@@ -89,7 +77,6 @@ export class ReportView implements OnInit {
   removeGroupFromReport(group: TransactionGroupDto): void {
     if (!group.id) return;
 
-    // Optional: check if the report is posted
     if (this.reportPosted) {
       alert('Cannot remove a group from a posted report.');
       return;
@@ -100,9 +87,7 @@ export class ReportView implements OnInit {
 
     this.reportService.removeReportFromGroup(group.id).subscribe({
       next: () => {
-        // Refresh report groups after removal
-        this.loadReportGroups();
-        this.checkCanAddTransactionGroups();
+        this.loadReportData();
       },
       error: (err) => {
         console.error('Failed to remove group from report:', err);
@@ -115,7 +100,19 @@ export class ReportView implements OnInit {
     alert('Post this report is not implemented yet!');
   }
 
-  loadReportGroups(): void {
+  // -----------------------
+  // Reload everything from BE
+  // -----------------------
+  private loadReportData(): void {
+    this.loadReportGroups();
+    this.checkCanAddTransactionGroups();
+    this.loadReportStatus();
+  }
+
+  // -----------------------
+  // Load report transaction groups
+  // -----------------------
+  private loadReportGroups(): void {
     this.loading = true;
 
     forkJoin({
@@ -125,7 +122,6 @@ export class ReportView implements OnInit {
       groups: this.transactionGroupService.getTransactionGroupsByReport(this.reportId)
     }).subscribe({
       next: ({ banks, brands, locations, groups }) => {
-
         this.bankMap = banks.reduce((map: Record<string, string>, bank: BankDto) => {
           map[bank.id] = bank.name;
           return map;
@@ -161,6 +157,9 @@ export class ReportView implements OnInit {
     });
   }
 
+  // -----------------------
+  // Check if user can add groups
+  // -----------------------
   private checkCanAddTransactionGroups(): void {
     this.reportService.canAddTransactionGroups().subscribe({
       next: (canAdd) => this.canAddTransactionGroups = canAdd,
@@ -168,16 +167,13 @@ export class ReportView implements OnInit {
     });
   }
 
-  // Load the current report info to get posted status
+  // -----------------------
+  // Load report posted status
+  // -----------------------
   private loadReportStatus(): void {
     this.reportService.getReportById(this.reportId).subscribe({
-      next: (report) => {
-        this.reportPosted = report.posted;
-      },
-      error: () => {
-        this.reportPosted = false;
-      }
+      next: (report) => this.reportPosted = report.posted,
+      error: () => this.reportPosted = false
     });
   }
-
 }
