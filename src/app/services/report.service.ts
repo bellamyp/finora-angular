@@ -25,6 +25,14 @@ export class ReportService {
   }
 
   /**
+   * Post a report — marks it as posted and saves snapshots
+   * POST /api/reports/{reportId}/post
+   */
+  postReport(reportId: string): Observable<ReportDto> {
+    return this.http.post<ReportDto>(`${this.apiUrl}/${reportId}/post`, {});
+  }
+
+  /**
    * Add all fully posted transaction groups to a report
    */
   addTransactionGroups(reportId: string): Observable<void> {
@@ -55,11 +63,27 @@ export class ReportService {
   }
 
   /**
+   * Get the next pending report for the current user
+   * GET /api/reports/next-pending
+   */
+  getNextPendingReport(): Observable<ReportDto | null> {
+    return this.http.get<ReportDto>(`${this.apiUrl}/next-pending`);
+  }
+
+  /**
    * Check if the user can generate a new report
    * GET /api/reports/can-generate
    */
   canGenerateNewReport(): Observable<boolean> {
     return this.http.get<boolean>(`${this.apiUrl}/can-generate`);
+  }
+
+  /**
+   * Check if the user has any pending reports
+   * GET /api/reports/has-pending
+   */
+  hasPendingReport(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/has-pending`);
   }
 
   /**

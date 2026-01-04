@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ReportService} from '../../services/report.service';
 import {ReportDto} from '../../dto/report.dto';
+import {forkJoin} from 'rxjs';
 
 @Component({
   selector: 'app-menu-user',
@@ -11,6 +12,7 @@ import {ReportDto} from '../../dto/report.dto';
 export class MenuUser implements OnInit {
 
   canGenerateReport = false;
+  hasPendingReport = false;
   loadingReportCheck = true;
 
   constructor(
@@ -19,7 +21,7 @@ export class MenuUser implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.checkReportAvailability();
+    this.checkReportStatus();
   }
 
   // --- Navigation Methods (Transactions) ---
@@ -67,6 +69,14 @@ export class MenuUser implements OnInit {
     });
   }
 
+  getPendingReportButtonText(): string {
+    if (this.loadingReportCheck) {
+      return 'Checking Report Availability...';
+    }
+
+    return this.hasPendingReport ? 'Current Report' : 'No Pending Report';
+  }
+
   getNewReportButtonText(): string {
     if (this.loadingReportCheck) {
       return 'Checking Report Availability...';
@@ -77,6 +87,24 @@ export class MenuUser implements OnInit {
     }
 
     return 'Add a New Report';
+  }
+
+  pendingReport() {
+    this.reportService.getNextPendingReport().subscribe({
+      next: (report) => {
+        if (report) {
+          console.log('Navigating to next pending report:', report);
+          // Navigate to report view with report ID
+          this.router.navigate(['/report-view', report.id]);
+        } else {
+          alert('No pending reports available.');
+        }
+      },
+      error: (err) => {
+        console.error('Failed to fetch next pending report', err);
+        alert('Failed to fetch next pending report. See console for details.');
+      }
+    });
   }
 
   viewReport() {
@@ -100,15 +128,21 @@ export class MenuUser implements OnInit {
     alert('Old Records is not implemented yet.');
   }
 
-  private checkReportAvailability(): void {
+  private checkReportStatus(): void {
     this.loadingReportCheck = true;
-    this.reportService.canGenerateNewReport().subscribe({
-      next: (canGenerate) => {
+
+    forkJoin({
+      hasPending: this.reportService.hasPendingReport(),
+      canGenerate: this.reportService.canGenerateNewReport()
+    }).subscribe({
+      next: ({ hasPending, canGenerate }) => {
+        this.hasPendingReport = hasPending;
         this.canGenerateReport = canGenerate;
         this.loadingReportCheck = false;
       },
       error: (err) => {
-        console.error('Failed to check report availability', err);
+        console.error('Failed to check report status', err);
+        this.hasPendingReport = false;
         this.canGenerateReport = false;
         this.loadingReportCheck = false;
       }

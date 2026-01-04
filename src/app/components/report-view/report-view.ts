@@ -26,6 +26,8 @@ export class ReportView implements OnInit {
   reportPosted = false;
   reportTypeBalances: ReportTypeBalanceDto[] = [];
   reportBankBalances: ReportBankBalanceDto[] = [];
+  currentReportMonth: string = '';
+
   loading = true;
   transactionGroups: TransactionGroupDto[] = [];
   canAddTransactionGroups = false;
@@ -57,6 +59,10 @@ export class ReportView implements OnInit {
         'text-danger': tx.amount < 0
       }
     };
+  }
+
+  getPostButtonText(): string {
+    return this.reportPosted ? 'Report Posted' : 'Post this Report';
   }
 
   getLoadTransactionsText(): string {
@@ -101,7 +107,22 @@ export class ReportView implements OnInit {
   }
 
   postReport(): void {
-    alert('Post this report is not implemented yet!');
+    if (!this.reportId) return;
+
+    const confirmed = confirm('Are you sure you want to post this report? Once posted, it cannot be modified.');
+    if (!confirmed) return;
+
+    this.reportService.postReport(this.reportId).subscribe({
+      next: (postedReport) => {
+        alert('Report has been successfully posted!');
+        this.reportPosted = postedReport.posted; // mark as posted
+        this.loadReportData(); // refresh balances and groups
+      },
+      error: (err) => {
+        console.error('Failed to post report', err);
+        alert('Failed to post report. See console for details.');
+      }
+    });
   }
 
   // -----------------------
@@ -178,8 +199,20 @@ export class ReportView implements OnInit {
   // -----------------------
   private loadReportStatus(): void {
     this.reportService.getReportById(this.reportId).subscribe({
-      next: (report) => this.reportPosted = report.posted,
-      error: () => this.reportPosted = false
+      next: (report) => {
+        this.reportPosted = report.posted;
+
+        if (report.month) {
+          const date = new Date(report.month); // report.month is ISO string, e.g., "2025-01-01"
+          const year = date.getFullYear();
+          const monthName = date.toLocaleString('default', { month: 'long' }); // e.g., "January"
+          this.currentReportMonth = `${year} / ${monthName}`;
+        }
+      },
+      error: () => {
+        this.reportPosted = false;
+        this.currentReportMonth = '';
+      }
     });
   }
 
