@@ -11,6 +11,7 @@ import { LocationDto } from '../../dto/location.dto';
 import { forkJoin } from 'rxjs';
 import { CommonModule, NgClass } from '@angular/common';
 import { ReportService } from '../../services/report.service';
+import {ReportTypeBalanceDto} from '../../dto/report-type-balance.dto';
 
 @Component({
   selector: 'app-report-view',
@@ -22,6 +23,7 @@ export class ReportView implements OnInit {
 
   reportId!: string;
   reportPosted = false;
+  reportTypeBalances: ReportTypeBalanceDto[] = [];
   loading = true;
   transactionGroups: TransactionGroupDto[] = [];
   canAddTransactionGroups = false;
@@ -107,6 +109,7 @@ export class ReportView implements OnInit {
     this.loadReportGroups();
     this.checkCanAddTransactionGroups();
     this.loadReportStatus();
+    this.loadReportTypeBalances();
   }
 
   // -----------------------
@@ -174,6 +177,23 @@ export class ReportView implements OnInit {
     this.reportService.getReportById(this.reportId).subscribe({
       next: (report) => this.reportPosted = report.posted,
       error: () => this.reportPosted = false
+    });
+  }
+
+  private loadReportTypeBalances(): void {
+    if (!this.reportId) return;
+
+    this.reportService.getReportTypeBalances(this.reportId).subscribe({
+      next: (balances) => {
+        // Optional: sort by typeId or type name if needed
+        this.reportTypeBalances = balances.sort((a, b) =>
+          a.typeId.localeCompare(b.typeId)
+        );
+      },
+      error: (err) => {
+        console.error('Failed to load report type balances:', err);
+        this.reportTypeBalances = [];
+      }
     });
   }
 }
