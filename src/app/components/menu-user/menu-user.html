@@ -45,8 +45,12 @@
             {{ getNewReportButtonText() }}
           </button>
 
+          <button class="menu-btn" (click)="pendingReport()">
+            <i class="bi bi-file-earmark-text me-2"></i> Current Report
+          </button>
+
           <button class="menu-btn" (click)="viewReport()">
-            <i class="bi bi-file-earmark-text me-2"></i> View Report
+            <i class="bi bi-file-earmark-text me-2"></i> List All Reports
           </button>
 
           <button class="menu-btn" (click)="customReport()">

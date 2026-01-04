@@ -79,6 +79,10 @@ export class MenuUser implements OnInit {
     return 'Add a New Report';
   }
 
+  pendingReport() {
+    alert('Current Report is not implemented yet.');
+  }
+
   viewReport() {
     this.router.navigate(['/report-list']);
   }
