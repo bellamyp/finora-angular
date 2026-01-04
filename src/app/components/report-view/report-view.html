@@ -94,11 +94,7 @@
     <div>Loading report transactions...</div>
   </div>
 
-  <div *ngIf="!loading && transactionGroups.length === 0" class="text-center text-muted fs-5">
-    <i class="bi bi-wallet2" style="font-size: 2rem;"></i>
-    <div>No transactions found for this report.</div>
-  </div>
-
+  <!-- 🔹 Transactions Table -->
   <div *ngIf="transactionGroups.length > 0" class="table-responsive">
     <table class="table table-hover align-middle shadow-sm rounded-4 bg-white text-center">
       <thead class="table-primary text-center">
@@ -114,7 +110,6 @@
       </thead>
       <tbody>
       <ng-container *ngFor="let group of transactionGroups">
-
         <!-- Group header -->
         <tr class="table-secondary fw-bold clickable-row"
             [class.disabled]="!group.id || reportPosted"
@@ -153,21 +148,27 @@
       </ng-container>
       </tbody>
     </table>
+  </div>
 
-    <!-- 🔽 Action buttons -->
-    <div class="d-flex justify-content-between mt-4">
-      <button class="btn btn-outline-primary"
-              [disabled]="!canAddTransactionGroups"
-              (click)="addTransactionGroupsToReport()">
-        <i class="bi bi-arrow-down-circle me-2"></i>
-        {{ getLoadTransactionsText() }}
-      </button>
+  <!-- 🔹 Empty placeholder when no transactions -->
+  <div *ngIf="!loading && transactionGroups.length === 0" class="text-center text-muted fs-5">
+    <i class="bi bi-wallet2" style="font-size: 2rem;"></i>
+    <div>No transactions found for this report.</div>
+  </div>
 
-      <button class="btn btn-success"
-              (click)="postReport()">
-        <i class="bi bi-check-circle me-2"></i>
-        Post this Report
-      </button>
-    </div>
+  <!-- 🔽 Action buttons (always visible) -->
+  <div class="d-flex justify-content-between mt-4">
+    <button class="btn btn-outline-primary"
+            [disabled]="!canAddTransactionGroups"
+            (click)="addTransactionGroupsToReport()">
+      <i class="bi bi-arrow-down-circle me-2"></i>
+      {{ getLoadTransactionsText() }}
+    </button>
+
+    <button class="btn btn-success"
+            (click)="postReport()">
+      <i class="bi bi-check-circle me-2"></i>
+      Post this Report
+    </button>
   </div>
 </div>
