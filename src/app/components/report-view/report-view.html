@@ -90,12 +90,15 @@
       <ng-container *ngFor="let group of transactionGroups">
 
         <!-- Group header -->
-        <tr class="table-secondary fw-bold">
+        <tr class="table-secondary fw-bold clickable-row"
+            [class.disabled]="!group.id || reportPosted"
+            (click)="group.id && removeGroupFromReport(group)">
           <td colspan="7" class="text-start ps-4">
             Group: {{ group.id || 'N/A' }}
             <span class="badge bg-light text-primary">
-                {{ group.transactions.length }} transaction(s)
-              </span>
+              {{ group.transactions.length }} transaction(s)
+            </span>
+            <span *ngIf="reportPosted" class="text-muted ms-2">(Report posted, cannot remove)</span>
           </td>
         </tr>
 

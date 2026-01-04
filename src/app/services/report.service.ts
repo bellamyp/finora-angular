@@ -30,11 +30,26 @@ export class ReportService {
   }
 
   /**
+   * Remove the report from a transaction group
+   */
+  removeReportFromGroup(groupId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/groups/${groupId}/remove-report`, {});
+  }
+
+  /**
    * Get all reports for the current user
    * GET /api/reports
    */
   getAllReports(): Observable<ReportDto[]> {
     return this.http.get<ReportDto[]>(this.apiUrl);
+  }
+
+  /**
+   * Get a single report by its ID
+   * GET /api/reports/{reportId}
+   */
+  getReportById(reportId: string): Observable<ReportDto> {
+    return this.http.get<ReportDto>(`${this.apiUrl}/${reportId}`);
   }
 
   /**

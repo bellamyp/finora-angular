@@ -23,6 +23,7 @@ import {ReportService} from '../../services/report.service';
 export class ReportView implements OnInit {
 
   reportId!: string;
+  reportPosted = false;
   loading = true;
   transactionGroups: TransactionGroupDto[] = [];
   canAddTransactionGroups = false;
@@ -43,6 +44,7 @@ export class ReportView implements OnInit {
     this.reportId = this.route.snapshot.paramMap.get('id')!;
     this.loadReportGroups();
     this.checkCanAddTransactionGroups();
+    this.loadReportStatus();
   }
 
   getAmountDisplay(tx: { amount: number | null }): { display: string; classes: any } {
@@ -80,6 +82,31 @@ export class ReportView implements OnInit {
       error: (err) => {
         console.error('Failed to add transaction groups', err);
         alert('Failed to add transaction groups. See console for details.');
+      }
+    });
+  }
+
+  removeGroupFromReport(group: TransactionGroupDto): void {
+    if (!group.id) return;
+
+    // Optional: check if the report is posted
+    if (this.reportPosted) {
+      alert('Cannot remove a group from a posted report.');
+      return;
+    }
+
+    const confirmed = confirm(`Are you sure you want to remove group ${group.id} from this report?`);
+    if (!confirmed) return;
+
+    this.reportService.removeReportFromGroup(group.id).subscribe({
+      next: () => {
+        // Refresh report groups after removal
+        this.loadReportGroups();
+        this.checkCanAddTransactionGroups();
+      },
+      error: (err) => {
+        console.error('Failed to remove group from report:', err);
+        alert('Failed to remove group from report. See console for details.');
       }
     });
   }
@@ -138,6 +165,18 @@ export class ReportView implements OnInit {
     this.reportService.canAddTransactionGroups().subscribe({
       next: (canAdd) => this.canAddTransactionGroups = canAdd,
       error: () => this.canAddTransactionGroups = false
+    });
+  }
+
+  // Load the current report info to get posted status
+  private loadReportStatus(): void {
+    this.reportService.getReportById(this.reportId).subscribe({
+      next: (report) => {
+        this.reportPosted = report.posted;
+      },
+      error: () => {
+        this.reportPosted = false;
+      }
     });
   }
 
