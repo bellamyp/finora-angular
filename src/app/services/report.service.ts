@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BackendConfig } from '../config/backend-config';
 import { ReportDto } from '../dto/report.dto';
+import {ReportTypeBalanceDto} from '../dto/report-type-balance.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -66,5 +67,13 @@ export class ReportService {
    */
   canAddTransactionGroups(): Observable<boolean> {
     return this.http.get<boolean>(`${this.apiUrl}/can-add-groups`);
+  }
+
+  /**
+   * Get type balances for a report
+   * GET /api/reports/{reportId}/type-balances
+   */
+  getReportTypeBalances(reportId: string): Observable<ReportTypeBalanceDto[]> {
+    return this.http.get<ReportTypeBalanceDto[]>(`${this.apiUrl}/${reportId}/type-balances`);
   }
 }

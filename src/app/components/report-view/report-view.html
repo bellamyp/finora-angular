@@ -3,6 +3,45 @@
   <!-- 🔹 Summary tables -->
   <div class="row g-4 mb-5">
 
+    <!-- Type Balances -->
+    <div class="col-md-6">
+      <div class="card shadow-sm rounded-4">
+        <div class="card-header bg-primary text-white fw-semibold">
+          Type Balances
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 text-center">
+            <thead class="table-light">
+            <tr>
+              <th>Type</th>
+              <th>Total</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <!-- Show balances if available -->
+            <tr *ngFor="let balance of reportTypeBalances">
+              <td>
+                <span class="badge bg-info text-dark">{{ balance.typeId }}</span>
+              </td>
+              <td [ngClass]="{ 'text-success': balance.totalAmount > 0, 'text-danger': balance.totalAmount < 0 }">
+                ${{ balance.totalAmount | number:'1.2-2' }}
+              </td>
+            </tr>
+
+            <!-- Show placeholder if empty -->
+            <tr *ngIf="reportTypeBalances.length === 0">
+              <td colspan="2" class="text-muted py-4">
+                No type balance data yet
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- Bank Balances -->
     <div class="col-md-6">
       <div class="card shadow-sm rounded-4">
@@ -23,34 +62,6 @@
             <tr>
               <td colspan="2" class="text-muted py-4">
                 No bank balance data yet
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Type Balances -->
-    <div class="col-md-6">
-      <div class="card shadow-sm rounded-4">
-        <div class="card-header bg-primary text-white fw-semibold">
-          Type Balances
-        </div>
-
-        <div class="table-responsive">
-          <table class="table table-hover mb-0 text-center">
-            <thead class="table-light">
-            <tr>
-              <th>Type</th>
-              <th>Total</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <tr>
-              <td colspan="2" class="text-muted py-4">
-                No type balance data yet
               </td>
             </tr>
             </tbody>
