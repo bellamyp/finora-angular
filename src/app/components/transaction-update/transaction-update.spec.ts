@@ -57,7 +57,7 @@ describe('TransactionUpdate', () => {
   };
 
   const mockBankService = {
-    getBanks: jasmine.createSpy('getBanks').and.returnValue(of(mockBanks))
+    getActiveBanks: jasmine.createSpy('getActiveBanks').and.returnValue(of(mockBanks))
   };
 
   const mockBrandService = {
@@ -98,7 +98,7 @@ describe('TransactionUpdate', () => {
     mockTransactionGroupService.getTransactionGroupById.calls.reset();
     mockTransactionGroupService.updateTransactionGroup.calls.reset();
     mockTransactionGroupService.createTransactionGroup.calls.reset();
-    mockBankService.getBanks.calls.reset();
+    mockBankService.getActiveBanks.calls.reset();
     mockBrandService.getBrandsByUser.calls.reset();
     mockRouter.navigate.calls.reset();
     mockActivatedRoute.snapshot.paramMap.get.calls.reset();
