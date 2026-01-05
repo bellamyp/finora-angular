@@ -3,9 +3,11 @@ import {CommonModule} from '@angular/common';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {BankCreateDto} from '../../dto/bank-create.dto';
 import {BankService} from '../../services/bank.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {BankGroupDto} from '../../dto/bank-group.dto';
 import {BankGroupService} from '../../services/bank-group.service';
+
+type Mode = 'create' | 'update';
 
 @Component({
   selector: 'app-bank-create',
@@ -19,8 +21,13 @@ export class BankCreate implements OnInit {
   bankTypes: BankCreateDto['type'][] = ['CHECKING', 'SAVINGS', 'CREDIT', 'REWARDS'];
   bankGroups: BankGroupDto[] = [];
 
+  bankId?: string;
+  mode: Mode = 'create';
+  loading = false;
+
   constructor(
     private fb: FormBuilder,
+    private route: ActivatedRoute,
     private router: Router,
     private bankService: BankService,
     private bankGroupService: BankGroupService
@@ -36,20 +43,17 @@ export class BankCreate implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadBankGroups();
-  }
 
-  /** Load bank groups from the backend */
-  private loadBankGroups(): void {
-    this.bankGroupService.getBankGroups().subscribe({
-      next: (groups) => {
-        this.bankGroups = groups;
-      },
-      error: (err) => {
-        console.error('Failed to load bank groups:', err);
-        alert('Error loading bank groups.');
-      }
-    });
+    this.bankId = this.route.snapshot.paramMap.get('bankId') || undefined;
+    this.mode = this.bankId ? 'update' : 'create';
+
+    this.loadBankGroups();
+
+    if (this.mode === 'update') {
+      this.loadBank();
+    } else {
+      this.bankForm.get('closingDate')?.disable();
+    }
   }
 
   submit() {
@@ -82,5 +86,47 @@ export class BankCreate implements OnInit {
 
   addBankGroup() {
     this.router.navigate(['/bank-group-create']);
+  }
+
+  get closingDateLabel(): string {
+    return this.mode === 'create'
+      ? 'Closing date (Cannot set when creating a new bank)'
+      : 'Closing date';
+  }
+
+  /** Load existing bank for edit */
+  private loadBank(): void {
+    this.loading = true;
+
+    this.bankService.getBankById(this.bankId!).subscribe({
+      next: bank => {
+        this.bankForm.patchValue({
+          groupId: bank.groupId,
+          name: bank.name,
+          // openingDate: bank.openingDate,
+          // closingDate: bank.closingDate,
+          type: bank.type
+        });
+        this.loading = false;
+      },
+      error: err => {
+        console.error('Failed to load bank:', err);
+        alert('Failed to load bank details.');
+        this.router.navigate(['/bank-list']);
+      }
+    });
+  }
+
+  /** Load bank groups from the backend */
+  private loadBankGroups(): void {
+    this.bankGroupService.getBankGroups().subscribe({
+      next: (groups) => {
+        this.bankGroups = groups;
+      },
+      error: (err) => {
+        console.error('Failed to load bank groups:', err);
+        alert('Error loading bank groups.');
+      }
+    });
   }
 }
