@@ -20,6 +20,16 @@ export class BankService {
     return this.http.get<BankDto[]>(this.apiUrl);
   }
 
+  // GET active banks (closingDate == null)
+  getActiveBanks(): Observable<BankDto[]> {
+    return this.http.get<BankDto[]>(`${this.apiUrl}/active`);
+  }
+
+  // NEW: GET inactive banks (closingDate != null)
+  getInactiveBanks(): Observable<BankDto[]> {
+    return this.http.get<BankDto[]>(`${this.apiUrl}/inactive`);
+  }
+
   // GET a single bank by ID (summary)
   getBankById(bankId: string): Observable<BankDto> {
     return this.http.get<BankDto>(`${this.apiUrl}/${bankId}`);
