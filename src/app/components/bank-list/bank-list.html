@@ -1,6 +1,33 @@
 <div class="container py-5">
   <h2 class="text-center mb-4 fw-bold text-primary">Your Banks</h2>
 
+  <!-- Mode Toggle Buttons -->
+  <div class="d-flex justify-content-center mb-4">
+    <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="mode">
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        [ngClass]="{'btn-primary text-white': mode==='all'}"
+        (click)="loadBanks('all')">
+        All
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        [ngClass]="{'btn-primary text-white': mode==='active'}"
+        (click)="loadBanks('active')">
+        Active
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        [ngClass]="{'btn-primary text-white': mode==='inactive'}"
+        (click)="loadBanks('inactive')">
+        Inactive
+      </button>
+    </div>
+  </div>
+
   <!-- Loading state -->
   <div *ngIf="loading" class="text-center py-5">
     <p>Loading banks...</p>
@@ -28,14 +55,12 @@
       <tr *ngFor="let bank of banks">
         <td>{{ bank.groupId }}</td>
         <td>{{ bank.name }}</td>
-        <td>
-          <span class="badge bg-info text-dark">{{ bank.type }}</span>
-        </td>
+        <td><span class="badge bg-info text-dark">{{ bank.type }}</span></td>
         <td>${{ bank.pendingBalance ?? '0.00' }}</td>
         <td>${{ bank.postedBalance ?? '0.00' }}</td>
         <td>
-          <button class="btn btn-sm btn-primary me-2" (click)="editBank(bank)">Edit</button>
-          <button class="btn btn-sm btn-outline-secondary" (click)="viewBank(bank)">View</button>
+          <button class="btn btn-sm btn-primary me-2" (click)="viewBank(bank)">View</button>
+          <button class="btn btn-sm btn-outline-secondary" (click)="editBank(bank)">Edit</button>
         </td>
       </tr>
       </tbody>
