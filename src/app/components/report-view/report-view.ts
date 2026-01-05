@@ -203,10 +203,10 @@ export class ReportView implements OnInit {
         this.reportPosted = report.posted;
 
         if (report.month) {
-          const date = new Date(report.month); // report.month is ISO string, e.g., "2025-01-01"
-          const year = date.getFullYear();
-          const monthName = date.toLocaleString('default', { month: 'long' }); // e.g., "January"
+          const [year, month] = report.month.split('-');
+          const monthName = new Date(Number(year), Number(month) - 1).toLocaleString('default', { month: 'long' });
           this.currentReportMonth = `${year} / ${monthName}`;
+          console.log('currentReportMonth:', this.currentReportMonth);
         }
       },
       error: () => {
