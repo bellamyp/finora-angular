@@ -99,13 +99,26 @@ export class TransactionUpdate implements OnInit {
   }
 
   loadLookups() {
-    this.bankService.getBanks().subscribe({ next: data => this.banks = data });
+    // Only load active banks
+    this.bankService.getActiveBanks().subscribe({
+      next: (data: BankDto[]) => {
+        this.banks = data;
+        if (this.banks.length === 0) {
+          window.alert('No active banks available. You cannot create transactions until a bank is active.');
+        }
+      },
+      error: err => {
+        console.error('Failed to fetch active banks:', err);
+        this.banks = [];
+      }
+    });
+
     this.brandService.getBrandsByUser().subscribe({ next: data => this.brands = data });
+
     this.transactionTypes = enumToOptions(TransactionTypeEnum);
-    // Fetch locations
+
     this.locationService.getLocations().subscribe({
       next: data => {
-        // Map to { id, name } format for the dropdown
         this.locations = data.map(loc => ({
           id: loc.id,
           name: `${loc.city}, ${loc.state}`
@@ -321,7 +334,7 @@ export class TransactionUpdate implements OnInit {
         if (res.success) {
           this.router.navigate(['/transaction-view', res.groupId || this.groupId]);
         } else {
-          this.errorMessage = res.message;  // show backend message inline
+          this.errorMessage = res.message;
         }
       },
       error: err => {
