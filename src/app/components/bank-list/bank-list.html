@@ -2,10 +2,30 @@
   <h2 class="text-center mb-4 fw-bold text-primary">Your Banks</h2>
 
   <!-- Mode Toggle Buttons -->
-  <div class="text-center mb-4">
-    <button class="btn" [ngClass]="{'btn-primary': mode==='all', 'btn-outline-primary': mode!=='all'}" (click)="loadBanks('all')">All</button>
-    <button class="btn" [ngClass]="{'btn-primary': mode==='active', 'btn-outline-primary': mode!=='active'}" (click)="loadBanks('active')">Active</button>
-    <button class="btn" [ngClass]="{'btn-primary': mode==='inactive', 'btn-outline-primary': mode!=='inactive'}" (click)="loadBanks('inactive')">Inactive</button>
+  <div class="d-flex justify-content-center mb-4">
+    <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="mode">
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        [ngClass]="{'btn-primary text-white': mode==='all'}"
+        (click)="loadBanks('all')">
+        All
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        [ngClass]="{'btn-primary text-white': mode==='active'}"
+        (click)="loadBanks('active')">
+        Active
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        [ngClass]="{'btn-primary text-white': mode==='inactive'}"
+        (click)="loadBanks('inactive')">
+        Inactive
+      </button>
+    </div>
   </div>
 
   <!-- Loading state -->

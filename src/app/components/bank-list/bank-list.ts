@@ -5,12 +5,13 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { BankGroupService } from '../../services/bank-group.service';
 import { BankGroupDto } from '../../dto/bank-group.dto';
+import {FormsModule} from '@angular/forms';
 
 type Mode = 'all' | 'active' | 'inactive';
 
 @Component({
   selector: 'app-bank-list',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './bank-list.html',
   styleUrls: ['./bank-list.scss'],
 })
@@ -20,7 +21,7 @@ export class BankList implements OnInit {
   loading = true;
   error?: string;
 
-  mode: Mode = 'all';
+  mode: Mode = 'active';
   private groupMap: Map<string, string> = new Map(); // groupId -> groupName
 
   constructor(
@@ -81,7 +82,7 @@ export class BankList implements OnInit {
     this.bankGroupService.getBankGroups().subscribe({
       next: (groups: BankGroupDto[]) => {
         this.groupMap = new Map(groups.map(g => [g.id, g.name]));
-        // Fetch initial banks (default mode: all)
+        // Fetch initial banks (default mode: active)
         this.loadBanks(this.mode);
       },
       error: (err) => {
