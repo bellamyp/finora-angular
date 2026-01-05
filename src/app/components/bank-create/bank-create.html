@@ -1,8 +1,11 @@
 <!-- bank-create.component.html -->
 <div class="container py-4" style="max-width: 600px;">
-  <h3 class="mb-4 text-center">Add a Bank</h3>
+  <h3 class="mb-4 text-center">
+    {{ mode === 'create' ? 'Add a Bank' : 'Edit Bank' }}
+  </h3>
 
   <form [formGroup]="bankForm" (ngSubmit)="submit()">
+
     <!-- Bank Group -->
     <div class="mb-3 d-flex align-items-end">
       <div class="flex-grow-1 me-2">
@@ -51,15 +54,13 @@
 
     <!-- Closing Date -->
     <div class="mb-3">
-      <label for="closingDate" class="form-label">
-        {{ closingDateLabel }}
-      </label>
-
+      <label for="closingDate" class="form-label">{{ closingDateLabel }}</label>
       <input
         id="closingDate"
         type="date"
         class="form-control"
         formControlName="closingDate"
+        [disabled]="mode === 'create'"
       />
     </div>
 
@@ -77,7 +78,8 @@
 
     <!-- Submit Button -->
     <button type="submit" class="btn btn-warning w-100">
-      <i class="bi bi-plus-square me-2"></i> Add Bank
+      <i class="bi bi-plus-square me-2"></i>
+      {{ mode === 'create' ? 'Add Bank' : 'Update Bank' }}
     </button>
   </form>
 </div>

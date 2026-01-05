@@ -42,7 +42,8 @@ export const routes: Routes = [
   { path: 'transaction-view/:groupId', component: TransactionView, canActivate: [authGuard] },
   { path: 'bank-list', component: BankList, canActivate: [authGuard] },
   { path: 'bank-view/:bankId', component: BankView, canActivate: [authGuard] },
-  { path: 'bank-create', component: BankCreate, canActivate: [authGuard] },
+  { path: 'bank-create', component: BankCreate, canActivate: [authGuard] },        // create mode
+  { path: 'bank-edit/:bankId', component: BankCreate, canActivate: [authGuard] },  // update mode
   { path: 'bank-group-create', component: BankGroupCreate, canActivate: [authGuard] },
   { path: 'brand-create', component: BrandCreate, canActivate: [authGuard] },
   { path: 'location-create', component: LocationCreate, canActivate: [authGuard] },

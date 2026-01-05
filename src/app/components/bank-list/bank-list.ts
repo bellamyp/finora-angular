@@ -59,8 +59,8 @@ export class BankList implements OnInit {
   }
 
   editBank(bank: BankDto): void {
-    window.alert('Edit bank not implemented yet!');
-    console.log('Edit bank:', bank);
+    // Navigate to the edit page
+    this.router.navigate(['/bank-edit', bank.id]);
   }
 
   viewBank(bank: BankDto): void {

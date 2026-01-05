@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {BankCreateDto} from '../../dto/bank-create.dto';
-import {BankService} from '../../services/bank.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {BankGroupDto} from '../../dto/bank-group.dto';
-import {BankGroupService} from '../../services/bank-group.service';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { BankEditDto } from '../../dto/bank-edit.dto';
+import { BankService } from '../../services/bank.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BankGroupDto } from '../../dto/bank-group.dto';
+import { BankGroupService } from '../../services/bank-group.service';
 
 type Mode = 'create' | 'update';
 
@@ -13,12 +13,12 @@ type Mode = 'create' | 'update';
   selector: 'app-bank-create',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './bank-create.html',
-  styleUrl: './bank-create.scss',
+  styleUrls: ['./bank-create.scss'],
 })
 export class BankCreate implements OnInit {
 
   bankForm: FormGroup;
-  bankTypes: BankCreateDto['type'][] = ['CHECKING', 'SAVINGS', 'CREDIT', 'REWARDS'];
+  bankTypes: BankEditDto['type'][] = ['CHECKING', 'SAVINGS', 'CREDIT', 'REWARDS'];
   bankGroups: BankGroupDto[] = [];
 
   bankId?: string;
@@ -32,8 +32,9 @@ export class BankCreate implements OnInit {
     private bankService: BankService,
     private bankGroupService: BankGroupService
   ) {
-    // Only the backend-required fields
+    // Backend required fields
     this.bankForm = this.fb.group({
+      id: [''], // used only for updates
       groupId: ['', Validators.required],
       name: ['', Validators.required],
       openingDate: ['', Validators.required],
@@ -43,14 +44,13 @@ export class BankCreate implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.bankId = this.route.snapshot.paramMap.get('bankId') || undefined;
     this.mode = this.bankId ? 'update' : 'create';
 
     this.loadBankGroups();
 
-    if (this.mode === 'update') {
-      this.loadBank();
+    if (this.mode === 'update' && this.bankId) {
+      this.loadBankForEdit(this.bankId);
     } else {
       this.bankForm.get('closingDate')?.disable();
     }
@@ -62,9 +62,10 @@ export class BankCreate implements OnInit {
       return;
     }
 
-    // Prepare payload matching backend BankCreateDto
     const raw = this.bankForm.getRawValue();
-    const payload: BankCreateDto = {
+
+    const payload: BankEditDto = {
+      id: raw.id || undefined, // undefined for creation
       name: raw.name,
       openingDate: raw.openingDate,
       closingDate: raw.closingDate || null,
@@ -72,16 +73,27 @@ export class BankCreate implements OnInit {
       groupId: raw.groupId
     };
 
-    this.bankService.createBank(payload).subscribe({
-      next: () => {
-        alert('Bank created successfully!');
-        this.router.navigate(['/bank-list']);
-
-      },
-      error: (err) => {
-        alert('Error creating bank: ' + err.message);
-      }
-    });
+    if (this.mode === 'create') {
+      this.bankService.createBank(payload).subscribe({
+        next: () => {
+          alert('Bank created successfully!');
+          this.router.navigate(['/bank-list']);
+        },
+        error: (err) => {
+          alert('Error creating bank: ' + err.message);
+        }
+      });
+    } else {
+      this.bankService.updateBank(payload).subscribe({
+        next: () => {
+          alert('Bank updated successfully!');
+          this.router.navigate(['/bank-list']);
+        },
+        error: (err) => {
+          alert('Error updating bank: ' + err.message);
+        }
+      });
+    }
   }
 
   addBankGroup() {
@@ -95,21 +107,22 @@ export class BankCreate implements OnInit {
   }
 
   /** Load existing bank for edit */
-  private loadBank(): void {
+  private loadBankForEdit(bankId: string): void {
     this.loading = true;
 
-    this.bankService.getBankById(this.bankId!).subscribe({
-      next: bank => {
+    this.bankService.getBankForEdit(bankId).subscribe({
+      next: (bank) => {
         this.bankForm.patchValue({
+          id: bank.id,
           groupId: bank.groupId,
           name: bank.name,
-          // openingDate: bank.openingDate,
-          // closingDate: bank.closingDate,
+          openingDate: bank.openingDate,
+          closingDate: bank.closingDate,
           type: bank.type
         });
         this.loading = false;
       },
-      error: err => {
+      error: (err) => {
         console.error('Failed to load bank:', err);
         alert('Failed to load bank details.');
         this.router.navigate(['/bank-list']);
@@ -120,9 +133,7 @@ export class BankCreate implements OnInit {
   /** Load bank groups from the backend */
   private loadBankGroups(): void {
     this.bankGroupService.getBankGroups().subscribe({
-      next: (groups) => {
-        this.bankGroups = groups;
-      },
+      next: (groups) => this.bankGroups = groups,
       error: (err) => {
         console.error('Failed to load bank groups:', err);
         alert('Error loading bank groups.');
