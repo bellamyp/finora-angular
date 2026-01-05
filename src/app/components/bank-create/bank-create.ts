@@ -32,9 +32,8 @@ export class BankCreate implements OnInit {
     private bankService: BankService,
     private bankGroupService: BankGroupService
   ) {
-    // Backend required fields
     this.bankForm = this.fb.group({
-      id: [''], // used only for updates
+      id: [''], // only used for updates
       groupId: ['', Validators.required],
       name: ['', Validators.required],
       openingDate: ['', Validators.required],
@@ -52,6 +51,7 @@ export class BankCreate implements OnInit {
     if (this.mode === 'update' && this.bankId) {
       this.loadBankForEdit(this.bankId);
     } else {
+      // During creation, closing date cannot be set
       this.bankForm.get('closingDate')?.disable();
     }
   }
@@ -65,7 +65,7 @@ export class BankCreate implements OnInit {
     const raw = this.bankForm.getRawValue();
 
     const payload: BankEditDto = {
-      id: raw.id || undefined, // undefined for creation
+      id: raw.id || undefined,
       name: raw.name,
       openingDate: raw.openingDate,
       closingDate: raw.closingDate || null,
@@ -73,27 +73,20 @@ export class BankCreate implements OnInit {
       groupId: raw.groupId
     };
 
-    if (this.mode === 'create') {
-      this.bankService.createBank(payload).subscribe({
-        next: () => {
-          alert('Bank created successfully!');
-          this.router.navigate(['/bank-list']);
-        },
-        error: (err) => {
-          alert('Error creating bank: ' + err.message);
-        }
-      });
-    } else {
-      this.bankService.updateBank(payload).subscribe({
-        next: () => {
-          alert('Bank updated successfully!');
-          this.router.navigate(['/bank-list']);
-        },
-        error: (err) => {
-          alert('Error updating bank: ' + err.message);
-        }
-      });
-    }
+    const request$ = this.mode === 'create'
+      ? this.bankService.createBank(payload)
+      : this.bankService.updateBank(payload);
+
+    request$.subscribe({
+      next: () => {
+        alert(`Bank ${this.mode === 'create' ? 'created' : 'updated'} successfully!`);
+        this.router.navigate(['/bank-list']);
+      },
+      error: err => {
+        console.error(err);
+        alert(`Error ${this.mode === 'create' ? 'creating' : 'updating'} bank: ${err.message}`);
+      }
+    });
   }
 
   addBankGroup() {
@@ -106,12 +99,11 @@ export class BankCreate implements OnInit {
       : 'Closing date';
   }
 
-  /** Load existing bank for edit */
+  /** Load bank for edit and enforce read-only rules */
   private loadBankForEdit(bankId: string): void {
     this.loading = true;
-
     this.bankService.getBankForEdit(bankId).subscribe({
-      next: (bank) => {
+      next: bank => {
         this.bankForm.patchValue({
           id: bank.id,
           groupId: bank.groupId,
@@ -120,9 +112,18 @@ export class BankCreate implements OnInit {
           closingDate: bank.closingDate,
           type: bank.type
         });
+
+        // 1️⃣ Opening date should never be editable
+        this.bankForm.get('openingDate')?.disable();
+
+        // 2️⃣ Closing date should be disabled if the bank is closed
+        if (bank.closingDate) {
+          this.bankForm.get('closingDate')?.disable();
+        }
+
         this.loading = false;
       },
-      error: (err) => {
+      error: err => {
         console.error('Failed to load bank:', err);
         alert('Failed to load bank details.');
         this.router.navigate(['/bank-list']);
@@ -130,11 +131,11 @@ export class BankCreate implements OnInit {
     });
   }
 
-  /** Load bank groups from the backend */
+  /** Load bank groups */
   private loadBankGroups(): void {
     this.bankGroupService.getBankGroups().subscribe({
-      next: (groups) => this.bankGroups = groups,
-      error: (err) => {
+      next: groups => this.bankGroups = groups,
+      error: err => {
         console.error('Failed to load bank groups:', err);
         alert('Error loading bank groups.');
       }
