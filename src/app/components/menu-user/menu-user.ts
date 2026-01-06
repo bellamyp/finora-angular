@@ -115,6 +115,10 @@ export class MenuUser implements OnInit {
     alert('Custom Report is not implemented yet.');
   }
 
+  netWorth() { alert('Net Worth not implemented yet'); }
+
+  assets() { alert('Assets not implemented yet'); }
+
   // --- Records ---
   activeRecords() {
     alert('Active Records is not implemented yet.');
@@ -127,6 +131,15 @@ export class MenuUser implements OnInit {
   oldRecords() {
     alert('Old Records is not implemented yet.');
   }
+
+  // --- Loans ---
+  studentLoans() { alert('Student Loans not implemented yet'); }
+  carLoans() { alert('Car Loans not implemented yet'); }
+  mortgage() { alert('Mortgage not implemented yet'); }
+
+  // --- Investments ---
+  allAccounts() { alert('All Accounts not implemented yet'); }
+  investmentTransactions() { alert('Investment Transactions not implemented yet'); }
 
   private checkReportStatus(): void {
     this.loadingReportCheck = true;
