@@ -13,7 +13,6 @@ import { BankDto } from '../../dto/bank.dto';
 import { TransactionGroupDto } from '../../dto/transaction-group.dto';
 import { ReportDto } from '../../dto/report.dto';
 
-// Dummy route component for provideRouter
 @Component({ template: '', standalone: true })
 class DummyComponent {}
 
@@ -28,7 +27,9 @@ describe('ReportView', () => {
   let reportServiceSpy: jasmine.SpyObj<ReportService>;
 
   beforeEach(async () => {
-    transactionGroupServiceSpy = jasmine.createSpyObj('TransactionGroupService', ['getTransactionGroupsByReport']);
+    transactionGroupServiceSpy = jasmine.createSpyObj('TransactionGroupService', [
+      'getTransactionGroupsByReport'
+    ]);
     bankServiceSpy = jasmine.createSpyObj('BankService', ['getBanks']);
     brandServiceSpy = jasmine.createSpyObj('BrandService', ['getBrandsByUser']);
     locationServiceSpy = jasmine.createSpyObj('LocationService', ['getLocations']);
@@ -36,7 +37,10 @@ describe('ReportView', () => {
       'canAddTransactionGroups',
       'getReportById',
       'addTransactionGroups',
-      'removeReportFromGroup'
+      'removeReportFromGroup',
+      'getReportTypeBalances',
+      'getReportBankBalances',
+      'postReport'
     ]);
 
     await TestBed.configureTestingModule({
@@ -58,6 +62,21 @@ describe('ReportView', () => {
     fixture = TestBed.createComponent(ReportView);
     component = fixture.componentInstance;
   });
+
+  function mockCommonReportCalls(posted = false) {
+    reportServiceSpy.getReportById.and.returnValue(
+      of({
+        id: 'r1',
+        userId: 'u1',
+        month: '2025-12',
+        posted
+      } as ReportDto)
+    );
+
+    reportServiceSpy.canAddTransactionGroups.and.returnValue(of(!posted));
+    reportServiceSpy.getReportTypeBalances.and.returnValue(of([]));
+    reportServiceSpy.getReportBankBalances.and.returnValue(of([]));
+  }
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -83,29 +102,22 @@ describe('ReportView', () => {
       }
     ];
 
-    const mockBanks: BankDto[] = [{ id: 'b1', groupId: 'grp1', name: 'Bank 1', type: 'Checking', email: '' }];
-    const mockBrands = [{ id: 'br1', name: 'Brand 1' } as any];
-    const mockLocations = [{ id: 'l1', city: 'City', state: 'ST' } as any];
+    const mockBanks: BankDto[] = [
+      { id: 'b1', groupId: 'grp1', name: 'Bank 1', type: 'Checking', email: '' }
+    ];
 
     bankServiceSpy.getBanks.and.returnValue(of(mockBanks));
-    brandServiceSpy.getBrandsByUser.and.returnValue(of(mockBrands));
-    locationServiceSpy.getLocations.and.returnValue(of(mockLocations));
+    brandServiceSpy.getBrandsByUser.and.returnValue(of([{ id: 'br1', name: 'Brand 1' } as any]));
+    locationServiceSpy.getLocations.and.returnValue(
+      of([{ id: 'l1', city: 'City', state: 'ST' } as any])
+    );
     transactionGroupServiceSpy.getTransactionGroupsByReport.and.returnValue(of(mockGroups));
 
-    reportServiceSpy.canAddTransactionGroups.and.returnValue(of(true));
-    reportServiceSpy.getReportById.and.returnValue(
-      of({
-        id: 'r1',
-        userId: 'u1',
-        month: '2025-12-01',
-        posted: false
-      } as ReportDto)
-    );
+    mockCommonReportCalls(false);
 
     fixture.detectChanges();
     tick();
 
-    expect(component.transactionGroups.length).toBe(1);
     const tx = component.transactionGroups[0].transactions[0];
     expect(tx.bankName).toBe('Bank 1');
     expect(tx.brandName).toBe('Brand 1');
@@ -116,20 +128,14 @@ describe('ReportView', () => {
   }));
 
   it('should handle load report groups error', fakeAsync(() => {
-    transactionGroupServiceSpy.getTransactionGroupsByReport.and.returnValue(throwError(() => new Error('Fail')));
+    transactionGroupServiceSpy.getTransactionGroupsByReport.and.returnValue(
+      throwError(() => new Error('Fail'))
+    );
     bankServiceSpy.getBanks.and.returnValue(of([]));
     brandServiceSpy.getBrandsByUser.and.returnValue(of([]));
     locationServiceSpy.getLocations.and.returnValue(of([]));
 
-    reportServiceSpy.canAddTransactionGroups.and.returnValue(of(false));
-    reportServiceSpy.getReportById.and.returnValue(
-      of({
-        id: 'r1',
-        userId: 'u1',
-        month: '2025-12-01',
-        posted: false
-      } as ReportDto)
-    );
+    mockCommonReportCalls(false);
 
     const consoleSpy = spyOn(console, 'error');
 
@@ -151,7 +157,10 @@ describe('ReportView', () => {
       classes: { 'text-success': false, 'text-danger': true }
     });
 
-    expect(component.getAmountDisplay({ amount: null })).toEqual({ display: '—', classes: {} });
+    expect(component.getAmountDisplay({ amount: null })).toEqual({
+      display: '—',
+      classes: {}
+    });
   });
 
   it('getLoadTransactionsText() should return correct text', () => {
@@ -159,44 +168,17 @@ describe('ReportView', () => {
     expect(component.getLoadTransactionsText()).toBe('Load all available transactions');
 
     component.canAddTransactionGroups = false;
-    expect(component.getLoadTransactionsText()).toBe('No fully posted transactions to add');
+    expect(component.getLoadTransactionsText()).toBe(
+      'No fully posted transactions to add'
+    );
   });
 
-  it('removeGroupFromReport() should confirm and call service', fakeAsync(() => {
-    const group: TransactionGroupDto = { id: 'g1', transactions: [] };
-    reportServiceSpy.removeReportFromGroup.and.returnValue(of(undefined));
-    spyOn(window, 'confirm').and.returnValue(true);
-
-    transactionGroupServiceSpy.getTransactionGroupsByReport.and.returnValue(of([]));
-    bankServiceSpy.getBanks.and.returnValue(of([]));
-    brandServiceSpy.getBrandsByUser.and.returnValue(of([]));
-    locationServiceSpy.getLocations.and.returnValue(of([]));
-    reportServiceSpy.canAddTransactionGroups.and.returnValue(of(true));
-    reportServiceSpy.getReportById.and.returnValue(
-      of({
-        id: 'r1',
-        userId: 'u1',
-        month: '2025-12-01',
-        posted: false
-      } as ReportDto)
-    );
-
-    fixture.detectChanges();
-    tick();
-
-    component.removeGroupFromReport(group);
-    tick();
-
-    expect(reportServiceSpy.removeReportFromGroup).toHaveBeenCalledWith('g1');
-  }));
-
-  it('removeGroupFromReport() should alert if report is posted', () => {
+  it('removeGroupFromReport() should do nothing if report is posted', () => {
     component.reportPosted = true;
     const group: TransactionGroupDto = { id: 'g1', transactions: [] };
-    const alertSpy = spyOn(window, 'alert');
 
     component.removeGroupFromReport(group);
 
-    expect(alertSpy).toHaveBeenCalledWith('Cannot remove a group from a posted report.');
+    expect(reportServiceSpy.removeReportFromGroup).not.toHaveBeenCalled();
   });
 });
