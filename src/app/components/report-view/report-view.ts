@@ -70,7 +70,7 @@ export class ReportView implements OnInit {
   }
 
   addTransactionGroupsToReport(): void {
-    if (!this.reportId) return;
+    if (!this.reportId || this.reportPosted) return;
 
     this.reportService.addTransactionGroups(this.reportId).subscribe({
       next: () => {
@@ -85,12 +85,7 @@ export class ReportView implements OnInit {
   }
 
   removeGroupFromReport(group: TransactionGroupDto): void {
-    if (!group.id) return;
-
-    if (this.reportPosted) {
-      alert('Cannot remove a group from a posted report.');
-      return;
-    }
+    if (!group.id || !this.reportId || this.reportPosted) return;
 
     const confirmed = confirm(`Are you sure you want to remove group ${group.id} from this report?`);
     if (!confirmed) return;
@@ -130,10 +125,9 @@ export class ReportView implements OnInit {
   // -----------------------
   private loadReportData(): void {
     this.loadReportGroups();
-    this.checkCanAddTransactionGroups();
-    this.loadReportStatus();
     this.loadReportTypeBalances();
     this.loadReportBankBalances();
+    this.loadReportStatus(); // this will decide permissions
   }
 
   // -----------------------
@@ -189,8 +183,13 @@ export class ReportView implements OnInit {
   // -----------------------
   private checkCanAddTransactionGroups(): void {
     this.reportService.canAddTransactionGroups().subscribe({
-      next: (canAdd) => this.canAddTransactionGroups = canAdd,
-      error: () => this.canAddTransactionGroups = false
+      next: (canAdd) => {
+        // Disable adding if the report is already posted
+        this.canAddTransactionGroups = canAdd && !this.reportPosted;
+      },
+      error: () => {
+        this.canAddTransactionGroups = false;
+      }
     });
   }
 
@@ -204,14 +203,25 @@ export class ReportView implements OnInit {
 
         if (report.month) {
           const [year, month] = report.month.split('-');
-          const monthName = new Date(Number(year), Number(month) - 1).toLocaleString('default', { month: 'long' });
+          const monthName = new Date(
+            Number(year),
+            Number(month) - 1
+          ).toLocaleString('default', { month: 'long' });
+
           this.currentReportMonth = `${year} / ${monthName}`;
-          console.log('currentReportMonth:', this.currentReportMonth);
+        }
+
+        // 🔒 Only check add-permission AFTER we know posted status
+        if (!this.reportPosted) {
+          this.checkCanAddTransactionGroups();
+        } else {
+          this.canAddTransactionGroups = false;
         }
       },
       error: () => {
         this.reportPosted = false;
         this.currentReportMonth = '';
+        this.canAddTransactionGroups = false;
       }
     });
   }
